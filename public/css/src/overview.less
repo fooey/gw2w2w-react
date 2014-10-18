@@ -1,0 +1,55 @@
+
+
+#overview {
+	.RegionMatches,
+	.RegionWorlds {
+		padding: 0 1em;
+	}
+
+	.matchContainer {
+
+		& + .matchContainer {
+			margin-top: .5em;
+			padding-top: .5em;
+			border-top: 1px solid @gray-lighter;
+		}
+
+		// &:nth-child(even) {
+		// 	background-color: @gray-lighter;
+		// }
+	}
+	.match {
+		width: 100%;
+
+		tr:hover {
+			td {
+				font-weight: 700;
+			}
+		}
+
+		td {
+			line-height: 20px;
+
+			&.score {
+				font-size: 10pt;
+				text-align: right;
+
+				.diff {
+					&::before {
+						content: '+';
+					}
+					display: inline-block;
+				}
+				.value {
+					width: 4.5em;
+					display: inline-block;
+				}
+			}
+			&.pie {
+				line-height: 60px;
+				width: 70px;
+				text-align: right;
+			}
+		}
+	}
+}

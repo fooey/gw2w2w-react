@@ -1,0 +1,61 @@
+doctype html
+html(lang="en")
+	head
+		meta(charset="utf-8")
+		meta(http-equiv="X-UA-Compatible" content="IE=edge")
+		meta(name="viewport" content="width=device-width, initial-scale=1")
+
+		title= (metaTitle || 'gw2w2w')
+		meta(name="description" content=(metaDescription || 'gw2w2w'))
+
+		block styles
+			link(href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet")
+			link(href="/css/dist/app.min.css" rel="stylesheet")
+	body
+
+		nav.navbar.navbar-default
+			.container
+				.navbar-header
+					button.navbar-toggle.collapsed(type="button" data-toggle="collapse" data-target="#navbar-collapse")
+						span.sr-only Toggle navigation
+						span.icon-bar
+						span.icon-bar
+						span.icon-bar
+
+					a.navbar-brand(href="/")
+						img(src="/img/logo/logo-96x36.png")
+
+
+				block navbar
+				//- #navbar-collapse.collapse.navbar-collapse
+				//- 	ul.nav.navbar-nav.navbar-right
+				//- 		li: a(href="/#Overview") Overview
+				//- 		li: a(href="/#Knowledge") Knowledge
+				//- 		li: a(href="/#Projects") Projects
+				//- 		li: a(href="/#Experience") Experience
+				//- 		li: a(href="/#Contact") Contact
+				//- 		li: a(href="/resume/JasonRushton.docx")
+				//- 			i.fa.fa-download
+				//- 			|  Résumé
+
+		
+
+		block content
+
+
+
+		block scripts
+			script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js")
+			script(src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js")
+			script(src="//cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js")
+
+			script(src="//cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.min.js")
+			//- script(src="//cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.ui.min.js")
+			script(src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js")
+			script(src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js")
+			script(src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.3/underscore.string.min.js")
+
+			script(src="//cdnjs.cloudflare.com/ajax/libs/react/0.11.2/react-with-addons.js")
+			//- script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.11.2/react.js")
+
+			script(src="/js/dist/app.js")
