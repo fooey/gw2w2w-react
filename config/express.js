@@ -3,6 +3,12 @@ const path = require('path');
 
 module.exports = function(express) {
 	var app = express();
+	
+	var isDev = (process.env.NODE_ENV === 'development');
+	var isProd = !isDev;
+
+	app.set('env', isDev ? 'development' : 'production');
+	app.set('port', process.env.PORT || 3000);
 
 
 	/*
