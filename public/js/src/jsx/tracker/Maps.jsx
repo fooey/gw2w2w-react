@@ -4,6 +4,7 @@
 
 var MapDetails = require('./MapDetails.jsx');
 var libDate = require('../../lib/date.js');
+var Log = require('./log/Log.jsx');
 
 module.exports = React.createClass({
 
@@ -28,6 +29,7 @@ module.exports = React.createClass({
 		var matchData = this.props.data;
 		var objectives = this.props.objectives;
 		var guilds = this.props.guilds;
+		var log = this.props.log;
 		var mapsScores = this.props.mapsScores;
 		var matchWorlds = this.props.matchWorlds;
 
@@ -43,27 +45,65 @@ module.exports = React.createClass({
 
 		return (
 			<div id="maps">
-				<div className="row">{
-					_.map(mapsConfig, function(mapConfig, outputIndex) {
-
-						var mapName = mapNames[outputIndex];
-						var mapColor = mapColors[outputIndex];
-
-						return (
-							<div className="col-md-6" key={'map-' + mapConfig.mapIndex}>
+				<div className="row">
+					<div className="col-md-6">
+						<MapDetails 
+							dateNow={dateNow}
+							objectives={objectives}
+							guilds={guilds}
+							mapsScores={mapsScores}
+							mapConfig={mapsConfig[0]}
+							mapName={mapNames[0]}
+							mapColor={mapColors[0]}
+						/>
+					</div>
+					<div className="col-md-18">
+						<div className="row">
+							<div className="col-md-8">
 								<MapDetails 
-									mapsScores={mapsScores[mapConfig.mapIndex]}
+									dateNow={dateNow}
 									objectives={objectives}
 									guilds={guilds}
-									mapConfig={mapConfig}
-									mapName={mapName}
-									mapColor={mapColor}
-									dateNow={dateNow}
+									mapsScores={mapsScores}
+									mapConfig={mapsConfig[1]}
+									mapName={mapNames[1]}
+									mapColor={mapColors[1]}
 								/>
 							</div>
-						);
-					})
-				}</div>
+							<div className="col-md-8">
+								<MapDetails 
+									dateNow={dateNow}
+									objectives={objectives}
+									guilds={guilds}
+									mapsScores={mapsScores}
+									mapConfig={mapsConfig[2]}
+									mapName={mapNames[2]}
+									mapColor={mapColors[2]}
+								/>
+							</div>
+							<div className="col-md-8">
+								<MapDetails 
+									dateNow={dateNow}
+									objectives={objectives}
+									guilds={guilds}
+									mapsScores={mapsScores}
+									mapConfig={mapsConfig[3]}
+									mapName={mapNames[3]}
+									mapColor={mapColors[3]}
+								/>
+							</div>
+						</div>
+						<div className="row">
+							<div className="col-md-24">
+								<Log
+									guilds={guilds}
+									objectives={objectives}
+									log={log}
+								/>
+							</div>
+						</div>
+					</div>
+				 </div>
 			</div>
 		);
 	},

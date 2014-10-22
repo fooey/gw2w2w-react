@@ -1,42 +1,55 @@
 /**
  * @jsx React.DOM
  */
-var Sprite = require('./Sprite.jsx');
-var Arrow = require('./Arrow.jsx');
+
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
+var Sprite = require('../Sprite.jsx');
+var Arrow = require('../Arrow.jsx');
+var libDate = require('../../../lib/date.js');
 
 module.exports = React.createClass({
 
+	getInitialState: function() {
+		return {dateNow: libDate.dateNow()};
+	},
+	tick: function() {
+		this.setState({dateNow: libDate.dateNow()});
+	},
+	componentDidMount: function() {
+		this.interval = setInterval(this.tick, 1000);
+	},
+	componentWillUnmount: function() {
+		clearInterval(this.interval);
+	},
+
 	render: function() {
-		var staticData = require('../../staticData');
+		var staticData = require('../../../staticData');
 		var objectivesData = staticData.objectives;
 
 		var appState = window.app.state;
 
-		var objectiveId = this.props.objectiveId;
-		var dateNow = this.props.dateNow;
+		var entryIndex = this.props.entryIndex;
+		var entry = this.props.entry;
+		var objective = entry.objective;
 		var objectives = this.props.objectives;
 		var guilds = this.props.guilds;
 
 
-		if (!_.has(objectivesData.objective_meta, objectiveId)) {
+		if (!objectivesData.objective_meta[objective.id]) {
+			// console.log(objective.id, 'not in', objectivesData.objective_meta);
 			// short circuit
 			return null;
 		}
 
 
-		var objective = objectives[objectiveId];
+		// var objective = objectives[objective];
 		var objectiveMeta = objectivesData.objective_meta[objective.id];
 		var objectiveName = objectivesData.objective_names[objective.id];
 		var objectiveLabels = objectivesData.objective_labels[objective.id];
 		var objectiveType = objectivesData.objective_types[objectiveMeta.type];
 
-		var timerActive = (objective.expires >= dateNow + 5); // show for 5 seconds after expiring
-		var timerUnknown = (objective.lastCap === window.app.state.start);
-		var secondsRemaining = objective.expires - dateNow;
-		var expiration = moment(secondsRemaining * 1000);
-
-
-		// console.log(objective.lastCap, objective.expires, now, objective.expires > now);
+		var timestamp = moment(entry.timestamp * 1000);
 
 		var className = [
 			'objective',
@@ -44,20 +57,14 @@ module.exports = React.createClass({
 			objective.owner.toLowerCase(),
 		].join(' ');
 
-		var timerClass = [
-			'timer',
-			(timerActive) ? 'active' : 'inactive',
-			(timerUnknown) ? 'unknown' : '',
-		].join(' ');
-
-		var tagClass = [
-			'tag',
-		].join(' ');
-
-		var timerHtml = (timerActive) ? expiration.format('m:ss') : '0:00';
-
 		return (
-			<div className={className}>
+			<div className={className} key={entryIndex}>
+				<div className="objective-relative">
+					<span>{timestamp.twitterShort()}</span>
+				</div>
+				<div className="objective-timestamp">
+					{timestamp.format('hh:mm:ss')}
+				</div>
 				<div className="objective-icons">
 					<Arrow objectiveMeta={objectiveMeta} />
  					<Sprite type={objectiveType.name} color={objective.owner.toLowerCase()} />
@@ -65,16 +72,15 @@ module.exports = React.createClass({
 				<div className="objective-label">
 					<span>{objectiveLabels[appState.lang.slug]}</span>
 				</div>
-				<div className="objective-state">
+				<div className="objective-guild">
 					{renderGuild(objective.owner_guild, guilds)}
-					<span className={timerClass} title={'Expires at ' + objective.expires}>{timerHtml}</span>
 				</div>
 			</div>
 		);
 	},
 });
 
-function renderGuild(guildId, guilds){
+function renderGuild(guildId, guilds) {
 	if (!guildId) {
 		return null;
 	}
@@ -83,7 +89,7 @@ function renderGuild(guildId, guilds){
 
 		var guildClass = [
 			'guild',
-			'tag',
+			'name',
 			'pending'
 		].join(' ');
 
@@ -91,7 +97,7 @@ function renderGuild(guildId, guilds){
 			return <span className={guildClass}><i className="fa fa-spinner fa-spin"></i></span>;
 		}
 		else {
-			return <a className={guildClass} title={guild.guild_name}>{guild.tag}</a>;
+			return <span className={guildClass}>{guild.guild_name} [{guild.tag}]</span>;
 		}
 	}
 }

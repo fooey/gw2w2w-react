@@ -16,6 +16,7 @@ module.exports = React.createClass({
 			mapsScores: [],
 			objectives: {},
 			guilds: {},
+			log: [],
 		};
 	},
 
@@ -27,7 +28,6 @@ module.exports = React.createClass({
 
 	componentWillUnmount: function() {
 		clearTimeout(this.updateTimer);
-		clearTimeout(this.buffTimers);
 	},
 
 	componentDidUpdate: function() {
@@ -53,10 +53,13 @@ module.exports = React.createClass({
 		// console.log('this.state.objectives', this.state.objectives);
 
 		if (_.isEmpty(this.state.objectives)) {
-			console.log('Objective data not ready');
 			return null;
 		}
 		else {
+			var claimsLog = _.filter(this.state.log, function(entry){
+				return _.has(entry.objective, 'owner_guild');
+			});
+
 			return (
 				<div id="tracker">
 					<Scoreboard 
@@ -65,19 +68,19 @@ module.exports = React.createClass({
 						matchWorlds={matchWorlds}
 					/>
 
-
 					<Maps
 						matchData={matchData}
 						mapsScores={this.state.mapsScores}
 						objectives={this.state.objectives}
 						guilds={this.state.guilds}
 						matchWorlds={matchWorlds}
+						log={this.state.log}
 					/>
-
 
 					<Guilds
 						guilds={this.state.guilds}
 						objectives={this.state.objectives}
+						claimsLog={claimsLog}
 					/>
 				</div>
 			);
@@ -155,15 +158,35 @@ function getObjectives(component, md) {
 function setObjectiveLastCap(o) {
 	var so = this.state.objectives[o.id];
 
+	var init = false;
+	var ownerChanged = false;
+	var claimerChanged = false;
+
 	if (!so) {
+		ownerChanged = true;
+		init = true;
 		o.lastCap = window.app.state.start;
 	}
-	else if (o.owner === so.owner) {
-		o.lastCap = so.lastCap;
+	else {
+		ownerChanged = !_.isEqual(o.owner, so.owner);
+		claimerChanged = _.has(o, 'owner_guild') && o.owner_guild && !_.isEqual(o.owner_guild, so.owner_guild);
+	}
+
+
+
+	if (ownerChanged){
+		if (!init) {
+			o.lastCap = libDate.dateNow();
+		}
+		appendToLog.call(this, {type: 'capture', objective: _.clone(o)});
 	}
 	else {
-		o.lastCap = libDate.dateNow();
+		if (claimerChanged) {
+			appendToLog.call(this, {type: 'claim', objective: _.clone(o)});
+		}
+		o.lastCap = so.lastCap;
 	}
+
 
 	o.expires = libDate.add5(o.lastCap);
 
@@ -171,6 +194,12 @@ function setObjectiveLastCap(o) {
 }
 
 
+function appendToLog(props) {
+	props.timestamp = libDate.dateNow();
+	props.logId = this.state.log.length;
+	this.state.log.push(props);
+	this.setState({log: this.state.log});
+}
 
 function queueGuildLookups(objectives){
 	var knownGuilds = _.keys(this.state.guilds);
@@ -179,7 +208,7 @@ function queueGuildLookups(objectives){
 		.chain(objectives)
 		.pluck('owner_guild')
 		.uniq()
-		.without(undefined)
+		.without(undefined, null)
 		.difference(knownGuilds)
 		.value();
 
@@ -199,7 +228,6 @@ function getGuildDetails(guildId, onComplete) {
 		function(data) {
 			// console.log('component.state', component.state);
 			// var guild = _.merge(component.state.guilds[guildId], data);
-			data.objectives = _.filter(component.state.objectives, {"owner_guild": guildId});
 			component.state.guilds[guildId] = data;
 			component.setState({guilds: component.state.guilds});
 		}, 

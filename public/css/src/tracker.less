@@ -108,11 +108,17 @@
 		.objective-label {
 			width: 100%;
 		}
-		.objective-state {
+		.objective-relative span {
+			display: inline-block;
+			width: 2em;
+			text-align: center;
+			font-size: 10pt;
 		}
 		.objective-timestamp {
 			padding-right: .5em;
 			font-size: 10pt;
+		}
+		.objective-state {
 		}
 
 
@@ -172,4 +178,42 @@
 			}
 		}
 	}
+
+
+	#log {
+		margin: 0 .5em;
+		max-height: 13em;
+		overflow-y: scroll;
+	}
+
+	#guilds {
+		.guild {
+			.transition(background-color 2s ease-in);
+
+			& + .guild {
+				margin-top: 2em;
+			}
+
+			&:nth-child(even) {
+				background-color: @gray-lightest;
+			}
+
+			h1 {
+				font-size: 32pt;
+				font-size: 24pt;
+				@media(min-width: @screen-md-min) { font-size: 32pt; }
+			}
+
+			img.emblem {
+				width: 256px;
+				max-width: 100%;
+				height: auto;
+			}
+
+			ul {
+				margin-left: 1em;
+			}
+		}
+	}
 }
+

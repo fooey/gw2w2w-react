@@ -12,7 +12,7 @@ module.exports = React.createClass({
 		var objectivesData = staticData.objectives;
 
 		var mapConfig = this.props.mapConfig;
-		var mapScores = this.props.mapScores;
+		var mapScores = this.props.mapsScores[mapConfig.mapIndex];
 		var objectives = this.props.objectives;
 		var guilds = this.props.guilds;
 		var mapName = this.props.mapName;

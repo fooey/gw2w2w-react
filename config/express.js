@@ -3,7 +3,7 @@ const path = require('path');
 
 module.exports = function(express) {
 	var app = express();
-	
+
 	var isDev = (process.env.NODE_ENV === 'development');
 	var isProd = !isDev;
 
@@ -85,7 +85,4 @@ module.exports = function(express) {
 
 
 	return app;
-}
-
-
-
+};

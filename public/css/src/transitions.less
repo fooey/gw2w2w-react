@@ -1,0 +1,28 @@
+
+&.transition {
+	&.log-entry-enter {
+		overflow: hidden;
+		white-space: nowrap;
+		max-height: 0;
+		.opacity(0);
+
+		&-active {
+			max-height: 1.6em;
+			.opacity(1);
+			.transition(all 400ms ease-in);
+		}
+	}
+
+	&.guild-enter {
+		overflow: hidden;
+		white-space: nowrap;
+		max-height: 0;
+		.opacity(0);
+
+		&-active {
+			max-height: 256px;
+			.opacity(1);
+			.transition(all 400ms ease-in);
+		}
+	}
+}

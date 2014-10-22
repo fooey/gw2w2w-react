@@ -12,12 +12,13 @@ module.exports = React.createClass({
 
 		var appState = window.app.state;
 
-		var objective = this.props.objective;
+		var claim = this.props.claim;
+		var objective = claim.objective;
 		var objectives = this.props.objectives;
 
 
 		if (!objectivesData.objective_meta[objective.id]) {
-			console.log(objective.id, 'not in', objectivesData.objective_meta);
+			// console.log(objective.id, 'not in', objectivesData.objective_meta);
 			// short circuit
 			return null;
 		}
@@ -42,7 +43,7 @@ module.exports = React.createClass({
  					<Sprite type={objectiveType.name} color={objective.owner.toLowerCase()} />
 				</div>
 				<div className="objective-timestamp">
-					{moment(objective.lastCap * 1000).format('hh:mm:ss')}
+					{moment(claim.timestamp * 1000).format('hh:mm:ss')}
 				</div>
 				<div className="objective-label">
 					<span>{objectiveLabels[appState.lang.slug]}</span>
