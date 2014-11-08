@@ -2,24 +2,29 @@
  * @jsx React.DOM
  */
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+//var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
-var Objective = require('./Objective.jsx');
+var Objective = React.createFactory(require('./Objective.jsx'));
 
 module.exports = React.createClass({
 
 	render: function() {
-		var claimsLog = this.props.claimsLog;
-		var objectives = this.props.objectives;
+		var dateNow = this.props.dateNow;
+		var eventHistory = this.props.eventHistory;
+		var mapsMeta = this.props.mapsMeta;
 
 		var guilds = _
 			.chain(this.props.guilds)
 			.map(function(guild){
-				guild.claims = _.filter(claimsLog, function(entry){
-					return (entry.objective.owner_guild === guild.guild_id);
-				});
-				guild.claims = _.sortBy(guild.claims, 'timestamp').reverse();
-				guild.lastClaim = guild.claims[0].timestamp;
+				guild.claims = _.chain(eventHistory)
+					.filter(function(entry){
+						return (entry.type === 'claim' && entry.guild === guild.guild_id);
+					})
+					.sortBy('timestamp')
+					.reverse()
+					.value();
+
+				guild.lastClaim = (guild.claims && guild.claims.length) ? guild.claims[0].timestamp : 0;
 				return guild;
 			})
 			.sortBy('guild_name')
@@ -31,7 +36,7 @@ module.exports = React.createClass({
 
 		var guildsList = _.map(guilds, function(guild, guildId) {
 			return (
-				<div key={'guild-' + guild.guild_id} id={'guild-' + guild.guild_id} className="transition guild">
+				<div key={guild.guild_id} id={guild.guild_id} className="guild">
 					<div className="row">
 						<div className="col-sm-4">
 							<img className="emblem" src={getEmblemSrc(guild.guild_name)} />
@@ -39,13 +44,13 @@ module.exports = React.createClass({
 						<div className="col-sm-20">
 							<h1>{guild.guild_name} [{guild.tag}]</h1>
 							<ul className="list-unstyled">
-								{_.map(guild.claims, function(claim) {
+								{_.map(guild.claims, function(entry, ixEntry) {
 									return (
-										<li key={'objective-' + claim.objective.id}>
+										<li key={guild.guild_id + '-' + ixEntry}>
 											<Objective
-												claim={claim}
-												objectives={objectives}
-												guilds={guilds}
+												entry={entry}
+												ixEntry={ixEntry}
+												mapsMeta={mapsMeta}
 											/>
 										</li>
 									);
@@ -59,9 +64,9 @@ module.exports = React.createClass({
 
 
 		return (
-			<ReactCSSTransitionGroup transitionName="guild" component={React.DOM.div} className="list-unstyled" id="guilds">
+			<div className="list-unstyled" id="guilds">
 				{guildsList}
-			</ReactCSSTransitionGroup>
+			</div>
 		);
 	},
 });
@@ -69,3 +74,12 @@ module.exports = React.createClass({
 function getEmblemSrc(guildName) {
 	return 'http://guilds.gw2w2w.com/guilds/' + encodeURIComponent(guildName.replace(/ /g, '-')) + '/64.svg';
 }
+
+
+/*
+											<Objective
+												claim={claim}
+												objectives={objectives}
+												guilds={guilds}
+											/>
+*/

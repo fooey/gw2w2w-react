@@ -2,20 +2,24 @@
  * @jxs React.DOM
  */
 
-var Match = require('./Match.jsx');
+var Match = React.createFactory(require('./Match.jsx'));
 
 module.exports = React.createClass({
 	render: function() {
 
+		var region = this.props.region;
+		var worlds = this.props.worlds;
+
 		return (
 			<div className="RegionMatches">
-				<h2>{this.props.data.label}</h2>
-				{_.map(this.props.data.matches, function(match){
+				<h2>{region.label}</h2>
+				{_.map(region.matches, function(match){
 					return (
 						<Match 
+							key={'match-' + match.id} 
 							className="match" 
-							key={'match-' + match.wvw_match_id} 
-							data={match} 
+							match={match} 
+							worlds={worlds} 
 						/>
 					);
 				})}

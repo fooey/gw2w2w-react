@@ -6952,9 +6952,6 @@ body {
 #overview .match td.score .diff {
   display: inline-block;
 }
-#overview .match td.score .diff::before {
-  content: '+';
-}
 #overview .match td.score .value {
   width: 4.5em;
   display: inline-block;
@@ -7142,6 +7139,11 @@ body {
   padding-right: .5em;
   font-size: 10pt;
 }
+#tracker .objective .objective-map span {
+  display: inline-block;
+  width: 2.5em;
+  text-align: center;
+}
 @media (min-width: 768px) {
   #tracker .objective {
     font-size: 9pt;
@@ -7204,10 +7206,46 @@ body {
 #tracker .objective .timer.inactive {
   display: none;
 }
+#tracker .log-tabs {
+  border-bottom: 1px solid #eeeeee;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+#tracker .log-tabs li {
+  margin: 0;
+  padding: 0;
+}
+#tracker .log-tabs a {
+  margin: 0;
+  padding: .2em .5em;
+  font-size: 8pt;
+  cursor: pointer;
+}
+#tracker .log-tabs #log-event-filters {
+  margin-right: 2em;
+}
+#tracker .log-tabs #log-event-filters li {
+  float: right;
+}
 #tracker #log {
   margin: 0 .5em;
   max-height: 13em;
   overflow-y: scroll;
+}
+#tracker #log li:nth-child(even) {
+  background-color: #f6f6f6;
+}
+#tracker #log .objective {
+  font-size: 10pt;
+}
+#tracker #log .objective:hover {
+  background-color: #eeeeee;
+}
+#tracker #log .objective-relative,
+#tracker #log .objective-timestamp,
+#tracker #log .objective-map,
+#tracker #log .objective-guild {
+  font-size: 9pt;
 }
 #tracker #guilds .guild {
   -moz-transition: background-color 2s ease-in;

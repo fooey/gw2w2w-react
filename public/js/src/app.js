@@ -20,8 +20,8 @@
 */
 
 var page = require('page');
-page('/:langSlug(en|de|es|fr)?', require('./overview'));
-page('/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)', require('./tracker'));
+page('/:langSlug(en|de|es|fr)?', require('./overview.jsx'));
+page('/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)', require('./tracker.jsx'));
 
 $(function() {
 	page.start({

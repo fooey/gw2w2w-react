@@ -2,9 +2,13 @@
  * @jsx React.DOM
  */
 
-var MapDetails = require('./MapDetails.jsx');
+var MapDetails = React.createFactory(require('./MapDetails.jsx'));
+var Log = React.createFactory(require('./log/Log.jsx'));
+
 var libDate = require('../../lib/date.js');
-var Log = require('./log/Log.jsx');
+
+var staticData = require('gw2w2w-static');
+var mapsConfig = staticData.objective_map;
 
 module.exports = React.createClass({
 
@@ -23,25 +27,18 @@ module.exports = React.createClass({
 
 
 	render: function() {
-		var staticData = require('../../staticData');
-		var mapsConfig = staticData.objectives.objective_map;
-
-		var matchData = this.props.data;
-		var objectives = this.props.objectives;
-		var guilds = this.props.guilds;
-		var log = this.props.log;
-		var mapsScores = this.props.mapsScores;
-		var matchWorlds = this.props.matchWorlds;
-
-		if (!objectives) {
+		if (!this.props.details.initialized) {
 			return null;
 		}
 
-
-		var mapNames = ['Eternal Battlegrounds', matchWorlds[0].name, matchWorlds[1].name, matchWorlds[2].name];
-		var mapColors = ['default', 'red', 'blue', 'green'];
-
 		var dateNow = this.state.dateNow;
+		var details = this.props.details;
+		var matchWorlds = this.props.matchWorlds;
+		var mapsMeta = this.props.mapsMeta;
+		var guilds = this.props.guilds;
+		
+		var eventHistory = details.history;
+
 
 		return (
 			<div id="maps">
@@ -49,59 +46,60 @@ module.exports = React.createClass({
 					<div className="col-md-6">
 						<MapDetails 
 							dateNow={dateNow}
-							objectives={objectives}
+							details={details}
 							guilds={guilds}
-							mapsScores={mapsScores}
-							mapConfig={mapsConfig[0]}
-							mapName={mapNames[0]}
-							mapColor={mapColors[0]}
+							matchWorlds={matchWorlds}
+							mapsMeta={mapsMeta}
+							mapIndex={0}
 						/>
 					</div>
 					<div className="col-md-18">
+
 						<div className="row">
 							<div className="col-md-8">
 								<MapDetails 
 									dateNow={dateNow}
-									objectives={objectives}
+									details={details}
 									guilds={guilds}
-									mapsScores={mapsScores}
-									mapConfig={mapsConfig[1]}
-									mapName={mapNames[1]}
-									mapColor={mapColors[1]}
+									matchWorlds={matchWorlds}
+									mapsMeta={mapsMeta}
+									mapIndex={1}
 								/>
 							</div>
 							<div className="col-md-8">
 								<MapDetails 
 									dateNow={dateNow}
-									objectives={objectives}
+									details={details}
 									guilds={guilds}
-									mapsScores={mapsScores}
-									mapConfig={mapsConfig[2]}
-									mapName={mapNames[2]}
-									mapColor={mapColors[2]}
+									matchWorlds={matchWorlds}
+									mapsMeta={mapsMeta}
+									mapIndex={2}
 								/>
 							</div>
 							<div className="col-md-8">
 								<MapDetails 
 									dateNow={dateNow}
-									objectives={objectives}
+									details={details}
 									guilds={guilds}
-									mapsScores={mapsScores}
-									mapConfig={mapsConfig[3]}
-									mapName={mapNames[3]}
-									mapColor={mapColors[3]}
+									matchWorlds={matchWorlds}
+									mapsMeta={mapsMeta}
+									mapIndex={3}
 								/>
 							</div>
 						</div>
+						
 						<div className="row">
 							<div className="col-md-24">
 								<Log
+									dateNow={dateNow}
 									guilds={guilds}
-									objectives={objectives}
-									log={log}
+									eventHistory={eventHistory}
+									matchWorlds={matchWorlds}
+									mapsMeta={mapsMeta}
 								/>
 							</div>
 						</div>
+
 					</div>
 				 </div>
 			</div>

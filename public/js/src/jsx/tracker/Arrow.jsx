@@ -4,7 +4,7 @@
 
 module.exports = React.createClass({
 	render: function() {
-		var meta = this.props.objectiveMeta;
+		var meta = this.props.oMeta;
 
 		if (meta.d) {
 			var src = ['/img/icons/dist/arrow'];

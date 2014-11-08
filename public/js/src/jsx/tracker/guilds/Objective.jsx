@@ -1,88 +1,71 @@
-/**
+/*
  * @jsx React.DOM
  */
-var Sprite = require('../Sprite.jsx');
-var Arrow = require('../Arrow.jsx');
+
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
+var Sprite = React.createFactory(require('../Sprite.jsx'));
+var Arrow = React.createFactory(require('../Arrow.jsx'));
+
+var libDate = require('../../../lib/date.js');
+
+var staticData = require('gw2w2w-static');
+var objectivesNames = staticData.objective_names;
+var objectivesTypes = staticData.objective_types;
+var objectivesMeta = staticData.objective_meta;
+var objectivesLabels = staticData.objective_labels;
 
 module.exports = React.createClass({
-
 	render: function() {
-		var staticData = require('../../../staticData');
-		var objectivesData = staticData.objectives;
-
 		var appState = window.app.state;
 
-		var claim = this.props.claim;
-		var objective = claim.objective;
-		var objectives = this.props.objectives;
+		var entry = this.props.entry;
+		var ixEntry = this.props.ixEntry;
+		var guilds = this.props.guilds;
+		var mapsMeta = this.props.mapsMeta;
 
 
-		if (!objectivesData.objective_meta[objective.id]) {
-			// console.log(objective.id, 'not in', objectivesData.objective_meta);
+		if (!_.has(objectivesMeta, entry.objectiveId)) {
 			// short circuit
 			return null;
 		}
 
+		var oMeta = objectivesMeta[entry.objectiveId];
+		var oName = objectivesNames[entry.objectiveId];
+		var oLabel = objectivesLabels[entry.objectiveId];
+		var oType = objectivesTypes[oMeta.type];
+		
+		var timestamp = moment(entry.timestamp * 1000);
 
-		// var objective = objectives[objective];
-		var objectiveMeta = objectivesData.objective_meta[objective.id];
-		var objectiveName = objectivesData.objective_names[objective.id];
-		var objectiveLabels = objectivesData.objective_labels[objective.id];
-		var objectiveType = objectivesData.objective_types[objectiveMeta.type];
 
 		var className = [
 			'objective',
 			'team', 
-			objective.owner.toLowerCase(),
+			entry.world,
 		].join(' ');
 
+		var mapMeta = mapsMeta[oMeta.map];
+
+
 		return (
-			<div className={className}>
-				<div className="objective-icons">
-					<Arrow objectiveMeta={objectiveMeta} />
- 					<Sprite type={objectiveType.name} color={objective.owner.toLowerCase()} />
+			<div className={className} key={ixEntry}>
+				<div className="objective-relative">
+					<span>{timestamp.twitterShort()}</span>
 				</div>
 				<div className="objective-timestamp">
-					{moment(claim.timestamp * 1000).format('hh:mm:ss')}
+					{timestamp.format('hh:mm:ss')}
+				</div>
+				<div className="objective-map">
+					<span title={mapMeta.name}>{mapMeta.abbr}</span>
+				</div>
+				<div className="objective-icons">
+					<Arrow oMeta={oMeta} />
+ 					<Sprite type={oType.name} color={entry.world} />
 				</div>
 				<div className="objective-label">
-					<span>{objectiveLabels[appState.lang.slug]}</span>
+					<span>{oLabel[appState.lang.slug]}</span>
 				</div>
 			</div>
 		);
 	},
 });
-
-
-function getArrow(meta) {
-	if (!meta.d) {
-		return null;
-	}
-	else {
-		var src = ['/img/icons/dist/arrow'];
-
-		if (meta.n) {src.push('north'); }
-		else if (meta.s) {src.push('south'); }
-
-		if (meta.w) {src.push('west'); }
-		else if (meta.e) {src.push('east'); }
-
-		return <img src={src.join('-') + '.svg'} />;
-
-	}
-}
-
-
-/*
-
-													<div>
-														<div>now: {now}</div>
-														<div>cap: {objective.lastCap}</div>
-														<div>exp: {objective.expires}</div>
-													</div>
-													<div>
-														<div> {objective.lastCap.format('YYYY-MM-DD HH:mm:ss')}</div>
-														<div> {objective.expires.format('YYYY-MM-DD HH:mm:ss')}</div>
-														<div> {objective.expires.diff(now, 's')}</div>
-													</div>
-*/

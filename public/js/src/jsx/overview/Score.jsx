@@ -3,24 +3,28 @@
  */
 
 module.exports = React.createClass({
-
-	componentDidMount: function() {
+	getInitialState: function() {
+		return {diff: 0};
 	},
 
-	componentDidUpdate: function(prevProps, prevState){
-		// console.log('Score::componentWillUpdate', prevProps, this.props);
+	componentWillReceiveProps: function(nextProps){
+		// console.log('Score::componentWillReceiveProps', nextProps.score, this.props.score);
+		this.setState({diff: nextProps.score - this.props.score});
+	},
 
-		if (_.isNumber(this.props.diff) && this.props.diff > 0) {
+	componentDidUpdate: function() {
+		if(this.state.diff > 0) {
 			var $diff = $('.diff', this.getDOMNode());
 
 			// $diff
-			// 	.fadeIn('fast')
-			// 	.delay(2000)
-			// 	.fadeOut('slow');
+			// 	.hide()
+			// 	.fadeIn(400)
+			// 	.delay(4000)
+			// 	.fadeOut(2000);
 			$diff
 				.velocity('fadeOut', {duration: 0})
-				.velocity('fadeIn', {duration: 400})
-				.velocity('fadeOut', {duration: 2000, delay: 4000});
+				.velocity('fadeIn', {duration: 200})
+				.velocity('fadeOut', {duration: 1200, delay: 400});
 		}
 	},
 
@@ -28,14 +32,14 @@ module.exports = React.createClass({
 		var matchId = this.props.matchId;
 		var team = this.props.team;
 		var score = this.props.score || 0;
-		var diff = this.props.diff || 0;
 
 		return (
 			<span>
-				{(diff) ?
-					<span className="diff">{numeral(diff).format('0,0')}</span>
-					: <span />
-				}
+				<span className="diff">{
+					(this.state.diff)
+						? '+' + numeral(this.state.diff).format('0,0')
+						: null
+				}</span>
 				<span className="value">{numeral(score).format('0,0')}</span>
 			</span>
 		);

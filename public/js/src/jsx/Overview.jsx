@@ -2,12 +2,22 @@
  * @jsx React.DOM
  */
 
-var RegionMatches = require('./overview/RegionMatches.jsx');
-var RegionWorlds = require('./overview/RegionWorlds.jsx');
+var RegionMatches = React.createFactory(require('./overview/RegionMatches.jsx'));
+var RegionWorlds = React.createFactory(require('./overview/RegionWorlds.jsx'));
+
+
+var regions = [
+	{"label": "NA Worlds", "regionId": "1"},
+	{"label": "EU Worlds", "regionId": "2"},
+];
+
 
 module.exports = React.createClass({
 	getInitialState: function() {
 		return {matches: {}};
+	},
+
+	componentWillMount: function() {
 	},
 
 	componentDidMount: function() {
@@ -20,16 +30,12 @@ module.exports = React.createClass({
 	},
 	
 	render: function() {
-		// var appState = window.app.state;
-		var staticData = require('../staticData');
+		var lang = window.app.state.lang;
+		var langSlug = lang.slug;
 
 		var regionMatches = [
-			{"label": "NA Matchups", "matches": _.filter(this.state.matches, function(match){return match.wvw_match_id.charAt(0) === '1'; })},
-			{"label": "EU Matchups", "matches": _.filter(this.state.matches, function(match){return match.wvw_match_id.charAt(0) === '2'; })},
-		];
-		var regionWorlds = [
-			{"label": "NA Worlds", "worlds": _.filter(staticData.worlds, function(world){return world.id.charAt(0) === '1'; })},
-			{"label": "EU Worlds", "worlds": _.filter(staticData.worlds, function(world){return world.id.charAt(0) === '2'; })},
+			{"label": "NA Matchups", "matches": _.filter(this.state.matches, {region: 1})},
+			{"label": "EU Matchups", "matches": _.filter(this.state.matches, {region: 2})},
 		];
 
 		return (
@@ -38,7 +44,7 @@ module.exports = React.createClass({
 					{_.map(regionMatches, function(region){
 						return (
 							<div className="col-sm-12" key={region.label}>
-								<RegionMatches data={region} />
+								<RegionMatches region={region} />
 							</div>
 						);
 					})}
@@ -47,10 +53,10 @@ module.exports = React.createClass({
 				<hr />
 
 				<div className="row">
-					{_.map(regionWorlds, function(region){
+					{_.map(regions, function(region){
 						return (
 							<div className="col-sm-12" key={region.label}>
-								<RegionWorlds data={region} />
+								<RegionWorlds region={region} />
 							</div>
 						);
 					})}
@@ -73,10 +79,13 @@ module.exports = React.createClass({
 	},
 
 	getMatchesSuccess: function(data) {
-		this.setState({matches: _.sortBy(data.wvw_matches, 'wvw_match_id')});
+		this.setState({matches: data});
 	},
 	getMatchesError: function(xhr, status, err) {
 		console.log('Overview::getMatches:data error', status, err.toString()); 
 	},
-	getMatchesComplete: _.noop,
+	getMatchesComplete: function() {
+		var interval = _.random(2000, 4000);
+		this.updateTimer = setTimeout(this.getMatches, interval);
+	},
 });

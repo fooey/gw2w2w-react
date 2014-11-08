@@ -1,38 +1,41 @@
 /**
  * @jsx React.DOM
  */
-var Sprite = require('./Sprite.jsx');
-var Arrow = require('./Arrow.jsx');
+ 
+var Sprite = React.createFactory(require('./Sprite.jsx'));
+var Arrow = React.createFactory(require('./Arrow.jsx'));
+
+var staticData = require('gw2w2w-static');
+var objectivesNames = staticData.objective_names;
+var objectivesTypes = staticData.objective_types;
+var objectivesMeta = staticData.objective_meta;
+var objectivesLabels = staticData.objective_labels;
 
 module.exports = React.createClass({
 
 	render: function() {
-		var staticData = require('../../staticData');
-		var objectivesData = staticData.objectives;
-
 		var appState = window.app.state;
 
-		var objectiveId = this.props.objectiveId;
 		var dateNow = this.props.dateNow;
-		var objectives = this.props.objectives;
+		var objectiveId = this.props.objectiveId;
+		var owner = this.props.owner;
+		var claimer = this.props.claimer;
 		var guilds = this.props.guilds;
 
 
-		if (!_.has(objectivesData.objective_meta, objectiveId)) {
+		if (!_.has(objectivesMeta, objectiveId)) {
 			// short circuit
 			return null;
 		}
 
+		var oMeta = objectivesMeta[objectiveId];
+		var oName = objectivesNames[objectiveId];
+		var oLabel = objectivesLabels[objectiveId];
+		var oType = objectivesTypes[oMeta.type];
 
-		var objective = objectives[objectiveId];
-		var objectiveMeta = objectivesData.objective_meta[objective.id];
-		var objectiveName = objectivesData.objective_names[objective.id];
-		var objectiveLabels = objectivesData.objective_labels[objective.id];
-		var objectiveType = objectivesData.objective_types[objectiveMeta.type];
-
-		var timerActive = (objective.expires >= dateNow + 5); // show for 5 seconds after expiring
-		var timerUnknown = (objective.lastCap === window.app.state.start);
-		var secondsRemaining = objective.expires - dateNow;
+		var expires = owner.timestamp + (5 * 60);
+		var timerActive = (expires >= dateNow + 5); // show for 5 seconds after expiring
+		var secondsRemaining = expires - dateNow;
 		var expiration = moment(secondsRemaining * 1000);
 
 
@@ -41,13 +44,12 @@ module.exports = React.createClass({
 		var className = [
 			'objective',
 			'team', 
-			objective.owner.toLowerCase(),
+			owner.world,
 		].join(' ');
 
 		var timerClass = [
 			'timer',
 			(timerActive) ? 'active' : 'inactive',
-			(timerUnknown) ? 'unknown' : '',
 		].join(' ');
 
 		var tagClass = [
@@ -59,27 +61,27 @@ module.exports = React.createClass({
 		return (
 			<div className={className}>
 				<div className="objective-icons">
-					<Arrow objectiveMeta={objectiveMeta} />
- 					<Sprite type={objectiveType.name} color={objective.owner.toLowerCase()} />
+					<Arrow oMeta={oMeta} />
+ 					<Sprite type={oType.name} color={owner.world} />
 				</div>
 				<div className="objective-label">
-					<span>{objectiveLabels[appState.lang.slug]}</span>
+					<span>{oLabel[appState.lang.slug]}</span>
 				</div>
 				<div className="objective-state">
-					{renderGuild(objective.owner_guild, guilds)}
-					<span className={timerClass} title={'Expires at ' + objective.expires}>{timerHtml}</span>
+					{renderGuild(claimer, guilds)}
+					<span className={timerClass}>{timerHtml}</span>
 				</div>
 			</div>
 		);
 	},
 });
 
-function renderGuild(guildId, guilds){
-	if (!guildId) {
+function renderGuild(claimer, guilds){
+	if (!claimer) {
 		return null;
 	}
 	else {
-		var guild = guilds[guildId];
+		var guild = guilds[claimer.guild];
 
 		var guildClass = [
 			'guild',
@@ -91,27 +93,8 @@ function renderGuild(guildId, guilds){
 			return <span className={guildClass}><i className="fa fa-spinner fa-spin"></i></span>;
 		}
 		else {
-			return <a className={guildClass} title={guild.guild_name}>{guild.tag}</a>;
+			return <a className={guildClass} href={'#' + claimer.guild} title={guild.guild_name}>{guild.tag}</a>;
 		}
-	}
-}
-
-
-function getArrow(meta) {
-	if (!meta.d) {
-		return null;
-	}
-	else {
-		var src = ['/img/icons/dist/arrow'];
-
-		if (meta.n) {src.push('north'); }
-		else if (meta.s) {src.push('south'); }
-
-		if (meta.w) {src.push('west'); }
-		else if (meta.e) {src.push('east'); }
-
-		return <img src={src.join('-') + '.svg'} />;
-
 	}
 }
 
