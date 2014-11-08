@@ -1,6 +1,8 @@
-/**
- * @jxs React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+
 
 var Score = React.createFactory(require('./Score.jsx'));
 var Pie = React.createFactory(require('./Pie.jsx'));

@@ -1,14 +1,15 @@
-/**
- * @jsx React.DOM
- */
+/*jslint node: true */
+"use strict";
 
-var ReactCSSTransitionGroup = React.createFactory(React.addons.CSSTransitionGroup);
+var React = require('React');
+var _ = require('lodash');
+var $ = require('jquery');
 
 var Objective = React.createFactory(require('./Objective.jsx'));
 
-
 var staticData = require('gw2w2w-static');
 var objectivesMeta = staticData.objective_meta;
+
 
 module.exports = React.createClass({
 	getInitialState: function() {

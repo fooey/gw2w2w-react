@@ -1,3 +1,9 @@
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
+var numeral = require('numeral');
 
 var Sprite = React.createFactory(require('./Sprite.jsx'));
 var staticData = require('gw2w2w-static');

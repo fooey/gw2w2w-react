@@ -1,9 +1,12 @@
-/**
- * @jsx React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
+
 
 var MapObjective = React.createFactory(require('./MapObjective.jsx'));
-// var staticData = require('gw2w2w-static');
+
 
 module.exports = React.createClass({
 
@@ -40,18 +43,3 @@ module.exports = React.createClass({
 		);
 	},
 });
-
-
-/*
-
-													<div>
-														<div>now: {now}</div>
-														<div>cap: {o.lastCap}</div>
-														<div>exp: {o.expires}</div>
-													</div>
-													<div>
-														<div> {o.lastCap.format('YYYY-MM-DD HH:mm:ss')}</div>
-														<div> {o.expires.format('YYYY-MM-DD HH:mm:ss')}</div>
-														<div> {o.expires.diff(now, 's')}</div>
-													</div>
-*/

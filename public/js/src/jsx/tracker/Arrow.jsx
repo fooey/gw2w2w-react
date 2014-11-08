@@ -1,6 +1,8 @@
-/**
- * @jxs React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+
 
 module.exports = React.createClass({
 	render: function() {

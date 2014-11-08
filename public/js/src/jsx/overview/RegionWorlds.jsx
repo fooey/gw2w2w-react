@@ -1,9 +1,11 @@
-/**
- * @jxs React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
+
 
 var worldsStatic = require('gw2w2w-static').worlds;
-
 
 module.exports = React.createClass({
 	render: function() {

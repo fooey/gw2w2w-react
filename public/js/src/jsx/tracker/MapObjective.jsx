@@ -1,6 +1,10 @@
-/**
- * @jsx React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
+var moment = require('moment');
+
  
 var Sprite = React.createFactory(require('./Sprite.jsx'));
 var Arrow = React.createFactory(require('./Arrow.jsx'));
@@ -97,18 +101,3 @@ function renderGuild(claimer, guilds){
 		}
 	}
 }
-
-
-/*
-
-													<div>
-														<div>now: {now}</div>
-														<div>cap: {objective.lastCap}</div>
-														<div>exp: {objective.expires}</div>
-													</div>
-													<div>
-														<div> {objective.lastCap.format('YYYY-MM-DD HH:mm:ss')}</div>
-														<div> {objective.expires.format('YYYY-MM-DD HH:mm:ss')}</div>
-														<div> {objective.expires.diff(now, 's')}</div>
-													</div>
-*/

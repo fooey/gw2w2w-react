@@ -1,10 +1,11 @@
-/**
- * @jsx React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
 
 var RegionMatches = React.createFactory(require('./overview/RegionMatches.jsx'));
 var RegionWorlds = React.createFactory(require('./overview/RegionWorlds.jsx'));
-
 
 var regions = [
 	{"label": "NA Worlds", "regionId": "1"},

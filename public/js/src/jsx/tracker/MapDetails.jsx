@@ -1,12 +1,15 @@
-/**
- * @jsx React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
+var $ = require('jquery');
+var numeral = require('numeral');
+
 
 var MapSection = React.createFactory(require('./MapSection.jsx'));
 
-var libDate = require('../../lib/date.js');
 var staticData = require('gw2w2w-static');
-
 var objectivesData = staticData.objectives;
 var colorMap = ['red', 'green', 'blue'];
 
@@ -97,43 +100,6 @@ module.exports = React.createClass({
 		);
 	},
 
-	/*
-
-
-				<div className="row">
-					{_.map(mapConfig.sections, function(mapSection, secIndex) {
-
-						var sectionClass = [
-							'col-md-24',
-							'map-section',
-						];
-
-						if (mapConfig.key === 'Center') {
-							if (mapSection.label === 'Castle') {
-								sectionClass.push('col-sm-24');
-							}
-							else {
-								sectionClass.push('col-sm-8');
-							}
-						}
-						else {
-							sectionClass.push('col-sm-8');
-						}
-
-						return (
-							<div className={sectionClass.join(' ')} key={mapConfig.key + '-' + mapSection.label}>
-								<MapSection
-									dateNow={dateNow}
-									mapSection={mapSection}
-									objectives={objectives}
-									guilds={guilds}
-								/>
-							</div>
-						);
-					})}
-				</div>
-	*/
-
 	onTitleClick: function(e) {
 		var $maps = $('.map');
 		var $map = $(e.target).closest('.map', $maps);
@@ -161,94 +127,5 @@ module.exports = React.createClass({
 
 
 function getScoreClass(scoreIndex) {
- return ['team', colorMap[scoreIndex]].join(' ');
+	return ['team', colorMap[scoreIndex]].join(' ');
 }
-
-
-/*
-
-
-				<ul className="objectives list-unstyled">
-					{_.map(mapDetails.objectives, function(o, oIndex) {
-						var objectiveMeta = objectivesData.objective_meta[o.id];
-						var objectiveName = objectivesData.objective_names[o.id];
-						var objectiveLabels = objectivesData.objective_labels[o.id];
-
-						var timerActive = (o.expires >= dateNow);
-						var timerUnknown = (o.lastCap === window.app.state.start);
-						var expiration = moment((o.expires - dateNow) * 1000);
-
-						// console.log(o.lastCap, o.expires, now, o.expires > now);
-
-						var className = [
-							'objective',
-							'team', 
-							o.owner.toLowerCase(),
-						].join(' ');
-
-						var timerClass = [
-							'timer',
-							(timerActive) ? 'active' : 'inactive',
-							(timerUnknown) ? 'unknown' : '',
-						].join(' ');
-
-						if (objectiveMeta) {
-							return (
-								<li className={className} key={'objective-' + o.id} id={'objective-' + o.id}>
-									<span className="objective-label">{objectiveLabels[appState.lang.slug]} </span>
-
-									<span className={timerClass} title={'Expires at ' + o.expires}>{expiration.format('m:ss')}</span>
-								</li>
-							);
-						}
-					})}
-				</ul>
-
-
-
-				<ul className="objectives list-unstyled">
-					{_.map(mapDetails.objectives, function(o, oIndex) {
-						var objectiveMeta = objectivesData.objective_meta[o.id];
-						var objectiveName = objectivesData.objective_names[o.id];
-						var objectiveLabels = objectivesData.objective_labels[o.id];
-
-						var timerActive = (o.expires >= dateNow);
-						var timerUnknown = (o.lastCap === window.app.state.start);
-						var expiration = moment((o.expires - dateNow) * 1000);
-
-						// console.log(o.lastCap, o.expires, now, o.expires > now);
-
-						var className = [
-							'objective',
-							'team', 
-							o.owner.toLowerCase(),
-						].join(' ');
-
-						var timerClass = [
-							'timer',
-							(timerActive) ? 'active' : 'inactive',
-							(timerUnknown) ? 'unknown' : '',
-						].join(' ');
-
-						if (objectiveMeta) {
-							return (
-								<li className={className} key={'objective-' + o.id} id={'objective-' + o.id}>
-									<span className="objective-label">{objectiveLabels[appState.lang.slug]} </span>
-
-									<span className={timerClass} title={'Expires at ' + o.expires}>{expiration.format('m:ss')}</span>
-								</li>
-							);
-						}
-					})}
-				</ul>
-													<div>
-														<div>now: {now}</div>
-														<div>cap: {o.lastCap}</div>
-														<div>exp: {o.expires}</div>
-													</div>
-													<div>
-														<div> {o.lastCap.format('YYYY-MM-DD HH:mm:ss')}</div>
-														<div> {o.expires.format('YYYY-MM-DD HH:mm:ss')}</div>
-														<div> {o.expires.diff(now, 's')}</div>
-													</div>
-*/

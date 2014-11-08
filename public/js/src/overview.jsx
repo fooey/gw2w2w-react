@@ -1,3 +1,7 @@
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
 
 var Overview = React.createFactory(require('./jsx/Overview.jsx'));
 

@@ -1,10 +1,13 @@
+/*jslint node: true */
+"use strict";
+
 /*
 *
 *	config
 *
 */
 
- var app = window.app = {
+window.app = {
 	state: {
 		lang: 'en',
 	},

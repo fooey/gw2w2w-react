@@ -1,6 +1,9 @@
-/**
- * @jsx React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
+
 
 var MapDetails = React.createFactory(require('./MapDetails.jsx'));
 var Log = React.createFactory(require('./log/Log.jsx'));
@@ -106,18 +109,3 @@ module.exports = React.createClass({
 		);
 	},
 });
-
-
-/*
-
-													<div>
-														<div>now: {now}</div>
-														<div>cap: {o.lastCap}</div>
-														<div>exp: {o.expires}</div>
-													</div>
-													<div>
-														<div> {o.lastCap.format('YYYY-MM-DD HH:mm:ss')}</div>
-														<div> {o.expires.format('YYYY-MM-DD HH:mm:ss')}</div>
-														<div> {o.expires.diff(now, 's')}</div>
-													</div>
-*/

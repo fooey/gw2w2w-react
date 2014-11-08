@@ -1,10 +1,14 @@
+/*jslint node: true */
+"use strict";
+
 var React = require('React');
+var _ = require('lodash');
+var async = require('async');
 
 var Scoreboard = React.createFactory(require('./tracker/Scoreboard.jsx'));
 var Maps = React.createFactory(require('./tracker/Maps.jsx'));
 var Guilds = React.createFactory(require('./tracker/guilds/Guilds.jsx'));
 
-var libDate = require('../lib/date.js');
 var staticData = require('gw2w2w-static');
 var worlds = staticData.worlds;
 

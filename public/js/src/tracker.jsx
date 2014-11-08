@@ -1,4 +1,11 @@
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
+
 var Tracker = React.createFactory(require('./jsx/Tracker.jsx'));
+
 var Langs = React.createFactory(require('./jsx/Langs.jsx'));
 var langs = require('gw2w2w-static').langs;
 

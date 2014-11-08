@@ -1,6 +1,11 @@
-/**
- * @jxs React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
+var $ = require('jquery');
+var numeral = require('numeral');
+
 
 module.exports = React.createClass({
 	getInitialState: function() {
@@ -36,9 +41,9 @@ module.exports = React.createClass({
 		return (
 			<span>
 				<span className="diff">{
-					(this.state.diff)
-						? '+' + numeral(this.state.diff).format('0,0')
-						: null
+					(this.state.diff) ?
+						'+' + numeral(this.state.diff).format('0,0') :
+						null
 				}</span>
 				<span className="value">{numeral(score).format('0,0')}</span>
 			</span>

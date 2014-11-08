@@ -1,6 +1,9 @@
-/**
- * @jxs React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
+
 
 var Match = React.createFactory(require('./Match.jsx'));
 

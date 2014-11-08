@@ -1,8 +1,9 @@
-/**
- * @jsx React.DOM
- */
+/*jslint node: true */
+"use strict";
 
-//var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var React = require('React');
+var _ = require('lodash');
+
 
 var Objective = React.createFactory(require('./Objective.jsx'));
 
@@ -74,12 +75,3 @@ module.exports = React.createClass({
 function getEmblemSrc(guildName) {
 	return 'http://guilds.gw2w2w.com/guilds/' + encodeURIComponent(guildName.replace(/ /g, '-')) + '/64.svg';
 }
-
-
-/*
-											<Objective
-												claim={claim}
-												objectives={objectives}
-												guilds={guilds}
-											/>
-*/

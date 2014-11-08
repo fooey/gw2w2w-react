@@ -1,19 +1,21 @@
-/*
- * @jsx React.DOM
- */
+/*jslint node: true */
+"use strict";
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var React = require('React');
+var _ = require('lodash');
+var moment = require('moment');
+
 
 var Sprite = React.createFactory(require('../Sprite.jsx'));
 var Arrow = React.createFactory(require('../Arrow.jsx'));
 
-var libDate = require('../../../lib/date.js');
 
 var staticData = require('gw2w2w-static');
 var objectivesNames = staticData.objective_names;
 var objectivesTypes = staticData.objective_types;
 var objectivesMeta = staticData.objective_meta;
 var objectivesLabels = staticData.objective_labels;
+
 
 module.exports = React.createClass({
 	render: function() {

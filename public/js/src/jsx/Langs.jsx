@@ -1,6 +1,8 @@
-/**
- * @jsx React.DOM
- */
+/*jslint node: true */
+"use strict";
+
+var React = require('React');
+var _ = require('lodash');
 
 var langs = require('gw2w2w-static').langs;
 var worlds = require('gw2w2w-static').worlds;

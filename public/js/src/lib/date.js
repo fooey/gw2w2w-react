@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
 	dateNow: dateNow,
 	add5: add5,
