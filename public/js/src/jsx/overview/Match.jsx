@@ -2,69 +2,61 @@
 "use strict";
 
 var React = require('React');
+var _ = require('lodash');
+
+var worldsStatic = require('gw2w2w-static').worlds;
 
 
 var Score = React.createFactory(require('./Score.jsx'));
 var Pie = React.createFactory(require('./Pie.jsx'));
 
-var worldsStatic = require('gw2w2w-static').worlds;
-
 module.exports = React.createClass({
 	render: function() {
-		// console.log('Match:render', this.props.match.id);
-		var lang = window.app.state.lang;
-		var langSlug = lang.slug;
-
 		var match = this.props.match;
+		var lang = this.props.lang;
 
-		var redWorld = worldsStatic[match.redId][langSlug];
-		var blueWorld = worldsStatic[match.blueId][langSlug];
-		var greenWorld = worldsStatic[match.greenId][langSlug];
+		var scores = match.scores;
 
-		[redWorld, blueWorld, greenWorld].map(function(world) {
-			world.link = '/' + langSlug + '/' + world.slug;
-			return world;
-		});
+		var redWorld = worldsStatic[match.redId][lang.slug];
+		var blueWorld = worldsStatic[match.blueId][lang.slug];
+		var greenWorld = worldsStatic[match.greenId][lang.slug];
+
+		var matchWorlds = {
+			"red": {"world": redWorld, "score": scores[0]},
+			"blue": {"world": blueWorld, "score": scores[1]},
+			"green": {"world": greenWorld, "score": scores[2]},
+		};
 
 		return (
 			<div className="matchContainer" key={match.id}>
 				<table className="match">
-					<tr>
-						<td className="team red name"><a href={redWorld.link}>{redWorld.name}</a></td>
-						<td className="team red score">
-							<Score 
-								key={'red-score-' + match.id}
-								matchId={match.id}
-								team="red"
-								score={match.scores[0]} 
-							/>
-						</td>
-						<td rowSpan="3" className="pie">
-							<Pie scores={match.scores} size="60" matchId={match.id} />
-						</td>
-					</tr>
-					<tr>
-						<td className="team blue name"><a href={blueWorld.link}>{blueWorld.name}</a></td>
-						<td className="team blue score">
-							<Score 
-								key={'blue-score-' + match.id}
-								matchId={match.id}
-								team="blue"
-								score={match.scores[1]} 
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td className="team green name"><a href={greenWorld.link}>{greenWorld.name}</a></td>
-						<td className="team green score">
-							<Score 
-								key={'green-score-' + match.id}
-								matchId={match.id}
-								team="green"
-								score={match.scores[2]} 
-							/>
-						</td>
-					</tr>
+					{_.map(matchWorlds, function(mw, color) {
+						var world = mw.world;
+						var score = mw.score;
+
+						var href = ['', lang.slug, world.slug].join('/');
+						var label = world.name;
+
+						return (
+							<tr key={color}>
+								<td className={"team name " + color}>
+									<a href={href}>{label}</a>
+								</td>
+								<td className={"team score " + color}>
+									<Score 
+										key={match.id}
+										matchId={match.id}
+										team={color}
+										score={score} 
+									/>
+								</td>
+								{(color === 'red') ?
+									<td rowSpan="3" className="pie"><Pie scores={match.scores} size="60" matchId={match.id} /></td> :
+									null
+								}
+							</tr>
+						);
+					})}
 				</table>
 			</div>
 		);

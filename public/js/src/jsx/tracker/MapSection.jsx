@@ -13,6 +13,8 @@ module.exports = React.createClass({
 	render: function() {
 
 		var dateNow = this.props.dateNow;
+		var timeOffset = this.props.timeOffset;
+		var lang = this.props.lang;
 		var mapSection = this.props.mapSection;
 		var owners = this.props.owners;
 		var claimers = this.props.claimers;
@@ -30,6 +32,8 @@ module.exports = React.createClass({
 						<li key={objectiveId} id={'objective-' + objectiveId}>
 							<MapObjective
 								dateNow={dateNow}
+								timeOffset={timeOffset}
+								lang={lang}
 								objectiveId={objectiveId}
 								owner={owner}
 								claimer={claimer}

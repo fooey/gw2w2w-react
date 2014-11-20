@@ -1,20 +1,6 @@
 /*jslint node: true */
 "use strict";
 
-/*
-*
-*	config
-*
-*/
-
-window.app = {
-	state: {
-		lang: 'en',
-	},
-	guilds: {},
- };
-
-
 
 /*
 *

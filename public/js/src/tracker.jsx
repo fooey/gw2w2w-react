@@ -8,14 +8,18 @@ var Tracker = React.createFactory(require('./jsx/Tracker.jsx'));
 
 var Langs = React.createFactory(require('./jsx/Langs.jsx'));
 var langs = require('gw2w2w-static').langs;
+var worlds = require('gw2w2w-static').worlds;
 
 module.exports = function overview(ctx) {
 	var langSlug = ctx.params.langSlug;
+	var lang = langs[langSlug];
+
 	var worldSlug = ctx.params.worldSlug;
+	var world = _.find(worlds, function(world) {
+		return world[lang.slug].slug === worldSlug;
+	});
 
-	var appState = window.app.state;
-	appState.lang = langs[langSlug];
 
-	React.render(<Langs langSlug={langSlug} worldSlug={worldSlug} />, document.getElementById('nav-langs'));
-	React.render(<Tracker worldSlug={worldSlug} />, document.getElementById('content'));
+	React.render(<Langs lang={lang} world={world} />, document.getElementById('nav-langs'));
+	React.render(<Tracker lang={lang} world={world} />, document.getElementById('content'));
 };

@@ -16,11 +16,11 @@ module.exports = function(express) {
 	*	Views
 	*
 	*/
-	app.set('views', path.normalize(path.join(process.cwd(), 'views')));
-	app.set('view engine', 'jade');
+	// app.set('views', path.normalize(path.join(process.cwd(), 'views')));
+	// app.set('view engine', 'jade');
 	app.set('case sensitive', true);
 	app.set('strict routing', true);
-	app.engine('jade', require('jade').__express);
+	// app.engine('jade', require('jade').__express);
 
 
 

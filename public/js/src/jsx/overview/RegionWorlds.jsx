@@ -4,25 +4,19 @@
 var React = require('React');
 var _ = require('lodash');
 
-
 var worldsStatic = require('gw2w2w-static').worlds;
 
 module.exports = React.createClass({
 	render: function() {
-		var lang = window.app.state.lang;
-		var langSlug = lang.slug;
+		var lang = this.props.lang;
+		var region = this.props.region;
 
-		var label = this.props.region.label;
-		var regionId = this.props.region.regionId;
+		var label = region.label + ' Worlds';
+		var regionId = region.id;
 
 		var worlds = _.chain(worldsStatic)
-			.filter(function(world) {return world.region == regionId;})
-			.map(function(world) {
-				world[langSlug].id = world.id;
-				world[langSlug].link = '/' + langSlug + '/' + world.slug;
-				return world[langSlug];
-			})
-			.sortBy('name')
+			.filter(function(w){return w.region == regionId;})
+			.sortBy(function(w){return w[lang.slug].name;})
 			.value();
 
 		return (
@@ -30,11 +24,12 @@ module.exports = React.createClass({
 				<h2>{label}</h2>
 				<ul className="list-unstyled">
 					{_.map(worlds, function(world){
+						var href = ['', lang.slug, world[lang.slug].slug].join('/');
+						var label = world[lang.slug].name;
+						
 						return (
-							<li key={'world' + world.id}>
-								<a href={world.slug}>
-									{world.name}
-								</a>
+							<li key={world.id}>
+								<a href={href}>{label}</a>
 							</li>
 						);
 					})}

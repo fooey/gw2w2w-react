@@ -10,10 +10,9 @@ var langs = require('gw2w2w-static').langs;
 
 module.exports = function overview(ctx) {
 	var langSlug = ctx.params.langSlug || 'en';
+	var lang = langs[langSlug];
 
-	var appState = window.app.state;
-	appState.lang = langs[langSlug];
-
-	React.render(<Langs langSlug={langSlug} />, document.getElementById('nav-langs'));
-	React.render(<Overview />, document.getElementById('content'));
+	React.render(<Langs lang={lang} />, document.getElementById('nav-langs'));
+	React.render(<Overview lang={lang} />, document.getElementById('content'));
 };
+

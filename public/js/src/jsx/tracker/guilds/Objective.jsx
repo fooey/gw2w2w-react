@@ -19,8 +19,8 @@ var objectivesLabels = staticData.objective_labels;
 
 module.exports = React.createClass({
 	render: function() {
-		var appState = window.app.state;
-
+		var timeOffset = this.props.timeOffset;
+		var lang = this.props.lang;
 		var entry = this.props.entry;
 		var ixEntry = this.props.ixEntry;
 		var guilds = this.props.guilds;
@@ -37,7 +37,7 @@ module.exports = React.createClass({
 		var oLabel = objectivesLabels[entry.objectiveId];
 		var oType = objectivesTypes[oMeta.type];
 		
-		var timestamp = moment(entry.timestamp * 1000);
+		var timestamp = moment((entry.timestamp + timeOffset) * 1000);
 
 
 		var className = [
@@ -65,7 +65,7 @@ module.exports = React.createClass({
  					<Sprite type={oType.name} color={entry.world} />
 				</div>
 				<div className="objective-label">
-					<span>{oLabel[appState.lang.slug]}</span>
+					<span>{oLabel[lang.slug]}</span>
 				</div>
 			</div>
 		);

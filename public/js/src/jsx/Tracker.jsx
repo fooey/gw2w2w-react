@@ -10,7 +10,7 @@ var Maps = React.createFactory(require('./tracker/Maps.jsx'));
 var Guilds = React.createFactory(require('./tracker/guilds/Guilds.jsx'));
 
 var staticData = require('gw2w2w-static');
-var worlds = staticData.worlds;
+var worldsStatic = staticData.worlds;
 
 module.exports = React.createClass({
 	getInitialState: function() {
@@ -18,6 +18,8 @@ module.exports = React.createClass({
 			match: [],
 			details: [],
 			guilds: {},
+			lastmod: 0,
+			timeOffset: 0,
 		};
 	},
 
@@ -35,10 +37,10 @@ module.exports = React.createClass({
 	// 	// console.log(this.state);
 	// 	// console.log(_.filter(this.state.objectives, function(o){ return o.lastCap !== 0; }));
 	// },
-	
+
 	render: function() {
-		var lang = window.app.state.lang;
-		var langSlug = lang.slug;
+		var lang = this.props.lang;
+		var world = this.props.world;
 
 		var details = this.state.details;
 
@@ -47,43 +49,65 @@ module.exports = React.createClass({
 			return null;
 		}
 		else {
+			var timeOffset = this.state.timeOffset;
 			var match = this.state.match;
 			var guilds = this.state.guilds;
-			
-			var eventHistory = details.history;
 
-			var matchWorlds = _.map(
-				[match.redId, match.blueId, match.greenId],
-				function(worldId, worldIndex) {
-					var world = worlds[worldId][langSlug];
-					world.link = '/' + langSlug + '/' + world.slug;
-					world.color = ['red','blue','green'][worldIndex];
-					return world;
-				}
-			);
+			var eventHistory = details.history;
+			var scores = match.scores;
+			var ticks = match.ticks;
+			var holdings = match.holdings;
+
+			var redWorld = worldsStatic[match.redId][lang.slug];
+			var blueWorld = worldsStatic[match.blueId][lang.slug];
+			var greenWorld = worldsStatic[match.greenId][lang.slug];
+
+			var matchWorlds = {
+				"red": {
+					"world": redWorld,
+					"score": scores[0],
+					"tick": ticks[0],
+					"holding": holdings[0],
+				},
+				"blue": {
+					"world": blueWorld,
+					"score": scores[1],
+					"tick": ticks[1],
+					"holding": holdings[1],
+				},
+				"green": {
+					"world": greenWorld,
+					"score": scores[2],
+					"tick": ticks[2],
+					"holding": holdings[2],
+				},
+			};
+
+			setPageTitle(lang, world);
+
 
 			var mapsMeta = [
 				{
 					'index': 0,
 					'name': 'RedHome' ,
-					'long': 'RedHome - ' + matchWorlds[0].name,
+					'long': 'RedHome - ' + matchWorlds.red.name,
 					'abbr': 'Red',
 					'color': 'red',
-					'world': matchWorlds[0]
+					'world': matchWorlds.red
 				}, {
 					'index': 1,
 					'name': 'GreenHome',
-					'long': 'GreenHome - ' + matchWorlds[2].name,
+					'long': 'GreenHome - ' + matchWorlds.green.name,
 					'abbr': 'Grn',
 					'color': 'green',
-					'world': matchWorlds[2]
+					'world': matchWorlds.green
 				}, {
 					'index': 2,
 					'name': 'BlueHome',
-					'long': 'BlueHome - ' + matchWorlds[1].name,
+					'long': 'BlueHome - ' + matchWorlds.blue.name,
 					'abbr': 'Blu',
 					'color': 'blue',
-					'world': matchWorlds[1]
+					'world': matchWorlds.blue
 				}, {
 					'index': 3,
 					'name': 'Eternal Battlegrounds',
@@ -96,26 +120,31 @@ module.exports = React.createClass({
 
 			return (
 				<div id="tracker">
-					<Scoreboard 
-						match={match}
+
+					<Scoreboard
+						lang={lang}
 						matchWorlds={matchWorlds}
-						mapsMeta={mapsMeta}
 					/>
 
 					<Maps
+						timeOffset={timeOffset}
+						lang={lang}
 						details={details}
 						matchWorlds={matchWorlds}
 						mapsMeta={mapsMeta}
 						guilds={guilds}
 					/>
-					
+
 					<hr />
 
 					<Guilds
+						lang={lang}
+						timeOffset={timeOffset}
 						guilds={guilds}
 						eventHistory={eventHistory}
 						mapsMeta={mapsMeta}
 					/>
+					
 				</div>
 			);
 		}
@@ -130,44 +159,42 @@ module.exports = React.createClass({
 
 	getMatchDetails: function() {
 		var api = require('../api');
-		
+
+		var world = this.props.world;
+		var lang = this.props.lang;
+		var worldSlug = world[lang.slug].slug;
+
 		api.getMatchDetailsByWorld(
-			this.props.worldSlug,
-			this.onMatchDetailsSuccess, 
-			this.onMatchDetailsError, 
-			this.onMatchDetailsComplete
+			worldSlug,
+			this.onMatchDetails
 		);
 	},
 
-	onMatchDetailsSuccess: function(data) {
-		// console.log('Match::onMatchDetailsSuccess', this.props.data.wvw_match_id, data);
-		var component = this;
+	onMatchDetails: function(err, data) {
+		if (!err) {
+			var msOffset = Date.now() - data.now;
+			var secOffset = Math.floor(msOffset / 1000);
 
-		this.setState({
-			match: data.match,
-			details: data.details,
-			// guilds: guilds,
-		});
+			this.setState({
+				lastmod: data.now,
+				timeOffset: secOffset,
+				match: data.match,
+				details: data.details,
+			});
 
-		var claimCurrent = _.pluck(data.details.objectives.claimers, 'guild');
-		var claimHistory = _.chain(data.details.history)
-			.filter({type: 'claim'})
-			.pluck('guild')
-			.value();
+			var claimCurrent = _.pluck(data.details.objectives.claimers, 'guild');
+			var claimHistory = _.chain(data.details.history)
+				.filter({type: 'claim'})
+				.pluck('guild')
+				.value();
 
-		var guilds = claimCurrent.concat(claimHistory);
-		
-		if(guilds.length) {
+			var guilds = claimCurrent.concat(claimHistory);
 
-			process.nextTick(queueGuildLookups.bind(this, guilds));
+			if(guilds.length) {
+				process.nextTick(queueGuildLookups.bind(this, guilds));
+			}
 		}
-	},
 
-	onMatchDetailsError: function(xhr, status, err) {
-		console.log('Overview::getMatchDetails:data error', status, err.toString()); 
-	},
-
-	onMatchDetailsComplete: function(xhr, status, err) {
 		var refreshTime = _.random(1000*2, 1000*4);
 		this.updateTimer = setTimeout(this.getMatchDetails, refreshTime);
 	},
@@ -199,13 +226,26 @@ function getGuildDetails(guildId, onComplete) {
 
 	api.getGuildDetails(
 		guildId,
-		function(data) {
-			// console.log('component.state', component.state);
-			// var guild = _.merge(component.state.guilds[guildId], data);
-			component.state.guilds[guildId] = data;
-			component.setState({guilds: component.state.guilds});
-		}, 
-		_.noop,
-		onComplete.bind(null, null) // so no error is returned
+		function(err, data) {
+			if(!err) {
+				component.state.guilds[guildId] = data;
+				component.setState({guilds: component.state.guilds});
+			}
+			onComplete();
+		}
 	);
+}
+
+
+
+
+function setPageTitle(lang, world) {
+	var $ = require('jquery');
+	var title = [world[lang.slug].name, 'gw2w2w'];
+
+	if (lang.slug !== 'en') {
+		title.push(lang.name);
+	}
+
+	$('title').text(title.join(' - '));
 }

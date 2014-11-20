@@ -21,6 +21,8 @@ module.exports = React.createClass({
 
 	render: function() {
 		var dateNow = this.props.dateNow;
+		var timeOffset = this.props.timeOffset;
+		var lang = this.props.lang;
 		var guilds = this.props.guilds;
 		var matchWorlds = this.props.matchWorlds;
 		var mapsMeta = this.props.mapsMeta;
@@ -47,6 +49,8 @@ module.exports = React.createClass({
 					<li key={key} className="transition">
 						<Objective
 							dateNow={dateNow}
+							timeOffset={timeOffset}
+							lang={lang}
 							entry={entry}
 							guilds={guilds}
 							ixEntry={ixEntry}

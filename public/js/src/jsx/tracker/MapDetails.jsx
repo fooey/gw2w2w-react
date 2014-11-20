@@ -17,6 +17,8 @@ module.exports = React.createClass({
 
 	render: function() {
 		var dateNow = this.props.dateNow;
+		var timeOffset = this.props.timeOffset;
+		var lang = this.props.lang;
 		var details = this.props.details;
 		var guilds = this.props.guilds;
 		var matchWorlds = this.props.matchWorlds;
@@ -85,6 +87,8 @@ module.exports = React.createClass({
 							<div className={sectionClass.join(' ')} key={mapConfig.key + '-' + mapSection.label}>
 								<MapSection
 									dateNow={dateNow}
+									timeOffset={timeOffset}
+									lang={lang}
 									mapSection={mapSection}
 									owners={owners}
 									claimers={claimers}

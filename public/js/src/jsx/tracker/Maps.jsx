@@ -35,6 +35,9 @@ module.exports = React.createClass({
 		}
 
 		var dateNow = this.state.dateNow;
+		var timeOffset = this.props.timeOffset;
+
+		var lang = this.props.lang;
 		var details = this.props.details;
 		var matchWorlds = this.props.matchWorlds;
 		var mapsMeta = this.props.mapsMeta;
@@ -49,6 +52,8 @@ module.exports = React.createClass({
 					<div className="col-md-6">
 						<MapDetails 
 							dateNow={dateNow}
+							timeOffset={timeOffset}
+							lang={lang}
 							details={details}
 							guilds={guilds}
 							matchWorlds={matchWorlds}
@@ -62,6 +67,8 @@ module.exports = React.createClass({
 							<div className="col-md-8">
 								<MapDetails 
 									dateNow={dateNow}
+									timeOffset={timeOffset}
+									lang={lang}
 									details={details}
 									guilds={guilds}
 									matchWorlds={matchWorlds}
@@ -72,6 +79,8 @@ module.exports = React.createClass({
 							<div className="col-md-8">
 								<MapDetails 
 									dateNow={dateNow}
+									timeOffset={timeOffset}
+									lang={lang}
 									details={details}
 									guilds={guilds}
 									matchWorlds={matchWorlds}
@@ -82,6 +91,8 @@ module.exports = React.createClass({
 							<div className="col-md-8">
 								<MapDetails 
 									dateNow={dateNow}
+									timeOffset={timeOffset}
+									lang={lang}
 									details={details}
 									guilds={guilds}
 									matchWorlds={matchWorlds}
@@ -95,6 +106,8 @@ module.exports = React.createClass({
 							<div className="col-md-24">
 								<Log
 									dateNow={dateNow}
+									timeOffset={timeOffset}
+									lang={lang}
 									guilds={guilds}
 									eventHistory={eventHistory}
 									matchWorlds={matchWorlds}

@@ -10,7 +10,9 @@ var Objective = React.createFactory(require('./Objective.jsx'));
 module.exports = React.createClass({
 
 	render: function() {
+		var timeOffset = this.props.timeOffset;
 		var dateNow = this.props.dateNow;
+		var lang = this.props.lang;
 		var eventHistory = this.props.eventHistory;
 		var mapsMeta = this.props.mapsMeta;
 
@@ -49,6 +51,9 @@ module.exports = React.createClass({
 									return (
 										<li key={guild.guild_id + '-' + ixEntry}>
 											<Objective
+												timeOffset={timeOffset}
+												dateNow={dateNow}
+												lang={lang}
 												entry={entry}
 												ixEntry={ixEntry}
 												mapsMeta={mapsMeta}

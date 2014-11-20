@@ -1,49 +1,35 @@
 "use strict";
 
+var gw2api = require('gw2api');
+
 
 module.exports = {
 	getGuildDetails: getGuildDetails,
 	getMatches: getMatches,
-	getMatchDetails: getMatchDetails,
+	// getMatchDetails: getMatchDetails,
 	getMatchDetailsByWorld: getMatchDetailsByWorld,
 };
 
 
 
-function getGuildDetails(guildId, onSuccess, onError, onComplete) {
-	var requestUrl = 'https://api.guildwars2.com/v1/guild_details.json?guild_id=' + guildId;
-	get(requestUrl, onSuccess, onError, onComplete);
+function getMatches(callback) {
+	gw2api.getMatchesState(callback);
 }
 
 
 
-function getMatches(onSuccess, onError, onComplete) {
-	var requestUrl = 'http://state.gw2w2w.com/matches';
-	get(requestUrl, onSuccess, onError, onComplete);
+function getGuildDetails(guildId, callback) {
+	gw2api.getGuildDetails({guild_id: guildId}, callback);
 }
 
 
 
-function getMatchDetails(matchId, onSuccess, onError, onComplete) {
-	var requestUrl = 'http://state.gw2w2w.com/' + matchId;
-	get(requestUrl, onSuccess, onError, onComplete);
-}
-
-function getMatchDetailsByWorld(worldSlug, onSuccess, onError, onComplete) {
-	var requestUrl = 'http://state.gw2w2w.com/world/' + worldSlug;
-	get(requestUrl, onSuccess, onError, onComplete);
+function getMatchDetails(matchId, callback) {
+	gw2api.getMatchDetailsState({match_id: matchId}, callback);
 }
 
 
 
-function get(url, onSuccess, onError, onComplete) {
-	$.ajax({
-		url: url,
-		dataType: 'json',
-		success: onSuccess,
-		error: onError,
-		complete: onComplete,
-	});
+function getMatchDetailsByWorld(worldSlug, callback) {
+	gw2api.getMatchDetailsState({world_slug: worldSlug}, callback);
 }
-
-

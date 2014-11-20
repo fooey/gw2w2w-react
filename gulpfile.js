@@ -136,7 +136,7 @@ gulp.task('browserify', [/*'clean-js', */], function() {
 			// insertGlobals: false,
 			// detectGlobals: true,
 			bundleExternal: true,
-			ignore: ['request', 'zlib'],
+			ignore: ['request', 'zlib', 'assert', 'buffer', 'util', '_process'],
 		})
         .transform(reactify)
 		.bundle()		

@@ -18,9 +18,12 @@ var objectivesLabels = staticData.objective_labels;
 module.exports = React.createClass({
 
 	render: function() {
-		var appState = window.app.state;
-
 		var dateNow = this.props.dateNow;
+		var timeOffset = this.props.timeOffset;
+		var nowOffset = dateNow + timeOffset;
+
+
+		var lang = this.props.lang;
 		var objectiveId = this.props.objectiveId;
 		var owner = this.props.owner;
 		var claimer = this.props.claimer;
@@ -37,7 +40,8 @@ module.exports = React.createClass({
 		var oLabel = objectivesLabels[objectiveId];
 		var oType = objectivesTypes[oMeta.type];
 
-		var expires = owner.timestamp + (5 * 60);
+		var offsetTimestamp = owner.timestamp + timeOffset;
+		var expires = offsetTimestamp + (5 * 60);
 		var timerActive = (expires >= dateNow + 5); // show for 5 seconds after expiring
 		var secondsRemaining = expires - dateNow;
 		var expiration = moment(secondsRemaining * 1000);
@@ -69,7 +73,7 @@ module.exports = React.createClass({
  					<Sprite type={oType.name} color={owner.world} />
 				</div>
 				<div className="objective-label">
-					<span>{oLabel[appState.lang.slug]}</span>
+					<span>{oLabel[lang.slug]}</span>
 				</div>
 				<div className="objective-state">
 					{renderGuild(claimer, guilds)}

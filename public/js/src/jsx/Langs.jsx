@@ -9,14 +9,8 @@ var worlds = require('gw2w2w-static').worlds;
 
 module.exports = React.createClass({	
 	render: function() {
-		var langSlug = this.props.langSlug;
-		var worldSlug = this.props.worldSlug;
-
-		if (worldSlug) {
-			var world = _.find(worlds, function(world) {
-				return world[langSlug].slug === worldSlug;
-			});
-		}
+		var lang = this.props.lang;
+		var world = this.props.world;
 
 		langs = _.map(langs, function(lang){
 			lang.link = '/' + lang.slug;
@@ -31,10 +25,10 @@ module.exports = React.createClass({
 
 		return (
 			<ul className="nav navbar-nav">
-				{_.map(langs, function(lang) {
+				{_.map(langs, function(l) {
 					return (
-						<li key={lang.slug} className={(lang.slug === langSlug) ? 'active' : ''} title={lang.name}>
-							<a data-slug={lang.slug} href={lang.link}>{lang.label}</a>
+						<li key={l.slug} className={(l.slug === lang.slug) ? 'active' : ''} title={l.name}>
+							<a data-slug={l.slug} href={l.link}>{l.label}</a>
 						</li>
 					);
 				})}
