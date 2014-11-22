@@ -42,7 +42,7 @@ module.exports = React.createClass({
 				<div key={guild.guild_id} id={guild.guild_id} className="guild">
 					<div className="row">
 						<div className="col-sm-4">
-							<img className="emblem" src={getEmblemSrc(guild.guild_name)} />
+							<img className="emblem" src={getEmblemSrc(guild)} />
 						</div>
 						<div className="col-sm-20">
 							<h1>{guild.guild_name} [{guild.tag}]</h1>
@@ -77,6 +77,10 @@ module.exports = React.createClass({
 	},
 });
 
-function getEmblemSrc(guildName) {
-	return 'http://guilds.gw2w2w.com/guilds/' + encodeURIComponent(guildName.replace(/ /g, '-')) + '/64.svg';
+function getEmblemSrc(guild) {
+	return 'http://guilds.gw2w2w.com/' + guild.guild_id + '.svg';
 }
+
+// function slugify(str) {
+// 	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
+// }
