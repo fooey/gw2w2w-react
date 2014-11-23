@@ -6,8 +6,8 @@ var _ = require('lodash');
 var moment = require('moment');
 
 
-var Sprite = React.createFactory(require('../Sprite.jsx'));
-var Arrow = React.createFactory(require('../Arrow.jsx'));
+var Sprite = require('../objectives/Sprite.jsx');
+var Arrow = require('../objectives/Arrow.jsx');
 
 
 var staticData = require('gw2w2w-static');
@@ -36,13 +36,13 @@ module.exports = React.createClass({
 		var oName = objectivesNames[entry.objectiveId];
 		var oLabel = objectivesLabels[entry.objectiveId];
 		var oType = objectivesTypes[oMeta.type];
-		
+
 		var timestamp = moment((entry.timestamp + timeOffset) * 1000);
 
 
 		var className = [
 			'objective',
-			'team', 
+			'team',
 			entry.world,
 		].join(' ');
 

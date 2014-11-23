@@ -5,9 +5,9 @@ var React = require('React');
 var _ = require('lodash');
 var moment = require('moment');
 
- 
-var Sprite = React.createFactory(require('./Sprite.jsx'));
-var Arrow = React.createFactory(require('./Arrow.jsx'));
+
+var Sprite = require('./objectives/Sprite.jsx');
+var Arrow = require('./objectives/Arrow.jsx');
 
 var staticData = require('gw2w2w-static');
 var objectivesNames = staticData.objective_names;
@@ -51,7 +51,7 @@ module.exports = React.createClass({
 
 		var className = [
 			'objective',
-			'team', 
+			'team',
 			owner.world,
 		].join(' ');
 

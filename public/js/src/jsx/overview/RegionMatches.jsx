@@ -4,7 +4,7 @@
 var React = require('React');
 var _ = require('lodash');
 
-var Match = React.createFactory(require('./Match.jsx'));
+var Match = require('./Match.jsx');
 
 module.exports = React.createClass({
 	render: function() {
@@ -16,7 +16,7 @@ module.exports = React.createClass({
 				<h2>{region.label}</h2>
 				{_.map(region.matches, function(match){
 					return (
-						<Match 
+						<Match
 							key={match.id}
 							className="match"
 							match={match}

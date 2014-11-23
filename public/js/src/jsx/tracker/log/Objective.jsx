@@ -5,8 +5,8 @@ var React = require('React');
 var _ = require('lodash');
 var moment = require('moment');
 
-var Sprite = React.createFactory(require('../Sprite.jsx'));
-var Arrow = React.createFactory(require('../Arrow.jsx'));
+var Sprite = require('../objectives/Sprite.jsx');
+var Arrow = require('../objectives/Arrow.jsx');
 
 var libDate = require('../../../lib/date.js');
 
@@ -50,7 +50,7 @@ module.exports = React.createClass({
 
 		var className = [
 			'objective',
-			'team', 
+			'team',
 			entry.world,
 		].join(' ');
 

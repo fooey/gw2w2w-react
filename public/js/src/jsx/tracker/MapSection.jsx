@@ -5,7 +5,19 @@ var React = require('React');
 var _ = require('lodash');
 
 
-var MapObjective = React.createFactory(require('./MapObjective.jsx'));
+var Objective = require('./objectives/Objective.jsx');
+
+var objectiveCols = {
+	elapsed: false,
+	timestamp: false,
+	mapAbbrev: false,
+	arrow: true,
+	sprite: true,
+	name: true,
+	guildName: false,
+	guildTag: true,
+	timer: true,
+};
 
 
 module.exports = React.createClass({
@@ -19,6 +31,7 @@ module.exports = React.createClass({
 		var owners = this.props.owners;
 		var claimers = this.props.claimers;
 		var guilds = this.props.guilds;
+		var mapsMeta = this.props.mapsMeta;
 
 		return (
 			<ul className='list-unstyled'>
@@ -26,18 +39,21 @@ module.exports = React.createClass({
 
 					var owner = owners[objectiveId];
 					var claimer = claimers[objectiveId];
-					// var claimer = (claimer && guilds[guildId]) ? guilds[guildId] : null;
+					var guild = (claimer && guilds[claimer.guild]) ? guilds[claimer.guild] : null;
 
 					return (
 						<li key={objectiveId} id={'objective-' + objectiveId}>
-							<MapObjective
+							<Objective
 								dateNow={dateNow}
 								timeOffset={timeOffset}
+								cols={objectiveCols}
 								lang={lang}
+
 								objectiveId={objectiveId}
 								owner={owner}
 								claimer={claimer}
-								guilds={guilds}
+								guild={guild}
+								mapsMeta={mapsMeta}
 							/>
 						</li>
 					);

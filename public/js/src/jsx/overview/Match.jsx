@@ -7,8 +7,8 @@ var _ = require('lodash');
 var worldsStatic = require('gw2w2w-static').worlds;
 
 
-var Score = React.createFactory(require('./Score.jsx'));
-var Pie = React.createFactory(require('./Pie.jsx'));
+var Score = require('./Score.jsx');
+var Pie = require('./Pie.jsx');
 
 module.exports = React.createClass({
 	render: function() {
@@ -43,11 +43,11 @@ module.exports = React.createClass({
 									<a href={href}>{label}</a>
 								</td>
 								<td className={"team score " + color}>
-									<Score 
+									<Score
 										key={match.id}
 										matchId={match.id}
 										team={color}
-										score={score} 
+										score={score}
 									/>
 								</td>
 								{(color === 'red') ?

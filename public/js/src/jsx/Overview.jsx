@@ -3,15 +3,15 @@
 
 var React = require('React');
 var _ = require('lodash');
+var $ = require('jquery');
 
-var RegionMatches = React.createFactory(require('./overview/RegionMatches.jsx'));
-var RegionWorlds = React.createFactory(require('./overview/RegionWorlds.jsx'));
+var RegionMatches = require('./overview/RegionMatches.jsx');
+var RegionWorlds = require('./overview/RegionWorlds.jsx');
 
 var worldsStatic = require('gw2w2w-static').worlds;
 
 
-
-module.exports = React.createClass({
+var Component = React.createClass({
 	getInitialState: function() {
 		return {matches: {}};
 	},
@@ -27,7 +27,7 @@ module.exports = React.createClass({
 	componentWillUnmount: function() {
 		clearTimeout(this.updateTimer);
 	},
-	
+
 	render: function() {
 		var lang = this.props.lang;
 
@@ -84,7 +84,6 @@ module.exports = React.createClass({
 	},
 
 
-
 	getMatches: function() {
 		var api = require('../api');
 		var component = this;
@@ -93,13 +92,16 @@ module.exports = React.createClass({
 			if (!err) {
 				component.setState({matches: data});
 			}
-			
+
 			var interval = _.random(2000, 4000);
 			component.updateTimer = setTimeout(component.getMatches, interval);
 		});
 
 	},
 });
+
+
+module.exports = Component;
 
 
 function setPageTitle(lang) {
@@ -110,5 +112,6 @@ function setPageTitle(lang) {
 			title.push(lang.name);
 		}
 	}
+
 	$('title').text(title.join(' - '));
 }

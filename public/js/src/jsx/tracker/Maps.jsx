@@ -5,8 +5,8 @@ var React = require('React');
 var _ = require('lodash');
 
 
-var MapDetails = React.createFactory(require('./MapDetails.jsx'));
-var Log = React.createFactory(require('./log/Log.jsx'));
+var MapDetails = require('./MapDetails.jsx');
+var Log = require('./log/Log.jsx');
 
 var libDate = require('../../lib/date.js');
 
@@ -42,7 +42,7 @@ module.exports = React.createClass({
 		var matchWorlds = this.props.matchWorlds;
 		var mapsMeta = this.props.mapsMeta;
 		var guilds = this.props.guilds;
-		
+
 		var eventHistory = details.history;
 
 
@@ -50,7 +50,7 @@ module.exports = React.createClass({
 			<div id="maps">
 				<div className="row">
 					<div className="col-md-6">
-						<MapDetails 
+						<MapDetails
 							dateNow={dateNow}
 							timeOffset={timeOffset}
 							lang={lang}
@@ -65,7 +65,7 @@ module.exports = React.createClass({
 
 						<div className="row">
 							<div className="col-md-8">
-								<MapDetails 
+								<MapDetails
 									dateNow={dateNow}
 									timeOffset={timeOffset}
 									lang={lang}
@@ -77,7 +77,7 @@ module.exports = React.createClass({
 								/>
 							</div>
 							<div className="col-md-8">
-								<MapDetails 
+								<MapDetails
 									dateNow={dateNow}
 									timeOffset={timeOffset}
 									lang={lang}
@@ -89,7 +89,7 @@ module.exports = React.createClass({
 								/>
 							</div>
 							<div className="col-md-8">
-								<MapDetails 
+								<MapDetails
 									dateNow={dateNow}
 									timeOffset={timeOffset}
 									lang={lang}
@@ -101,7 +101,7 @@ module.exports = React.createClass({
 								/>
 							</div>
 						</div>
-						
+
 						<div className="row">
 							<div className="col-md-24">
 								<Log

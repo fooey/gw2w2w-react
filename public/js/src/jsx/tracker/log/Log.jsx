@@ -5,7 +5,7 @@ var React = require('React');
 var _ = require('lodash');
 var $ = require('jquery');
 
-var Objective = React.createFactory(require('./Objective.jsx'));
+var Objective = require('./Objective.jsx');
 
 var staticData = require('gw2w2w-static');
 var objectivesMeta = staticData.objective_meta;
@@ -44,7 +44,7 @@ module.exports = React.createClass({
 			.sortBy('timestamp')
 			.reverse()
 			.map(function(entry, ixEntry) {
-				var key = entry.timestamp + '-' + entry.objectiveId  + '-' + entry.type; 
+				var key = entry.timestamp + '-' + entry.objectiveId  + '-' + entry.type;
 				return (
 					<li key={key} className="transition">
 						<Objective

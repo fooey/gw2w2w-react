@@ -3,9 +3,9 @@
 
 var React = require('React');
 
-var Overview = React.createFactory(require('./jsx/Overview.jsx'));
+var Overview = require('./jsx/Overview.jsx');
+var Langs = require('./jsx/Langs.jsx');
 
-var Langs = React.createFactory(require('./jsx/Langs.jsx'));
 var langs = require('gw2w2w-static').langs;
 
 module.exports = function overview(ctx) {

@@ -22,17 +22,17 @@ var source = require('vinyl-source-stream');
 */
 
 var paths = {};
-paths.public = './public'
+paths.public = './public';
 
 paths.css = {};
-paths.css.base = paths.public + '/css'
-paths.css.src = paths.css.base + '/src'
-paths.css.dist = paths.css.base + '/dist'
+paths.css.base = paths.public + '/css';
+paths.css.src = paths.css.base + '/src';
+paths.css.dist = paths.css.base + '/dist';
 
 paths.js = {};
-paths.js.base = paths.public + '/js'
-paths.js.src = paths.js.base + '/src'
-paths.js.dist = paths.js.base + '/dist'
+paths.js.base = paths.public + '/js';
+paths.js.src = paths.js.base + '/src';
+paths.js.dist = paths.js.base + '/dist';
 
 // paths.jsx = {};
 // paths.jsx.base = paths.public + '/jsx'
@@ -52,7 +52,7 @@ paths.js.dist = paths.js.base + '/dist'
 
 gulp.task('clean-css', function(cb) {
 	console.log('clean-css', paths.css.dist);
-	
+
 	del(paths.css.dist, cb);
 });
 
@@ -70,10 +70,10 @@ gulp.task('less', [/*'clean-css'*/], function() {
 		.pipe(sourcemaps.init())
 		.pipe(less())
 		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest(dest))
+		.pipe(gulp.dest(dest));
 
-	
-	stream.on('error', function (err) {
+
+	stream.on('error', function(err) {
 		console.log(err.toString());
 		this.emit("end");
 	});
@@ -95,11 +95,11 @@ gulp.task('cssmin', ['less'], function() {
 		.pipe(cssmin({noAdvanced: true}))
 		.pipe(rename({suffix: '.min'}))
 		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest(dest))
+		.pipe(gulp.dest(dest));
 		// .pipe(livereload.changed)
 
-	
-	stream.on('error', function (err) {
+
+	stream.on('error', function(err) {
 		console.log(err.toString());
 		this.emit("end");
 	});
@@ -119,7 +119,7 @@ gulp.task('cssmin', ['less'], function() {
 
 gulp.task('clean-js', function(cb) {
 	console.log('clean-js', paths.js.dist);
-	
+
 	del(paths.js.dist, cb);
 });
 
@@ -132,14 +132,14 @@ gulp.task('browserify', [/*'clean-js', */], function() {
 
 	var stream = browserify({
 			entries: [src],
-			debug: true,
+			debug: false,
 			// insertGlobals: false,
 			// detectGlobals: true,
 			bundleExternal: true,
 			ignore: ['request', 'zlib', 'assert', 'buffer', 'util', '_process'],
 		})
         .transform(reactify)
-		.bundle()		
+		.bundle()
 		// Use vinyl-source-stream to make the
 		// stream gulp compatible. Specifiy the
 		// desired output filename here.
@@ -148,11 +148,11 @@ gulp.task('browserify', [/*'clean-js', */], function() {
 		.pipe(gulp.dest(dest));
 
 
-	stream.on('error', function (err) {
+	stream.on('error', function(err) {
 		console.log(err.toString());
 		this.emit("end");
 	});
-	
+
 	return stream;
 });
 
@@ -178,11 +178,11 @@ gulp.task('jsmin', ['browserify'], function() {
 				beautify: false,
 			},
 		}))
-		.pipe(gulp.dest(dest))
+		.pipe(gulp.dest(dest));
 		// .pipe(livereload.changed)
 
-	
-	stream.on('error', function (err) {
+
+	stream.on('error', function(err) {
 		console.log(err.toString());
 		this.emit("end");
 	});
@@ -209,7 +209,7 @@ gulp.task('watch', ['nodemon', 'cssmin', 'jsmin'], function() {
 });
 
 
-gulp.task('nodemon', function (cb) {
+gulp.task('nodemon', function(cb) {
 	var called = false;
 	var options = {
 		script: './server.js',
@@ -232,13 +232,13 @@ gulp.task('nodemon', function (cb) {
 
 
 	return nodemon(options)
-		.on('start', function () {
+		.on('start', function() {
 			if (!called) {
 				called = true;
 				cb();
 			}
 		})
-		.on('restart', function () {
+		.on('restart', function() {
 			console.log('restarted!');
 			livereload();
 		});

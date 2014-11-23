@@ -7,7 +7,7 @@ var $ = require('jquery');
 var numeral = require('numeral');
 
 
-var MapSection = React.createFactory(require('./MapSection.jsx'));
+var MapSection = require('./MapSection.jsx');
 
 var staticData = require('gw2w2w-static');
 var objectivesData = staticData.objectives;
@@ -93,6 +93,7 @@ module.exports = React.createClass({
 									owners={owners}
 									claimers={claimers}
 									guilds={guilds}
+									mapsMeta={mapsMeta}
 								/>
 							</div>
 						);

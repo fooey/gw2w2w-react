@@ -5,9 +5,9 @@ var React = require('React');
 var _ = require('lodash');
 var async = require('async');
 
-var Scoreboard = React.createFactory(require('./tracker/Scoreboard.jsx'));
-var Maps = React.createFactory(require('./tracker/Maps.jsx'));
-var Guilds = React.createFactory(require('./tracker/guilds/Guilds.jsx'));
+var Scoreboard = require('./tracker/Scoreboard.jsx');
+var Maps = require('./tracker/Maps.jsx');
+var Guilds = require('./tracker/guilds/Guilds.jsx');
 
 var staticData = require('gw2w2w-static');
 var worldsStatic = staticData.worlds;
@@ -45,7 +45,7 @@ module.exports = React.createClass({
 		var details = this.state.details;
 
 
-		if (_.isEmpty(this.state.details) || this.state.details.initialized === false) {
+		if (_.isEmpty(details) || details.initialized === false) {
 			return null;
 		}
 		else {
@@ -144,7 +144,7 @@ module.exports = React.createClass({
 						eventHistory={eventHistory}
 						mapsMeta={mapsMeta}
 					/>
-					
+
 				</div>
 			);
 		}

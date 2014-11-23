@@ -5,7 +5,7 @@ var React = require('React');
 var _ = require('lodash');
 
 
-var Objective = React.createFactory(require('./Objective.jsx'));
+var Objective = require('./Objective.jsx');
 
 module.exports = React.createClass({
 
