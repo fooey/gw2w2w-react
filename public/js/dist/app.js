@@ -3202,13 +3202,15 @@ function componentDidMount() {
 
 function shouldComponentUpdate(nextProps, nextState) {
 	var component = this;
+	var props = component.props;
+	var state = component.state;
 
 	// don't update more often than once per second
 	// helps greatly during initialization while guilds are loading
 
-	var isFirstUpdate = (component.state.hasData === false && nextState.hasData === true);
-	var isNewNow = (nextState.hasData && component.state.dateNow !== nextState.dateNow);
-	var shouldUpdate = (isFirstUpdate || isNewNow);
+	var isNewTick = (state.dateNow !== nextState.dateNow);
+	var langChange = (props.lang !== nextProps.lang);
+	var shouldUpdate = (isNewTick || langChange);
 
 	// console.log(shouldUpdate, isFirstUpdate, isNewNow);
 
