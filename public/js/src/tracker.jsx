@@ -1,14 +1,41 @@
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = require('React');
-var _ = require('lodash');
+/*
+*	Dependencies
+*/
+
+var React = require('React');	// browserify shim
+var _ = require('lodash');		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var Tracker = require('./jsx/Tracker.jsx');
 var Langs = require('./jsx/Langs.jsx');
 
+
+
+
+
+/*
+*	Component Globals
+*/
+
 var langs = require('gw2w2w-static').langs;
 var worlds = require('gw2w2w-static').worlds;
+
+
+
+
+
+/*
+*	Export
+*/
 
 module.exports = function overview(ctx) {
 	var langSlug = ctx.params.langSlug;

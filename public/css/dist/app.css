@@ -7297,7 +7297,7 @@ body {
   opacity: 0.4;
   filter: alpha(opacity=40);
 }
-#tracker .objective .guild {
+#tracker .objective .guildname {
   font-size: 7pt;
   margin-right: 4px;
   cursor: pointer;
@@ -7360,6 +7360,9 @@ body {
 #tracker #log .objective-map,
 #tracker #log .objective-guild {
   font-size: 9pt;
+}
+#tracker #log .objective-event {
+  font-size: 7pt;
 }
 #tracker #guilds .guild {
   -moz-transition: background-color 2s ease-in;

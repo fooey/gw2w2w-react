@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*jslint node: true */
-"use strict";
+'use strict';
 
 
 /*
@@ -2765,7 +2765,7 @@ function pathtoRegexp (path, keys, options) {
 };
 
 },{}],18:[function(require,module,exports){
-"use strict";
+'use strict';
 
 var gw2api = require('gw2api');
 
@@ -2798,157 +2798,279 @@ function getMatchDetails(matchId, callback) {
 
 
 function getMatchDetailsByWorld(worldSlug, callback) {
+	// setTimeout(
+	// 	gw2api.getMatchDetailsState.bind(null, {world_slug: worldSlug}, callback),
+	// 	3000
+	// );
 	gw2api.getMatchDetailsState({world_slug: worldSlug}, callback);
 }
 
 },{"gw2api":7}],19:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+
+var PureRenderMixin = React.addons.PureRenderMixin;
+
+
+
+
+
+/*
+*	Component Globals
+*/
 
 var langs = require('gw2w2w-static').langs;
 var worlds = require('gw2w2w-static').worlds;
 
-module.exports = React.createClass({displayName: 'exports',	
-	render: function() {
-		var lang = this.props.lang;
-		var world = this.props.world;
-
-		langs = _.map(langs, function(lang){
-			lang.link = '/' + lang.slug;
-
-			if (world) {
-				lang.link = lang.link + '/' + world[lang.slug].slug;
-			} 
-
-			return lang;
-		});
 
 
-		return (
-			React.createElement("ul", {className: "nav navbar-nav"}, 
-				_.map(langs, function(l) {
-					return (
-						React.createElement("li", {key: l.slug, className: (l.slug === lang.slug) ? 'active' : '', title: l.name}, 
-							React.createElement("a", {'data-slug': l.slug, href: l.link}, l.label)
-						)
-					);
-				})
-			)
-		);
-	},
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	mixins: [PureRenderMixin],
+
+	render: render,
 });
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var lang = props.lang;
+	var world = props.world;
+
+	langs = _.map(langs, function(lang){
+		lang.link = '/' + lang.slug;
+
+		if (world) {
+			lang.link = lang.link + '/' + world[lang.slug].slug;
+		}
+
+		return lang;
+	});
+
+
+	return (
+		React.createElement("ul", {className: "nav navbar-nav"}, 
+			_.map(langs, function(l) {
+				return (
+					React.createElement("li", {key: l.slug, className: (l.slug === lang.slug) ? 'active' : '', title: l.name}, 
+						React.createElement("a", {'data-slug': l.slug, href: l.link}, l.label)
+					)
+				);
+			})
+		)
+	);
+}
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"gw2w2w-static":15}],20:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
-var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);		// browserify shim
+
+var api = require('../api');
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var RegionMatches = require('./overview/RegionMatches.jsx');
 var RegionWorlds = require('./overview/RegionWorlds.jsx');
 
+
+
+
+
+/*
+*	Component Globals
+*/
+
 var worldsStatic = require('gw2w2w-static').worlds;
 
 
-var Component = React.createClass({displayName: 'Component',
-	getInitialState: function() {
-		return {matches: {}};
-	},
-
-	componentWillMount: function() {
-	},
-
-	componentDidMount: function() {
-		this.updateTimer = null;
-		this.getMatches();
-	},
-
-	componentWillUnmount: function() {
-		clearTimeout(this.updateTimer);
-	},
-
-	render: function() {
-		var lang = this.props.lang;
-
-		var worlds = _.mapValues(worldsStatic, function(world) {
-			world[lang.slug].id = world.id;
-			world[lang.slug].region = world.region;
-			world[lang.slug].link = '/' + lang.slug + '/' + world.slug;
-			return world[lang.slug];
-		});
-
-		var matches = this.state.matches;
-
-		var regions = [
-			{
-				"label": "NA",
-				"id": "1",
-				"matches": _.filter(matches, function(m) {return m.region == 1;}),
-			}, {
-				"label": "EU",
-				"id": "2",
-				"matches": _.filter(matches, function(m) {return m.region == 2;}),
-			},
-		];
 
 
-		setPageTitle(lang);
 
+/*
+*	Component Export
+*/
 
-		return (
-			React.createElement("div", {id: "overview"}, 
-				React.createElement("div", {className: "row"}, 
-					_.map(regions, function(region){
-						return (
-							React.createElement("div", {className: "col-sm-12", key: region.label}, 
-								React.createElement(RegionMatches, {region: region, lang: lang})
-							)
-						);
-					})
-				), 
+module.exports = React.createClass({displayName: 'exports',
+	getInitialState: getInitialState,
+	// componentWillMount: componentWillMount,
+	componentDidMount: componentDidMount,
+	componentWillUnmount: componentWillUnmount,
+	render: render,
 
-				React.createElement("hr", null), 
-
-				React.createElement("div", {className: "row"}, 
-					_.map(regions, function(region){
-						return (
-							React.createElement("div", {className: "col-sm-12", key: region.label}, 
-								React.createElement(RegionWorlds, {region: region, lang: lang})
-							)
-						);
-					})
-				)
-			)
-		);
-	},
-
-
-	getMatches: function() {
-		var api = require('../api');
-		var component = this;
-
-		api.getMatches(function(err, data) {
-			if (!err) {
-				component.setState({matches: data});
-			}
-
-			var interval = _.random(2000, 4000);
-			component.updateTimer = setTimeout(component.getMatches, interval);
-		});
-
-	},
+	getMatches: getMatches,
 });
 
 
-module.exports = Component;
 
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function getInitialState() {
+	return {matches: {}};
+}
+
+
+
+function componentDidMount() {
+	var component = this;
+
+	component.updateTimer = null;
+	component.getMatches();
+}
+
+
+
+function componentWillUnmount() {
+	var component = this;
+
+	clearTimeout(component.updateTimer);
+}
+
+
+
+function render() {
+	var component = this;
+	var props = component.props;
+	var state = component.state;
+
+	var lang = props.lang;
+
+	var worlds = _.mapValues(worldsStatic, function(world) {
+		world[lang.slug].id = world.id;
+		world[lang.slug].region = world.region;
+		world[lang.slug].link = '/' + lang.slug + '/' + world.slug;
+		return world[lang.slug];
+	});
+
+	var matches = state.matches;
+
+	var regions = [
+		{
+			"label": "NA",
+			"id": "1",
+			"matches": _.filter(matches, function(m) {return m.region == 1;}),
+		}, {
+			"label": "EU",
+			"id": "2",
+			"matches": _.filter(matches, function(m) {return m.region == 2;}),
+		},
+	];
+
+
+	setPageTitle(lang);
+
+
+	return (
+		React.createElement("div", {id: "overview"}, 
+			React.createElement("div", {className: "row"}, 
+				_.map(regions, function(region){
+					return (
+						React.createElement("div", {className: "col-sm-12", key: region.label}, 
+							React.createElement(RegionMatches, {region: region, lang: lang})
+						)
+					);
+				})
+			), 
+
+			React.createElement("hr", null), 
+
+			React.createElement("div", {className: "row"}, 
+				_.map(regions, function(region){
+					return (
+						React.createElement("div", {className: "col-sm-12", key: region.label}, 
+							React.createElement(RegionWorlds, {region: region, lang: lang})
+						)
+					);
+				})
+			)
+		)
+	);
+}
+
+
+
+
+/*
+*	Component Helper Methods
+*/
+
+function getMatches() {
+	var component = this;
+
+	api.getMatches(function(err, data) {
+		if (!err) {
+			component.setState({matches: data});
+		}
+
+		var interval = _.random(2000, 4000);
+		component.updateTimer = setTimeout(component.getMatches, interval);
+	});
+
+}
+
+
+
+
+
+/*
+*
+*	Private Methods
+*
+*/
 
 function setPageTitle(lang) {
 	var title = ['gw2w2w'];
@@ -2961,187 +3083,278 @@ function setPageTitle(lang) {
 
 	$('title').text(title.join(' - '));
 }
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../api":18,"./overview/RegionMatches.jsx":24,"./overview/RegionWorlds.jsx":25,"gw2w2w-static":15}],21:[function(require,module,exports){
 (function (process,global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
-var async = (typeof window !== "undefined" ? window.async : typeof global !== "undefined" ? global.async : null);
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+var async = (typeof window !== "undefined" ? window.async : typeof global !== "undefined" ? global.async : null);	// browserify shim
+
+var api = require('../api');
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var Scoreboard = require('./tracker/Scoreboard.jsx');
 var Maps = require('./tracker/Maps.jsx');
 var Guilds = require('./tracker/guilds/Guilds.jsx');
 
+
+
+
+
+/*
+*	Component Globals
+*/
+
+var libDate = require('../lib/date.js');
 var staticData = require('gw2w2w-static');
 var worldsStatic = staticData.worlds;
 
+
+
+
+
+/*
+*	Component Export
+*/
+
 module.exports = React.createClass({displayName: 'exports',
-	getInitialState: function() {
-		return {
-			match: [],
-			details: [],
-			guilds: {},
-			lastmod: 0,
-			timeOffset: 0,
+	getInitialState: getInitialState,
+	componentWillMount: componentWillMount,
+	componentDidMount: componentDidMount,
+	shouldComponentUpdate: shouldComponentUpdate,
+	componentWillUnmount: componentWillUnmount,
+	render: render,
+
+
+	tick: tick,
+
+	getMatchDetails: getMatchDetails,
+	onMatchDetails: onMatchDetails,
+
+	queueGuildLookups: queueGuildLookups,
+	getGuildDetails: getGuildDetails,
+});
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function getInitialState() {
+	var component = this;
+
+	return {
+		hasData: false,
+
+		dateNow: libDate.dateNow(),
+		lastmod: 0,
+		timeOffset: 0,
+
+		match: [],
+		details: [],
+		guilds: {},
+	};
+}
+
+
+
+function componentWillMount() {
+	var component = this;
+}
+
+
+
+function componentDidMount() {
+	var component = this;
+
+	component.interval = setInterval(component.tick, 1000);
+
+	component.updateTimer = null;
+	process.nextTick(component.getMatchDetails);
+}
+
+
+
+function shouldComponentUpdate(nextProps, nextState) {
+	var component = this;
+
+	// don't update more often than once per second
+	// helps greatly during initialization while guilds are loading
+
+	var isFirstUpdate = (component.state.hasData === false && nextState.hasData === true);
+	var isNewNow = (nextState.hasData && component.state.dateNow !== nextState.dateNow);
+	var shouldUpdate = (isFirstUpdate || isNewNow);
+
+	// console.log(shouldUpdate, isFirstUpdate, isNewNow);
+
+	return shouldUpdate;
+}
+
+
+
+function componentWillUnmount() {
+	var component = this;
+
+	clearTimeout(component.updateTimer);
+	clearInterval(component.interval);
+}
+
+
+
+function render() {
+	var component = this;
+	var props = component.props;
+	var state = component.state;
+
+	var lang = props.lang;
+	var world = props.world;
+
+	var details = state.details;
+
+
+	if (false && !state.hasData) {
+		return null;
+	}
+	else {
+		setPageTitle(lang, world);
+
+
+		var dateNow = state.dateNow;
+		var timeOffset = state.timeOffset;
+		var match = state.match;
+		var guilds = state.guilds;
+
+		var eventHistory = details.history;
+		var scores = match.scores || [0,0,0];
+		var ticks = match.ticks || [0,0,0];
+		var holdings = match.holdings || [0,0,0];
+
+		var matchWorlds = {
+			"red": {
+				"world": worldsStatic[match.redId],
+				"score": scores[0],
+				"tick": ticks[0],
+				"holding": holdings[0],
+			},
+			"blue": {
+				"world": worldsStatic[match.blueId],
+				"score": scores[1],
+				"tick": ticks[1],
+				"holding": holdings[1],
+			},
+			"green": {
+				"world": worldsStatic[match.greenId],
+				"score": scores[2],
+				"tick": ticks[2],
+				"holding": holdings[2],
+			},
 		};
-	},
-
-	componentDidMount: function() {
-		this.updateTimer = null;
-
-		this.getMatchDetails();
-	},
-
-	componentWillUnmount: function() {
-		clearTimeout(this.updateTimer);
-	},
-
-	// componentDidUpdate: function() {
-	// 	// console.log(this.state);
-	// 	// console.log(_.filter(this.state.objectives, function(o){ return o.lastCap !== 0; }));
-	// },
-
-	render: function() {
-		var lang = this.props.lang;
-		var world = this.props.world;
-
-		var details = this.state.details;
 
 
-		if (_.isEmpty(details) || details.initialized === false) {
-			return null;
-		}
-		else {
-			var timeOffset = this.state.timeOffset;
-			var match = this.state.match;
-			var guilds = this.state.guilds;
 
-			var eventHistory = details.history;
-			var scores = match.scores;
-			var ticks = match.ticks;
-			var holdings = match.holdings;
+		return (
+			React.createElement("div", {id: "tracker"}, 
 
-			var redWorld = worldsStatic[match.redId][lang.slug];
-			var blueWorld = worldsStatic[match.blueId][lang.slug];
-			var greenWorld = worldsStatic[match.greenId][lang.slug];
+				React.createElement(Scoreboard, {
+					lang: lang, 
 
-			var matchWorlds = {
-				"red": {
-					"world": redWorld,
-					"score": scores[0],
-					"tick": ticks[0],
-					"holding": holdings[0],
-				},
-				"blue": {
-					"world": blueWorld,
-					"score": scores[1],
-					"tick": ticks[1],
-					"holding": holdings[1],
-				},
-				"green": {
-					"world": greenWorld,
-					"score": scores[2],
-					"tick": ticks[2],
-					"holding": holdings[2],
-				},
-			};
+					matchWorlds: matchWorlds}
+				), 
 
-			setPageTitle(lang, world);
+				React.createElement(Maps, {
+					lang: lang, 
+					timeOffset: timeOffset, 
+					dateNow: dateNow, 
 
+					details: details, 
+					matchWorlds: matchWorlds, 
+					guilds: guilds}
+				), 
 
-			var mapsMeta = [
-				{
-					'index': 0,
-					'name': 'RedHome' ,
-					'long': 'RedHome - ' + matchWorlds.red.name,
-					'abbr': 'Red',
-					'color': 'red',
-					'world': matchWorlds.red
-				}, {
-					'index': 1,
-					'name': 'GreenHome',
-					'long': 'GreenHome - ' + matchWorlds.green.name,
-					'abbr': 'Grn',
-					'color': 'green',
-					'world': matchWorlds.green
-				}, {
-					'index': 2,
-					'name': 'BlueHome',
-					'long': 'BlueHome - ' + matchWorlds.blue.name,
-					'abbr': 'Blu',
-					'color': 'blue',
-					'world': matchWorlds.blue
-				}, {
-					'index': 3,
-					'name': 'Eternal Battlegrounds',
-					'long': 'Eternal Battlegrounds',
-					'abbr': 'EBG',
-					'color': 'neutral',
-					'world': null
-				},
-			];
+				React.createElement(Guilds, {
+					lang: lang, 
+					timeOffset: timeOffset, 
+					dateNow: dateNow, 
 
-			return (
-				React.createElement("div", {id: "tracker"}, 
-
-					React.createElement(Scoreboard, {
-						lang: lang, 
-						matchWorlds: matchWorlds}
-					), 
-
-					React.createElement(Maps, {
-						timeOffset: timeOffset, 
-						lang: lang, 
-						details: details, 
-						matchWorlds: matchWorlds, 
-						mapsMeta: mapsMeta, 
-						guilds: guilds}
-					), 
-
-					React.createElement("hr", null), 
-
-					React.createElement(Guilds, {
-						lang: lang, 
-						timeOffset: timeOffset, 
-						guilds: guilds, 
-						eventHistory: eventHistory, 
-						mapsMeta: mapsMeta}
-					)
-
+					guilds: guilds, 
+					eventHistory: eventHistory}
 				)
-			);
-		}
 
-	},
-
-
-
-
-
-
-
-	getMatchDetails: function() {
-		var api = require('../api');
-
-		var world = this.props.world;
-		var lang = this.props.lang;
-		var worldSlug = world[lang.slug].slug;
-
-		api.getMatchDetailsByWorld(
-			worldSlug,
-			this.onMatchDetails
+			)
 		);
-	},
+	}
 
-	onMatchDetails: function(err, data) {
+}
+
+
+
+
+/*
+*	Component Helper Methods
+*/
+
+function tick() {
+	var component = this;
+
+	if(component.isMounted()) {
+		component.setState({dateNow: libDate.dateNow()});
+	}
+}
+
+
+
+function getMatchDetails() {
+	var component = this;
+	var props = component.props;
+
+	var world = props.world;
+	var lang = props.lang;
+	var worldSlug = world[lang.slug].slug;
+
+	api.getMatchDetailsByWorld(
+		worldSlug,
+		component.onMatchDetails
+	);
+}
+
+
+
+function onMatchDetails(err, data) {
+	var component = this;
+	var props = component.props;
+
+	if(component.isMounted()) {
 		if (!err) {
 			var msOffset = Date.now() - data.now;
 			var secOffset = Math.floor(msOffset / 1000);
 
-			this.setState({
+			component.setState({
+				hasData: true,
 				lastmod: data.now,
 				timeOffset: secOffset,
 				match: data.match,
@@ -3157,20 +3370,29 @@ module.exports = React.createClass({displayName: 'exports',
 			var guilds = claimCurrent.concat(claimHistory);
 
 			if(guilds.length) {
-				process.nextTick(queueGuildLookups.bind(this, guilds));
+				process.nextTick(component.queueGuildLookups.bind(null, guilds));
 			}
 		}
+	}
+	else {
+		component.setState({
+			hasData: false,
+		});
+	}
 
-		var refreshTime = _.random(1000*2, 1000*4);
-		this.updateTimer = setTimeout(this.getMatchDetails, refreshTime);
-	},
-});
+	var refreshTime = _.random(1000*2, 1000*4);
+	component.updateTimer = setTimeout(component.getMatchDetails, refreshTime);
+
+}
 
 
 
 
 function queueGuildLookups(guilds){
-	var knownGuilds = _.keys(this.state.guilds);
+	var component = this;
+	var state = component.state;
+
+	var knownGuilds = _.keys(state.guilds);
 
 	var newGuilds = _
 		.chain(guilds)
@@ -3179,23 +3401,31 @@ function queueGuildLookups(guilds){
 		.difference(knownGuilds)
 		.value();
 
-	async.eachLimit(
-		newGuilds,
-		4,
-		getGuildDetails.bind(this)
-	);
+
+	if(component.isMounted()) {
+		async.eachLimit(
+			newGuilds,
+			4,
+			component.getGuildDetails
+		);
+	}
 }
 
+
+
 function getGuildDetails(guildId, onComplete) {
-	var api = require('../api');
 	var component = this;
+	var state = component.state;
 
 	api.getGuildDetails(
 		guildId,
 		function(err, data) {
 			if(!err) {
-				component.state.guilds[guildId] = data;
-				component.setState({guilds: component.state.guilds});
+				state.guilds[guildId] = data;
+
+				if(component.isMounted()) {
+					component.setState({guilds: state.guilds});
+				}
 			}
 			onComplete();
 		}
@@ -3204,6 +3434,13 @@ function getGuildDetails(guildId, onComplete) {
 
 
 
+
+
+/*
+*
+*	Private Methods
+*
+*/
 
 function setPageTitle(lang, world) {
 	var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);
@@ -3216,381 +3453,681 @@ function setPageTitle(lang, world) {
 	$('title').text(title.join(' - '));
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../api":18,"./tracker/Maps.jsx":29,"./tracker/Scoreboard.jsx":30,"./tracker/guilds/Guilds.jsx":31,"_process":2,"gw2w2w-static":15}],22:[function(require,module,exports){
+},{"../api":18,"../lib/date.js":38,"./tracker/Maps.jsx":29,"./tracker/Scoreboard.jsx":30,"./tracker/guilds/Guilds.jsx":32,"_process":2,"gw2w2w-static":15}],22:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
 var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
 
-var worldsStatic = require('gw2w2w-static').worlds;
+var PureRenderMixin = React.addons.PureRenderMixin;
 
+
+
+
+
+/*
+*	React Components
+*/
 
 var Score = require('./Score.jsx');
 var Pie = require('./Pie.jsx');
 
+
+
+
+
+/*
+*	Component Globals
+*/
+
+var worldsStatic = require('gw2w2w-static').worlds;
+
+
+
+
+
+/*
+*	Component Export
+*/
+
 module.exports = React.createClass({displayName: 'exports',
-	render: function() {
-		var match = this.props.match;
-		var lang = this.props.lang;
+	mixins: [PureRenderMixin],
 
-		var scores = match.scores;
-
-		var redWorld = worldsStatic[match.redId][lang.slug];
-		var blueWorld = worldsStatic[match.blueId][lang.slug];
-		var greenWorld = worldsStatic[match.greenId][lang.slug];
-
-		var matchWorlds = {
-			"red": {"world": redWorld, "score": scores[0]},
-			"blue": {"world": blueWorld, "score": scores[1]},
-			"green": {"world": greenWorld, "score": scores[2]},
-		};
-
-		return (
-			React.createElement("div", {className: "matchContainer", key: match.id}, 
-				React.createElement("table", {className: "match"}, 
-					_.map(matchWorlds, function(mw, color) {
-						var world = mw.world;
-						var score = mw.score;
-
-						var href = ['', lang.slug, world.slug].join('/');
-						var label = world.name;
-
-						return (
-							React.createElement("tr", {key: color}, 
-								React.createElement("td", {className: "team name " + color}, 
-									React.createElement("a", {href: href}, label)
-								), 
-								React.createElement("td", {className: "team score " + color}, 
-									React.createElement(Score, {
-										key: match.id, 
-										matchId: match.id, 
-										team: color, 
-										score: score}
-									)
-								), 
-								(color === 'red') ?
-									React.createElement("td", {rowSpan: "3", className: "pie"}, React.createElement(Pie, {scores: match.scores, size: "60", matchId: match.id})) :
-									null
-								
-							)
-						);
-					})
-				)
-			)
-		);
-	},
+	render: render,
 });
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Pie.jsx":23,"./Score.jsx":26,"gw2w2w-static":15}],23:[function(require,module,exports){
-(function (global){
-/*jslint node: true */
-"use strict";
-
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
 
 
-module.exports = React.createClass({displayName: 'exports',
-	render: function() {
-		var size = this.props.size || '60';
-		var stroke = this.props.stroke || 2;
-		var scores = this.props.scores || [];
 
-		var pieSrc = 'http://www.piely.net/' + size + '/' + scores.join(',') + '?strokeWidth=' + stroke;
 
-		return (
-			(scores.length) ?
-				React.createElement("img", {
-					width: "60", height: "60", 
-					key: 'pie-' + this.props.matchId, 
-					src: pieSrc}
-				) :
-				React.createElement("span", null)
-		);
-	}
-});
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],24:[function(require,module,exports){
-(function (global){
-/*jslint node: true */
-"use strict";
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
+/*
+*
+*	Component Methods
+*
+*/
 
-var Match = require('./Match.jsx');
 
-module.exports = React.createClass({displayName: 'exports',
-	render: function() {
-		var region = this.props.region;
-		var lang = this.props.lang;
+/*
+*	Component Lifecyle Methods
+*/
 
-		return (
-			React.createElement("div", {className: "RegionMatches"}, 
-				React.createElement("h2", null, region.label), 
-				_.map(region.matches, function(match){
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var match = props.match;
+	var lang = props.lang;
+
+	var scores = match.scores;
+
+	var redWorld = worldsStatic[match.redId][lang.slug];
+	var blueWorld = worldsStatic[match.blueId][lang.slug];
+	var greenWorld = worldsStatic[match.greenId][lang.slug];
+
+	var matchWorlds = {
+		"red": {"world": redWorld, "score": scores[0]},
+		"blue": {"world": blueWorld, "score": scores[1]},
+		"green": {"world": greenWorld, "score": scores[2]},
+	};
+
+	return (
+		React.createElement("div", {className: "matchContainer", key: match.id}, 
+			React.createElement("table", {className: "match"}, 
+				_.map(matchWorlds, function(mw, color) {
+					var world = mw.world;
+					var score = mw.score;
+
+					var href = ['', lang.slug, world.slug].join('/');
+					var label = world.name;
+
 					return (
-						React.createElement(Match, {
-							key: match.id, 
-							className: "match", 
-							match: match, 
-							lang: lang}
+						React.createElement("tr", {key: color}, 
+							React.createElement("td", {className: "team name " + color}, 
+								React.createElement("a", {href: href}, label)
+							), 
+							React.createElement("td", {className: "team score " + color}, 
+								React.createElement(Score, {
+									key: match.id, 
+									matchId: match.id, 
+									team: color, 
+									score: score}
+								)
+							), 
+							(color === 'red') ?
+								React.createElement("td", {rowSpan: "3", className: "pie"}, React.createElement(Pie, {scores: match.scores, size: "60", matchId: match.id})) :
+								null
+							
 						)
 					);
 				})
 			)
-		);
-	}
+		)
+	);
+}
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./Pie.jsx":23,"./Score.jsx":26,"gw2w2w-static":15}],23:[function(require,module,exports){
+(function (global){
+'use strict';
+
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);		// browserify shim
+
+var PureRenderMixin = React.addons.PureRenderMixin;
+
+
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	mixins: [PureRenderMixin],
+
+	render: render,
 });
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var size = props.size || '60';
+	var stroke = props.stroke || 2;
+	var scores = props.scores || [];
+
+	var pieSrc = 'http://www.piely.net/' + size + '/' + scores.join(',') + '?strokeWidth=' + stroke;
+
+	return (
+		(scores.length) ?
+			React.createElement("img", {
+				width: "60", height: "60", 
+				key: 'pie-' + props.matchId, 
+				src: pieSrc}
+			) :
+			React.createElement("span", null)
+	);
+}
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],24:[function(require,module,exports){
+(function (global){
+'use strict';
+
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
+
+var Match = require('./Match.jsx');
+
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	render: render,
+});
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var region = props.region;
+	var lang = props.lang;
+
+	return (
+		React.createElement("div", {className: "RegionMatches"}, 
+			React.createElement("h2", null, region.label), 
+			_.map(region.matches, function(match){
+				return (
+					React.createElement(Match, {
+						key: match.id, 
+						className: "match", 
+						match: match, 
+						lang: lang}
+					)
+				);
+			})
+		)
+	);
+}
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./Match.jsx":22}],25:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+
+var PureRenderMixin = React.addons.PureRenderMixin;
+
+
+
+
+
+/*
+*	Component Globals
+*/
 
 var worldsStatic = require('gw2w2w-static').worlds;
 
+
+
+
+
+/*
+*	Component Export
+*/
+
 module.exports = React.createClass({displayName: 'exports',
-	render: function() {
-		var lang = this.props.lang;
-		var region = this.props.region;
+	mixins: [PureRenderMixin],
 
-		var label = region.label + ' Worlds';
-		var regionId = region.id;
-
-		var worlds = _.chain(worldsStatic)
-			.filter(function(w){return w.region == regionId;})
-			.sortBy(function(w){return w[lang.slug].name;})
-			.value();
-
-		return (
-			React.createElement("div", {className: "RegionWorlds"}, 
-				React.createElement("h2", null, label), 
-				React.createElement("ul", {className: "list-unstyled"}, 
-					_.map(worlds, function(world){
-						var href = ['', lang.slug, world[lang.slug].slug].join('/');
-						var label = world[lang.slug].name;
-						
-						return (
-							React.createElement("li", {key: world.id}, 
-								React.createElement("a", {href: href}, label)
-							)
-						);
-					})
-				)
-			)
-		);
-	}
+	render: render,
 });
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var lang = props.lang;
+	var region = props.region;
+
+	var label = region.label + ' Worlds';
+	var regionId = region.id;
+
+
+	var worlds = _.chain(worldsStatic)
+		.filter(function(w){return w.region == regionId;})
+		.sortBy(function(w){return w[lang.slug].name;})
+		.value();
+
+
+	return (
+		React.createElement("div", {className: "RegionWorlds"}, 
+			React.createElement("h2", null, label), 
+			React.createElement("ul", {className: "list-unstyled"}, 
+				_.map(worlds, function(world){
+					var href = ['', lang.slug, world[lang.slug].slug].join('/');
+					var label = world[lang.slug].name;
+
+					return (
+						React.createElement("li", {key: world.id}, 
+							React.createElement("a", {href: href}, label)
+						)
+					);
+				})
+			)
+		)
+	);
+}
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"gw2w2w-static":15}],26:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
-var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);
-var numeral = (typeof window !== "undefined" ? window.numeral : typeof global !== "undefined" ? global.numeral : null);
 
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);		// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);			// browserify shim
+var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);			// browserify shim
+var numeral = (typeof window !== "undefined" ? window.numeral : typeof global !== "undefined" ? global.numeral : null);	// browserify shim
+
+
+
+
+
+/*
+*	Component Export
+*/
 
 module.exports = React.createClass({displayName: 'exports',
-	getInitialState: function() {
-		return {diff: 0};
-	},
-
-	componentWillReceiveProps: function(nextProps){
-		// console.log('Score::componentWillReceiveProps', nextProps.score, this.props.score);
-		this.setState({diff: nextProps.score - this.props.score});
-	},
-
-	componentDidUpdate: function() {
-		if(this.state.diff > 0) {
-			var $diff = $('.diff', this.getDOMNode());
-
-			// $diff
-			// 	.hide()
-			// 	.fadeIn(400)
-			// 	.delay(4000)
-			// 	.fadeOut(2000);
-			$diff
-				.velocity('fadeOut', {duration: 0})
-				.velocity('fadeIn', {duration: 200})
-				.velocity('fadeOut', {duration: 1200, delay: 400});
-		}
-	},
-
-	render: function() {
-		var matchId = this.props.matchId;
-		var team = this.props.team;
-		var score = this.props.score || 0;
-
-		return (
-			React.createElement("span", null, 
-				React.createElement("span", {className: "diff"}, 
-					(this.state.diff) ?
-						'+' + numeral(this.state.diff).format('0,0') :
-						null
-				), 
-				React.createElement("span", {className: "value"}, numeral(score).format('0,0'))
-			)
-		);
-	}
+	getInitialState: getInitialState,
+	componentWillReceiveProps: componentWillReceiveProps,
+	componentDidUpdate: componentDidUpdate,
+	render: render,
 });
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function getInitialState() {
+	return {diff: 0};
+}
+
+
+
+function componentWillReceiveProps(nextProps){
+	var component = this;
+	var props = component.props;
+
+	// console.log('Score::componentWillReceiveProps', nextProps.score, props.score);
+	component.setState({diff: nextProps.score - props.score});
+}
+
+
+
+function componentDidUpdate() {
+	var component = this;
+	var state = component.state;
+
+	if(state.diff > 0) {
+		var $diff = $('.diff', component.getDOMNode());
+
+		$diff
+			.velocity('fadeOut', {duration: 0})
+			.velocity('fadeIn', {duration: 200})
+			.velocity('fadeOut', {duration: 1200, delay: 400});
+	}
+}
+
+
+
+function render() {
+	var component = this;
+	var props = component.props;
+	var state = component.state;
+
+	var matchId = props.matchId;
+	var team = props.team;
+	var score = props.score || 0;
+
+	return (
+		React.createElement("div", null, 
+			React.createElement("span", {className: "diff"}, 
+				(state.diff) ?
+					'+' + numeral(state.diff).format('0,0') :
+					null
+			), 
+			React.createElement("span", {className: "value"}, numeral(score).format('0,0'))
+		)
+	);
+}
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],27:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
-var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);
-var numeral = (typeof window !== "undefined" ? window.numeral : typeof global !== "undefined" ? global.numeral : null);
+/*
+*	Dependencies
+*/
 
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);		// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);			// browserify shim
+var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);			// browserify shim
+var numeral = (typeof window !== "undefined" ? window.numeral : typeof global !== "undefined" ? global.numeral : null);	// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var MapSection = require('./MapSection.jsx');
 
+
+
+
+
+/*
+*	Component Globals
+*/
+
 var staticData = require('gw2w2w-static');
-var objectivesData = staticData.objectives;
-var colorMap = ['red', 'green', 'blue'];
+var mapsStatic = staticData.objective_map;
+
+
+
+
+
+/*
+*	Component Export
+*/
 
 module.exports = React.createClass({displayName: 'exports',
+	render: render,
 
-	render: function() {
-		var dateNow = this.props.dateNow;
-		var timeOffset = this.props.timeOffset;
-		var lang = this.props.lang;
-		var details = this.props.details;
-		var guilds = this.props.guilds;
-		var matchWorlds = this.props.matchWorlds;
-		var mapsMeta = this.props.mapsMeta;
-		var mapIndex = this.props.mapIndex;
-
-		var owners = details.objectives.owners;
-		var claimers = details.objectives.claimers;
-
-		var scores = _.map(details.maps.scores[mapIndex], function(score) {return numeral(score).format('0,0');});
-		var ticks = details.maps.ticks[mapIndex];
-		var holdings = details.maps.holdings[mapIndex];
-
-		// var mapConfig = this.props.mapConfig;
-		// var mapScores = this.props.mapsScores[mapConfig.mapIndex];
-		// var mapName = this.props.mapName;
-		// var mapColor = this.props.mapColor;
+	onTitleClick: onTitleClick,
+});
 
 
-		var metaIndex = [3,0,2,1]; // output in different order than original data
 
-		var mapMeta = mapsMeta[metaIndex[mapIndex]];
-		var mapName = mapMeta.name;
-		var mapColor = mapMeta.color;
-		var mapConfig = staticData.objective_map[mapIndex];
 
-		return (
-			React.createElement("div", {className: "map"}, 
 
-				React.createElement("div", {className: "mapScores"}, 
-					React.createElement("h2", {className: 'team ' + mapColor, onClick: this.onTitleClick}, 
-						mapName
-					), 
-					React.createElement("ul", {className: "list-inline"}, 
-						_.map(scores, function(score, scoreIndex) {
-							return (
-								React.createElement("li", {key: 'map-score-' + scoreIndex, className: getScoreClass(scoreIndex)}, 
-									score
-								)
-							);
-						})
-					)
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var dateNow = props.dateNow;
+	var timeOffset = props.timeOffset;
+	var lang = props.lang;
+	var details = props.details;
+	var guilds = props.guilds;
+	var matchWorlds = props.matchWorlds;
+	var mapsMeta = props.mapsMeta;
+	var mapKey = props.mapKey;
+
+	var owners = details.objectives.owners;
+	var claimers = details.objectives.claimers;
+
+
+	var mapMeta = _.find(mapsStatic, {key: mapKey});
+	var scores = _.map(details.maps.scores[mapMeta.mapIndex], function(score) {return numeral(score).format('0,0');});
+	// var ticks = details.maps.ticks[mapMeta.mapIndex];
+	// var holdings = details.maps.holdings[mapMeta.mapIndex];
+
+
+	return (
+		React.createElement("div", {className: "map"}, 
+
+			React.createElement("div", {className: "mapScores"}, 
+				React.createElement("h2", {className: 'team ' + mapMeta.colo, onClick: component.onTitleClick}, 
+					mapMeta.name
 				), 
-
-				React.createElement("div", {className: "row"}, 
-					_.map(mapConfig.sections, function(mapSection, secIndex) {
-
-						var sectionClass = [
-							'col-md-24',
-							'map-section',
-						];
-
-						if (mapConfig.key === 'Center') {
-							if (mapSection.label === 'Castle') {
-								sectionClass.push('col-sm-24');
-							}
-							else {
-								sectionClass.push('col-sm-8');
-							}
-						}
-						else {
-							sectionClass.push('col-sm-8');
-						}
-
+				React.createElement("ul", {className: "list-inline"}, 
+					_.map(scores, function(score, ixScore) {
 						return (
-							React.createElement("div", {className: sectionClass.join(' '), key: mapConfig.key + '-' + mapSection.label}, 
-								React.createElement(MapSection, {
-									dateNow: dateNow, 
-									timeOffset: timeOffset, 
-									lang: lang, 
-									mapSection: mapSection, 
-									owners: owners, 
-									claimers: claimers, 
-									guilds: guilds, 
-									mapsMeta: mapsMeta}
-								)
+							React.createElement("li", {key: ixScore, className: getScoreClass(ixScore)}, 
+								score
 							)
 						);
 					})
 				)
+			), 
 
+			React.createElement("div", {className: "row"}, 
+				_.map(mapMeta.sections, function(mapSection, ixSection) {
 
+					var sectionClass = getSectionClass(mapMeta.key, mapSection.label);
+
+					return (
+						React.createElement("div", {className: sectionClass, key: ixSection}, 
+							React.createElement(MapSection, {
+								lang: lang, 
+								dateNow: dateNow, 
+								timeOffset: timeOffset, 
+
+								mapSection: mapSection, 
+								owners: owners, 
+								claimers: claimers, 
+								guilds: guilds, 
+								mapMeta: mapMeta}
+							)
+						)
+					);
+				})
 			)
-		);
-	},
-
-	onTitleClick: function(e) {
-		var $maps = $('.map');
-		var $map = $(e.target).closest('.map', $maps);
-
-		var hasFocus = $map.hasClass('map-focus');
 
 
-		if(!hasFocus) {
-			$map
-				.addClass('map-focus')
-				.removeClass('map-blur');
+		)
+	);
+}
 
-			$maps.not($map)
-				.removeClass('map-focus')
-				.addClass('map-blur');
+
+
+
+
+/*
+*	Component Helper Methods
+*/
+
+function onTitleClick(e) {
+	var component = this;
+
+	var $maps = $('.map');
+	var $map = $(e.target).closest('.map', $maps);
+
+	var hasFocus = $map.hasClass('map-focus');
+
+
+	if(!hasFocus) {
+		$map
+			.addClass('map-focus')
+			.removeClass('map-blur');
+
+		$maps.not($map)
+			.removeClass('map-focus')
+			.addClass('map-blur');
+	}
+	else {
+		$maps
+			.removeClass('map-focus')
+			.removeClass('map-blur');
+
+	}
+}
+
+
+
+
+
+/*
+*
+*	Private Methods
+*
+*/
+
+var colorMap = ['red', 'green', 'blue'];
+function getScoreClass(ixScore) {
+	return ['team', colorMap[ixScore]].join(' ');
+}
+
+
+
+function getSectionClass(mapKey, sectionLabel) {
+	var sectionClass = [
+		'col-md-24',
+		'map-section',
+	];
+
+	if (mapKey === 'Center') {
+		if (sectionLabel === 'Castle') {
+			sectionClass.push('col-sm-24');
 		}
 		else {
-			$maps
-				.removeClass('map-focus')
-				.removeClass('map-blur');
-
+			sectionClass.push('col-sm-8');
 		}
-	},
-});
+	}
+	else {
+		sectionClass.push('col-sm-8');
+	}
 
-
-function getScoreClass(scoreIndex) {
-	return ['team', colorMap[scoreIndex]].join(' ');
+	return sectionClass.join(' ');
 }
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./MapSection.jsx":28,"gw2w2w-static":15}],28:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
+/*
+*	Dependencies
+*/
 
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var Objective = require('./objectives/Objective.jsx');
+
+
+
+
+
+/*
+*	Component Globals
+*/
 
 var objectiveCols = {
 	elapsed: false,
@@ -3599,717 +4136,984 @@ var objectiveCols = {
 	arrow: true,
 	sprite: true,
 	name: true,
+	eventType: false,
 	guildName: false,
 	guildTag: true,
 	timer: true,
 };
 
 
+
+
+
+/*
+*	Component Export
+*/
+
 module.exports = React.createClass({displayName: 'exports',
-
-	render: function() {
-
-		var dateNow = this.props.dateNow;
-		var timeOffset = this.props.timeOffset;
-		var lang = this.props.lang;
-		var mapSection = this.props.mapSection;
-		var owners = this.props.owners;
-		var claimers = this.props.claimers;
-		var guilds = this.props.guilds;
-		var mapsMeta = this.props.mapsMeta;
-
-		return (
-			React.createElement("ul", {className: "list-unstyled"}, 
-				_.map(mapSection.objectives, function(objectiveId) {
-
-					var owner = owners[objectiveId];
-					var claimer = claimers[objectiveId];
-					var guild = (claimer && guilds[claimer.guild]) ? guilds[claimer.guild] : null;
-
-					return (
-						React.createElement("li", {key: objectiveId, id: 'objective-' + objectiveId}, 
-							React.createElement(Objective, {
-								dateNow: dateNow, 
-								timeOffset: timeOffset, 
-								cols: objectiveCols, 
-								lang: lang, 
-
-								objectiveId: objectiveId, 
-								owner: owner, 
-								claimer: claimer, 
-								guild: guild, 
-								mapsMeta: mapsMeta}
-							)
-						)
-					);
-
-				})
-			)
-		);
-	},
+	render: render,
 });
+
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var dateNow = props.dateNow;
+	var timeOffset = props.timeOffset;
+	var lang = props.lang;
+	var mapSection = props.mapSection;
+	var owners = props.owners;
+	var claimers = props.claimers;
+	var guilds = props.guilds;
+	var mapMeta = props.mapMeta;
+
+	return (
+		React.createElement("ul", {className: "list-unstyled"}, 
+			_.map(mapSection.objectives, function(objectiveId) {
+
+				var owner = owners[objectiveId];
+				var claimer = claimers[objectiveId];
+				var guildId = (claimer) ? claimer.guild : null;
+
+				return (
+					React.createElement("li", {key: objectiveId, id: 'objective-' + objectiveId}, 
+						React.createElement(Objective, {
+							lang: lang, 
+							dateNow: dateNow, 
+							timeOffset: timeOffset, 
+							cols: objectiveCols, 
+
+							objectiveId: objectiveId, 
+							worldColor: owner.world, 
+							timestamp: owner.timestamp, 
+							guildId: guildId, 
+							guilds: guilds}
+						)
+					)
+				);
+
+			})
+		)
+	);
+}
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./objectives/Objective.jsx":36}],29:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
 
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var MapDetails = require('./MapDetails.jsx');
 var Log = require('./log/Log.jsx');
 
-var libDate = require('../../lib/date.js');
+
+
+
+
+/*
+*	Component Globals
+*/
 
 var staticData = require('gw2w2w-static');
 var mapsConfig = staticData.objective_map;
 
+
+
+
+
+/*
+*	Component Export
+*/
+
 module.exports = React.createClass({displayName: 'exports',
-
-	getInitialState: function() {
-		return {dateNow: libDate.dateNow()};
-	},
-	tick: function() {
-		this.setState({dateNow: libDate.dateNow()});
-	},
-	componentDidMount: function() {
-		this.interval = setInterval(this.tick, 1000);
-	},
-	componentWillUnmount: function() {
-		clearInterval(this.interval);
-	},
-
-
-	render: function() {
-		if (!this.props.details.initialized) {
-			return null;
-		}
-
-		var dateNow = this.state.dateNow;
-		var timeOffset = this.props.timeOffset;
-
-		var lang = this.props.lang;
-		var details = this.props.details;
-		var matchWorlds = this.props.matchWorlds;
-		var mapsMeta = this.props.mapsMeta;
-		var guilds = this.props.guilds;
-
-		var eventHistory = details.history;
-
-
-		return (
-			React.createElement("div", {id: "maps"}, 
-				React.createElement("div", {className: "row"}, 
-					React.createElement("div", {className: "col-md-6"}, 
-						React.createElement(MapDetails, {
-							dateNow: dateNow, 
-							timeOffset: timeOffset, 
-							lang: lang, 
-							details: details, 
-							guilds: guilds, 
-							matchWorlds: matchWorlds, 
-							mapsMeta: mapsMeta, 
-							mapIndex: 0}
-						)
-					), 
-					React.createElement("div", {className: "col-md-18"}, 
-
-						React.createElement("div", {className: "row"}, 
-							React.createElement("div", {className: "col-md-8"}, 
-								React.createElement(MapDetails, {
-									dateNow: dateNow, 
-									timeOffset: timeOffset, 
-									lang: lang, 
-									details: details, 
-									guilds: guilds, 
-									matchWorlds: matchWorlds, 
-									mapsMeta: mapsMeta, 
-									mapIndex: 1}
-								)
-							), 
-							React.createElement("div", {className: "col-md-8"}, 
-								React.createElement(MapDetails, {
-									dateNow: dateNow, 
-									timeOffset: timeOffset, 
-									lang: lang, 
-									details: details, 
-									guilds: guilds, 
-									matchWorlds: matchWorlds, 
-									mapsMeta: mapsMeta, 
-									mapIndex: 2}
-								)
-							), 
-							React.createElement("div", {className: "col-md-8"}, 
-								React.createElement(MapDetails, {
-									dateNow: dateNow, 
-									timeOffset: timeOffset, 
-									lang: lang, 
-									details: details, 
-									guilds: guilds, 
-									matchWorlds: matchWorlds, 
-									mapsMeta: mapsMeta, 
-									mapIndex: 3}
-								)
-							)
-						), 
-
-						React.createElement("div", {className: "row"}, 
-							React.createElement("div", {className: "col-md-24"}, 
-								React.createElement(Log, {
-									dateNow: dateNow, 
-									timeOffset: timeOffset, 
-									lang: lang, 
-									guilds: guilds, 
-									eventHistory: eventHistory, 
-									matchWorlds: matchWorlds, 
-									mapsMeta: mapsMeta}
-								)
-							)
-						)
-
-					)
-				 )
-			)
-		);
-	},
+	render: render,
 });
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../lib/date.js":38,"./MapDetails.jsx":27,"./log/Log.jsx":33,"gw2w2w-static":15}],30:[function(require,module,exports){
-(function (global){
-/*jslint node: true */
-"use strict";
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
-var numeral = (typeof window !== "undefined" ? window.numeral : typeof global !== "undefined" ? global.numeral : null);
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	if (!props.details.initialized) {
+		return null;
+	}
+
+	var dateNow = props.dateNow;
+	var timeOffset = props.timeOffset;
+
+	var lang = props.lang;
+	var details = props.details;
+	var matchWorlds = props.matchWorlds;
+	var guilds = props.guilds;
+
+	var eventHistory = details.history;
+
+
+
+	function getMapDetails(mapKey) {
+		return (
+			React.createElement(MapDetails, {
+				mapKey: mapKey, 
+				lang: lang, 
+				dateNow: dateNow, 
+				timeOffset: timeOffset, 
+
+				details: details, 
+				guilds: guilds, 
+				matchWorlds: matchWorlds}
+			));
+	}
+
+
+
+	return (
+		React.createElement("div", {id: "maps"}, 
+			React.createElement("h1", null, "Maps"), 
+			React.createElement("div", {className: "row"}, 
+
+				React.createElement("div", {className: "col-md-6"}, getMapDetails('Center')), 
+
+				React.createElement("div", {className: "col-md-18"}, 
+
+					React.createElement("div", {className: "row"}, 
+						React.createElement("div", {className: "col-md-8"}, getMapDetails('RedHome')), 
+						React.createElement("div", {className: "col-md-8"}, getMapDetails('BlueHome')), 
+						React.createElement("div", {className: "col-md-8"}, getMapDetails('GreenHome'))
+					), 
+
+					React.createElement("div", {className: "row"}, 
+						React.createElement("div", {className: "col-md-24"}, 
+							React.createElement(Log, {
+								lang: lang, 
+								dateNow: dateNow, 
+								timeOffset: timeOffset, 
+
+								eventHistory: eventHistory, 
+								guilds: guilds, 
+								matchWorlds: matchWorlds}
+							)
+						)
+					)
+
+				)
+			 )
+		)
+	);
+}
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./MapDetails.jsx":27,"./log/Log.jsx":34,"gw2w2w-static":15}],30:[function(require,module,exports){
+(function (global){
+'use strict';
+
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);		// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);			// browserify shim
+var numeral = (typeof window !== "undefined" ? window.numeral : typeof global !== "undefined" ? global.numeral : null);	// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var Sprite = require('./objectives/Sprite.jsx');
+
+
+
+
+
+/*
+*	Component Globals
+*/
+
 var staticData = require('gw2w2w-static');
 var objectiveTypes = staticData.objective_types;
 
-module.exports = React.createClass({displayName: 'exports',
 
-	render: function() {
-		var lang = this.props.lang;
-		var matchWorlds = this.props.matchWorlds;
 
-		return (
-			React.createElement("div", {className: "row", id: "scoreboards"}, 
-				_.map(matchWorlds, function(mw, color) {
-					var world = mw.world;
-					var score = mw.score;
-					var tick = mw.tick;
-					var holdings = mw.holding;
 
-					var scoreboardClass = [
-						'scoreboard',
-						'team-bg',
-						'team',
-						'text-center',
-						color
-					].join(' ');
-
-					return (
-						React.createElement("div", {className: "col-sm-8", key: color}, 
-							React.createElement("div", {className: scoreboardClass}, 
-
-								React.createElement("h1", null, world.name), 
-								React.createElement("h2", null, numeral(score).format('0,0'), " +", tick), 
-
-								React.createElement("ul", {className: "list-inline"}, 
-									_.map(holdings, function(holding, ixHolding) {
-										var oType = objectiveTypes[ixHolding + 1];
-
-										return (
-											React.createElement("li", {key: ixHolding}, 
-												React.createElement(Sprite, {type: oType.name, color: color}), " x ", holding
-											)
-										);
-									})
-								)
-
-							)
-						)
-					);
-				})
-			)
-		);
-	}
-});
 
 /*
-
-
-								<ul className="list-inline">
-									{_.map(holdings, function(holding, ixHolding) {
-										var ot = objectiveTypes[ixHolding + 1];
-
-										return (
-											<li key={'type-holdings-' + ot.name}>
-												<Sprite type={ot.name} color={colors[scoreIndex]} /> x {ot.holdings[scoreIndex]}
-											</li>
-										);
-									})}
-								</ul>
+*	Component Export
 */
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./objectives/Sprite.jsx":37,"gw2w2w-static":15}],31:[function(require,module,exports){
-(function (global){
-/*jslint node: true */
-"use strict";
-
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
-
-
-var Objective = require('./Objective.jsx');
 
 module.exports = React.createClass({displayName: 'exports',
-
-	render: function() {
-		var timeOffset = this.props.timeOffset;
-		var dateNow = this.props.dateNow;
-		var lang = this.props.lang;
-		var eventHistory = this.props.eventHistory;
-		var mapsMeta = this.props.mapsMeta;
-
-		var guilds = _
-			.chain(this.props.guilds)
-			.map(function(guild){
-				guild.claims = _.chain(eventHistory)
-					.filter(function(entry){
-						return (entry.type === 'claim' && entry.guild === guild.guild_id);
-					})
-					.sortBy('timestamp')
-					.reverse()
-					.value();
-
-				guild.lastClaim = (guild.claims && guild.claims.length) ? guild.claims[0].timestamp : 0;
-				return guild;
-			})
-			.sortBy('guild_name')
-			.sortBy(function(guild){
-				return -guild.lastClaim;
-			})
-			.value();
-
-
-		var guildsList = _.map(guilds, function(guild, guildId) {
-			return (
-				React.createElement("div", {key: guild.guild_id, id: guild.guild_id, className: "guild"}, 
-					React.createElement("div", {className: "row"}, 
-						React.createElement("div", {className: "col-sm-4"}, 
-							React.createElement("img", {className: "emblem", src: getEmblemSrc(guild)})
-						), 
-						React.createElement("div", {className: "col-sm-20"}, 
-							React.createElement("h1", null, guild.guild_name, " [", guild.tag, "]"), 
-							React.createElement("ul", {className: "list-unstyled"}, 
-								_.map(guild.claims, function(entry, ixEntry) {
-									return (
-										React.createElement("li", {key: guild.guild_id + '-' + ixEntry}, 
-											React.createElement(Objective, {
-												timeOffset: timeOffset, 
-												dateNow: dateNow, 
-												lang: lang, 
-												entry: entry, 
-												ixEntry: ixEntry, 
-												mapsMeta: mapsMeta}
-											)
-										)
-									);
-								})
-							)
-						)
-					)
-				)
-			);
-		});
-
-
-		return (
-			React.createElement("div", {className: "list-unstyled", id: "guilds"}, 
-				guildsList
-			)
-		);
-	},
+	render: render,
 });
 
-function getEmblemSrc(guild) {
-	return 'http://guilds.gw2w2w.com/' + guild.guild_id + '.svg';
-}
-
-// function slugify(str) {
-// 	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
-// }
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Objective.jsx":32}],32:[function(require,module,exports){
-(function (global){
-/*jslint node: true */
-"use strict";
-
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
-var moment = (typeof window !== "undefined" ? window.moment : typeof global !== "undefined" ? global.moment : null);
 
 
-var Sprite = require('../objectives/Sprite.jsx');
-var Arrow = require('../objectives/Arrow.jsx');
 
 
-var staticData = require('gw2w2w-static');
-var objectivesNames = staticData.objective_names;
-var objectivesTypes = staticData.objective_types;
-var objectivesMeta = staticData.objective_meta;
-var objectivesLabels = staticData.objective_labels;
+/*
+*
+*	Component Methods
+*
+*/
 
 
-module.exports = React.createClass({displayName: 'exports',
-	render: function() {
-		var timeOffset = this.props.timeOffset;
-		var lang = this.props.lang;
-		var entry = this.props.entry;
-		var ixEntry = this.props.ixEntry;
-		var guilds = this.props.guilds;
-		var mapsMeta = this.props.mapsMeta;
+/*
+*	Component Lifecyle Methods
+*/
 
 
-		if (!_.has(objectivesMeta, entry.objectiveId)) {
-			// short circuit
-			return null;
-		}
+function render() {
+	var component = this;
+	var props = component.props;
 
-		var oMeta = objectivesMeta[entry.objectiveId];
-		var oName = objectivesNames[entry.objectiveId];
-		var oLabel = objectivesLabels[entry.objectiveId];
-		var oType = objectivesTypes[oMeta.type];
+	var lang = props.lang;
+	var matchWorlds = props.matchWorlds;
 
-		var timestamp = moment((entry.timestamp + timeOffset) * 1000);
+	return (
+		React.createElement("div", {className: "row", id: "scoreboards"}, 
+			_.map(matchWorlds, function(mw, color) {
+				var worldName = (mw.world) ? mw.world[lang.slug].name : color;
+				var score = mw.score;
+				var tick = mw.tick;
+				var holdings = mw.holding;
 
+				var scoreboardClass = [
+					'scoreboard',
+					'team-bg',
+					'team',
+					'text-center',
+					color
+				].join(' ');
 
-		var className = [
-			'objective',
-			'team',
-			entry.world,
-		].join(' ');
-
-		var mapMeta = mapsMeta[oMeta.map];
-
-
-		return (
-			React.createElement("div", {className: className, key: ixEntry}, 
-				React.createElement("div", {className: "objective-relative"}, 
-					React.createElement("span", null, timestamp.twitterShort())
-				), 
-				React.createElement("div", {className: "objective-timestamp"}, 
-					timestamp.format('hh:mm:ss')
-				), 
-				React.createElement("div", {className: "objective-map"}, 
-					React.createElement("span", {title: mapMeta.name}, mapMeta.abbr)
-				), 
-				React.createElement("div", {className: "objective-icons"}, 
-					React.createElement(Arrow, {oMeta: oMeta}), 
- 					React.createElement(Sprite, {type: oType.name, color: entry.world})
-				), 
-				React.createElement("div", {className: "objective-label"}, 
-					React.createElement("span", null, oLabel[lang.slug])
-				)
-			)
-		);
-	},
-});
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Arrow.jsx":35,"../objectives/Sprite.jsx":37,"gw2w2w-static":15}],33:[function(require,module,exports){
-(function (global){
-/*jslint node: true */
-"use strict";
-
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
-var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);
-
-var Objective = require('./Objective.jsx');
-
-var staticData = require('gw2w2w-static');
-var objectivesMeta = staticData.objective_meta;
-
-
-module.exports = React.createClass({displayName: 'exports',
-	getInitialState: function() {
-		return {
-			mapFilter: 'all',
-			eventFilter: 'all',
-		};
-	},
-
-	render: function() {
-		var dateNow = this.props.dateNow;
-		var timeOffset = this.props.timeOffset;
-		var lang = this.props.lang;
-		var guilds = this.props.guilds;
-		var matchWorlds = this.props.matchWorlds;
-		var mapsMeta = this.props.mapsMeta;
-
-		var setWorld = this.setWorld;
-		var setEvent = this.setEvent;
-
-		var eventFilter = this.state.eventFilter;
-		var mapFilter = this.state.mapFilter;
-
-		var eventHistory = _.chain(this.props.eventHistory)
-			.filter(function(entry) {
-				return (eventFilter == 'all' || entry.type == eventFilter);
-			})
-			.filter(function(entry) {
-				var oMeta = objectivesMeta[entry.objectiveId];
-				return (mapFilter == 'all' || oMeta.map == mapFilter);
-			})
-			.sortBy('timestamp')
-			.reverse()
-			.map(function(entry, ixEntry) {
-				var key = entry.timestamp + '-' + entry.objectiveId  + '-' + entry.type;
 				return (
-					React.createElement("li", {key: key, className: "transition"}, 
-						React.createElement(Objective, {
-							dateNow: dateNow, 
-							timeOffset: timeOffset, 
-							lang: lang, 
-							entry: entry, 
-							guilds: guilds, 
-							ixEntry: ixEntry, 
-							matchWorlds: matchWorlds, 
-							mapsMeta: mapsMeta}
+					React.createElement("div", {className: "col-sm-8", key: color}, 
+						React.createElement("div", {className: scoreboardClass}, 
+
+							(mw.world) ?(
+								React.createElement("div", null, 
+									React.createElement("h1", null, worldName), 
+									React.createElement("h2", null, numeral(score).format('0,0'), " +", tick), 
+
+									React.createElement("ul", {className: "list-inline"}, 
+										_.map(holdings, function(holding, ixHolding) {
+											var oType = objectiveTypes[ixHolding + 1];
+
+											return (
+												React.createElement("li", {key: ixHolding}, 
+													React.createElement(Sprite, {type: oType.name, color: color}), 
+													' x' + holding
+												)
+											);
+										})
+									)
+								)
+							) : (
+								React.createElement("h1", {style: {height: '90px', fontSize: '32pt', lineHeight: '90px'}}, 
+									React.createElement("i", {className: "fa fa-spinner fa-spin"})
+								)
+							)
+
+
 						)
 					)
 				);
 			})
-			.value();
+		)
+	);
+}
 
-		return (
-			React.createElement("div", {id: "log-container"}, 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./objectives/Sprite.jsx":37,"gw2w2w-static":15}],31:[function(require,module,exports){
+(function (global){
+'use strict';
 
-				React.createElement("div", {className: "log-tabs"}, 
-					React.createElement("div", {className: "row"}, 
-						React.createElement("div", {className: "col-sm-16"}, 
-							React.createElement("ul", {id: "log-map-filters", className: "nav nav-pills"}, 
-								React.createElement("li", {className: (mapFilter == 'all') ? 'active': 'null'}, 
-									React.createElement("a", {onClick: setWorld, 'data-filter': "all"}, "All")
-								), 
+/*
+*	Dependencies
+*/
 
-								_.map([
-									mapsMeta[3],
-									mapsMeta[0],
-									mapsMeta[2],
-									mapsMeta[1],
-								], function(mapMeta, i) {
-									return (
-										React.createElement("li", {key: mapMeta.index, className: (mapFilter === mapMeta.index) ? 'active': 'null'}, 
-											React.createElement("a", {onClick: setWorld, 'data-filter': mapMeta.index}, mapMeta.name)
-										)
-									);
-								})
-							)
-						), 
-						React.createElement("div", {className: "col-sm-8"}, 
-							React.createElement("ul", {id: "log-event-filters", className: "nav nav-pills"}, 
-								React.createElement("li", {className: (eventFilter === 'claim') ? 'active': 'null'}, 
-									React.createElement("a", {onClick: setEvent, 'data-filter': "claim"}, "Claims")
-								), 
-								React.createElement("li", {className: (eventFilter === 'capture') ? 'active': 'null'}, 
-									React.createElement("a", {onClick: setEvent, 'data-filter': "capture"}, "Captures")
-								), 
-								React.createElement("li", {className: (eventFilter === 'all') ? 'active': 'null'}, 
-									React.createElement("a", {onClick: setEvent, 'data-filter': "all"}, "All")
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+
+var PureRenderMixin = React.addons.PureRenderMixin;
+
+
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	mixins: [PureRenderMixin],
+
+	render: render,
+});
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var guildName = slugify(props.guildName);
+	var size = props.size;
+
+	var src = 'http://guilds.gw2w2w.com/guilds/' + guildName + '/256.svg';
+
+
+	return (
+		React.createElement("img", {className: "emblem", src: src, width: size, height: size})
+	);
+}
+
+
+
+
+
+
+/*
+*
+*	Private Methods
+*
+*/
+
+function slugify(str) {
+	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
+}
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],32:[function(require,module,exports){
+(function (global){
+'use strict';
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
+
+var Emblem = require('./Emblem.jsx');
+var Objective = require('./Objective.jsx');
+
+
+
+
+
+/*
+*	Component Globals
+*/
+
+var staticData = require('gw2w2w-static');
+var mapsStatic = staticData.objective_map;
+
+
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	render: render,
+});
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var timeOffset = props.timeOffset;
+	var dateNow = props.dateNow;
+	var lang = props.lang;
+	var eventHistory = props.eventHistory;
+
+	var guilds = _
+		.chain(props.guilds)
+		.map(function(guild){
+			guild.claims = _.chain(eventHistory)
+				.filter(function(entry){
+					return (entry.type === 'claim' && entry.guild === guild.guild_id);
+				})
+				.sortBy('timestamp')
+				.reverse()
+				.value();
+
+			guild.lastClaim = (guild.claims && guild.claims.length) ? guild.claims[0].timestamp : 0;
+			return guild;
+		})
+		.sortBy('guild_name')
+		.sortBy(function(guild){
+			return -guild.lastClaim;
+		})
+		.value();
+
+
+	return (
+		React.createElement("div", {id: "guilds"}, 
+			(guilds && guilds.length) ? React.createElement("hr", null) : null, 
+
+			_.map(guilds, function(guild, guildId) {
+				return (
+					React.createElement("div", {key: guild.guild_id, id: guild.guild_id, className: "guild"}, 
+						React.createElement("div", {className: "row"}, 
+							React.createElement("div", {className: "col-sm-4"}, 
+								React.createElement(Emblem, {guildName: guild.guild_name})
+							), 
+							React.createElement("div", {className: "col-sm-20"}, 
+								React.createElement("h1", null, guild.guild_name, " [", guild.tag, "]"), 
+								React.createElement("ul", {className: "list-unstyled"}, 
+									_.map(guild.claims, function(entry, ixEntry) {
+										return (
+											React.createElement("li", {key: guild.guild_id + '-' + ixEntry}, 
+												React.createElement(Objective, {
+													timeOffset: timeOffset, 
+													dateNow: dateNow, 
+													lang: lang, 
+													entry: entry, 
+													ixEntry: ixEntry}
+												)
+											)
+										);
+									})
 								)
 							)
 						)
 					)
-				), 
+				);
+			})
+		)
+	);
+}
 
-				React.createElement("ul", {className: "list-unstyled", id: "log"}, 
-					eventHistory
-				)
 
-			)
-		);
-	},
 
-	setWorld: function(e) {
-		var filter = $(e.target).data('filter');
-		this.setState({mapFilter: filter});
-	},
-	setEvent: function(e) {
-		var filter = $(e.target).data('filter');
-		this.setState({eventFilter: filter});
-	},
-});
+
+
 
 /*
-
+*
+*	Private Methods
+*
 */
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Objective.jsx":34,"gw2w2w-static":15}],34:[function(require,module,exports){
+},{"./Emblem.jsx":31,"./Objective.jsx":33,"gw2w2w-static":15}],33:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
-var moment = (typeof window !== "undefined" ? window.moment : typeof global !== "undefined" ? global.moment : null);
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+var moment = (typeof window !== "undefined" ? window.moment : typeof global !== "undefined" ? global.moment : null);	// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var Sprite = require('../objectives/Sprite.jsx');
 var Arrow = require('../objectives/Arrow.jsx');
 
-var libDate = require('../../../lib/date.js');
+
+
+
+
+/*
+*	Component Globals
+*/
 
 var staticData = require('gw2w2w-static');
+var mapsStatic = staticData.objective_map;
 var objectivesNames = staticData.objective_names;
 var objectivesTypes = staticData.objective_types;
 var objectivesMeta = staticData.objective_meta;
 var objectivesLabels = staticData.objective_labels;
 
+
+
+
+
+/*
+*	Component Export
+*/
+
 module.exports = React.createClass({displayName: 'exports',
-	render: function() {
-		var dateNow = this.props.dateNow;
-		var timeOffset = this.props.timeOffset;
-		var nowOffset = dateNow + timeOffset;
-
-		var lang = this.props.lang;
-		var entry = this.props.entry;
-		var ixEntry = this.props.ixEntry;
-		var guilds = this.props.guilds;
-		var matchWorlds = this.props.matchWorlds;
-		var mapsMeta = this.props.mapsMeta;
-
-
-		if (!_.has(objectivesMeta, entry.objectiveId)) {
-			// short circuit
-			return null;
-		}
-
-		var oMeta = objectivesMeta[entry.objectiveId];
-		var oName = objectivesNames[entry.objectiveId];
-		var oLabel = objectivesLabels[entry.objectiveId];
-		var oType = objectivesTypes[oMeta.type];
-
-		var expires = entry.timestamp + (5 * 60);
-		var timerActive = (expires >= nowOffset + 5); // show  after expiring
-		var secondsRemaining = expires - nowOffset;
-		var expiration = moment(secondsRemaining * 1000);
-
-		var timestamp = moment((entry.timestamp + timeOffset) * 1000);
-
-
-		var className = [
-			'objective',
-			'team',
-			entry.world,
-		].join(' ');
-
-		var mapMeta = mapsMeta[oMeta.map];
-
-
-		return (
-			React.createElement("div", {className: className, key: ixEntry}, 
-				React.createElement("div", {className: "objective-relative"}, 
-					React.createElement("span", null, timestamp.twitterShort())
-				), 
-				React.createElement("div", {className: "objective-timestamp"}, 
-					timestamp.format('hh:mm:ss')
-				), 
-				React.createElement("div", {className: "objective-map"}, 
-					React.createElement("span", {title: mapMeta.name}, mapMeta.abbr)
-				), 
-				React.createElement("div", {className: "objective-icons"}, 
-					React.createElement(Arrow, {oMeta: oMeta}), 
- 					React.createElement(Sprite, {type: oType.name, color: entry.world})
-				), 
-				React.createElement("div", {className: "objective-label"}, 
-					React.createElement("span", null, oLabel[lang.slug])
-				), 
-				React.createElement("div", {className: "objective-guild"}, 
-					renderGuild(entry.guild, guilds)
-				)
-			)
-		);
-	},
+	render: render,
 });
 
 
-function renderGuild(guildId, guilds) {
-	if (!guildId) {
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var timeOffset = props.timeOffset;
+	var lang = props.lang;
+	var entry = props.entry;
+	var ixEntry = props.ixEntry;
+	var guilds = props.guilds;
+	var mapsMeta = props.mapsMeta;
+
+
+	if (!_.has(objectivesMeta, entry.objectiveId)) {
+		// short circuit
 		return null;
 	}
-	else {
-		var guild = guilds[guildId];
 
-		var guildClass = [
-			'guild',
-			'name',
-			'pending'
-		].join(' ');
+	var oMeta = objectivesMeta[entry.objectiveId];
+	var oName = objectivesNames[entry.objectiveId];
+	var oLabel = objectivesLabels[entry.objectiveId];
+	var oType = objectivesTypes[oMeta.type];
 
-		if(!guild) {
-			return React.createElement("span", {className: guildClass}, React.createElement("i", {className: "fa fa-spinner fa-spin"}));
-		}
-		else {
-			return React.createElement("span", null, 
-				React.createElement("a", {className: guildClass, href: '#' + guildId, title: guild.guild_name}, guild.guild_name, " [", guild.tag, "]")
+	var timestamp = moment((entry.timestamp + timeOffset) * 1000);
+
+
+	var mapMeta = _.find(mapsStatic, {mapIndex: oMeta.map});
+
+
+	var className = [
+		'objective',
+		'team',
+		entry.world,
+	].join(' ');
+
+
+
+	return (
+		React.createElement("div", {className: className, key: ixEntry}, 
+			React.createElement("div", {className: "objective-relative"}, 
+				React.createElement("span", null, timestamp.twitterShort())
+			), 
+			React.createElement("div", {className: "objective-timestamp"}, 
+				timestamp.format('hh:mm:ss')
+			), 
+			React.createElement("div", {className: "objective-map"}, 
+				React.createElement("span", {title: mapMeta.name}, mapMeta.abbr)
+			), 
+			React.createElement("div", {className: "objective-icons"}, 
+				React.createElement(Arrow, {oMeta: oMeta}), 
+					React.createElement(Sprite, {type: oType.name, color: entry.world})
+			), 
+			React.createElement("div", {className: "objective-label"}, 
+				React.createElement("span", null, oLabel[lang.slug])
+			)
+		)
+	);
+}
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../objectives/Arrow.jsx":35,"../objectives/Sprite.jsx":37,"gw2w2w-static":15}],34:[function(require,module,exports){
+(function (global){
+'use strict';
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
+
+var Objective = require('../objectives/Objective.jsx');
+
+
+
+
+
+/*
+*	Component Globals
+*/
+
+var staticData = require('gw2w2w-static');
+var mapsStatic = staticData.objective_map;
+var objectivesMeta = staticData.objective_meta;
+
+var objectiveCols = {
+	elapsed: true,
+	timestamp: true,
+	mapAbbrev: true,
+	arrow: true,
+	sprite: true,
+	name: true,
+	eventType: true,
+	guildName: true,
+	guildTag: true,
+	timer: false,
+};
+
+
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	getInitialState: getInitialState,
+	render: render,
+
+	setWorld: setWorld,
+	setEvent: setEvent,
+});
+
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function getInitialState() {
+	return {
+		mapFilter: 'all',
+		eventFilter: 'all',
+	};
+}
+
+
+
+function render() {
+	var component = this;
+	var props = component.props;
+	var state = component.state;
+
+	var dateNow = props.dateNow;
+	var timeOffset = props.timeOffset;
+	var lang = props.lang;
+	var guilds = props.guilds;
+	var matchWorlds = props.matchWorlds;
+
+	var eventFilter = state.eventFilter;
+	var mapFilter = state.mapFilter;
+
+
+	var eventHistory = _.chain(props.eventHistory)
+		.filter(function(entry) {
+			return (eventFilter == 'all' || entry.type == eventFilter);
+		})
+		.filter(function(entry) {
+			var oMeta = objectivesMeta[entry.objectiveId];
+			return (mapFilter == 'all' || oMeta.map == mapFilter);
+		})
+		.sortBy('timestamp')
+		.reverse()
+		.map(function(entry, ixEntry) {
+
+			var key = entry.timestamp + '-' + entry.objectiveId  + '-' + entry.type;
+			var guildId = (entry.guild) ? entry.guild : null;
+
+			return (
+				React.createElement("li", {key: key, className: "transition"}, 
+					React.createElement(Objective, {
+						lang: lang, 
+						dateNow: dateNow, 
+						timeOffset: timeOffset, 
+						cols: objectiveCols, 
+
+						objectiveId: entry.objectiveId, 
+						worldColor: entry.world, 
+						timestamp: entry.timestamp, 
+						guildId: guildId, 
+						eventType: entry.type, 
+						guilds: guilds}
+					)
+				)
 			);
-		}
+		})
+		.value();
+
+
+	return (
+		React.createElement("div", {id: "log-container"}, 
+
+			React.createElement("div", {className: "log-tabs"}, 
+				React.createElement("div", {className: "row"}, 
+					React.createElement("div", {className: "col-sm-16"}, 
+						React.createElement("ul", {id: "log-map-filters", className: "nav nav-pills"}, 
+
+							React.createElement("li", {className: (mapFilter == 'all') ? 'active': 'null'}, 
+								React.createElement("a", {onClick: component.setWorld, 'data-filter': "all"}, "All")
+							), 
+
+							_.map(mapsStatic, function(mapMeta, ixMap) {
+								return (
+									React.createElement("li", {key: mapMeta.mapIndex, className: (mapFilter === mapMeta.mapIndex) ? 'active': 'null'}, 
+										React.createElement("a", {onClick: component.setWorld, 'data-filter': mapMeta.mapIndex}, mapMeta.abbr)
+									)
+								);
+							})
+
+						)
+					), 
+					React.createElement("div", {className: "col-sm-8"}, 
+						React.createElement("ul", {id: "log-event-filters", className: "nav nav-pills"}, 
+							React.createElement("li", {className: (eventFilter === 'claim') ? 'active': 'null'}, 
+								React.createElement("a", {onClick: component.setEvent, 'data-filter': "claim"}, "Claims")
+							), 
+							React.createElement("li", {className: (eventFilter === 'capture') ? 'active': 'null'}, 
+								React.createElement("a", {onClick: component.setEvent, 'data-filter': "capture"}, "Captures")
+							), 
+							React.createElement("li", {className: (eventFilter === 'all') ? 'active': 'null'}, 
+								React.createElement("a", {onClick: component.setEvent, 'data-filter': "all"}, "All")
+							)
+						)
+					)
+				)
+			), 
+
+			React.createElement("ul", {className: "list-unstyled", id: "log"}, 
+				eventHistory
+			)
+
+		)
+	);
+}
+
+
+
+
+
+/*
+*	Component Helper Methods
+*/
+
+function setWorld(e) {
+	var component = this;
+
+	var filter = $(e.target).data('filter');
+	console.log('setWorld', filter);
+
+	component.setState({mapFilter: filter});
+}
+
+
+
+function setEvent(e) {
+	var component = this;
+
+	var filter = $(e.target).data('filter');
+
+	component.setState({eventFilter: filter});
+}
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../objectives/Objective.jsx":36,"gw2w2w-static":15}],35:[function(require,module,exports){
+(function (global){
+'use strict';
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+
+var PureRenderMixin = React.addons.PureRenderMixin;
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	mixins: [PureRenderMixin],
+
+	render: render,
+});
+
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var meta = props.oMeta;
+
+	if (meta.d) {
+		var src = ['/img/icons/dist/arrow'];
+
+		if (meta.n) {src.push('north'); }
+		else if (meta.s) {src.push('south'); }
+
+		if (meta.w) {src.push('west'); }
+		else if (meta.e) {src.push('east'); }
+
+		return (
+			React.createElement("span", {className: "direction"}, 
+				React.createElement("img", {src: src.join('-') + '.svg'})
+			)
+		);
+	}
+	else {
+		return React.createElement("span", {className: "direction"});
 	}
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../../lib/date.js":38,"../objectives/Arrow.jsx":35,"../objectives/Sprite.jsx":37,"gw2w2w-static":15}],35:[function(require,module,exports){
-(function (global){
-/*jslint node: true */
-"use strict";
-
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-
-
-module.exports = React.createClass({displayName: 'exports',
-	render: function() {
-		var meta = this.props.oMeta;
-
-		if (meta.d) {
-			var src = ['/img/icons/dist/arrow'];
-
-			if (meta.n) {src.push('north'); }
-			else if (meta.s) {src.push('south'); }
-
-			if (meta.w) {src.push('west'); }
-			else if (meta.e) {src.push('east'); }
-
-			return (
-				React.createElement("span", {className: "direction"}, 
-					React.createElement("img", {src: src.join('-') + '.svg'})
-				)
-			);
-		}
-		else {
-			return React.createElement("span", {className: "direction"});
-		}
-	}
-});
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],36:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
-var moment = (typeof window !== "undefined" ? window.moment : typeof global !== "undefined" ? global.moment : null);
+/*
+*	Dependencies
+*/
 
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);		// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);			// browserify shim
+var moment = (typeof window !== "undefined" ? window.moment : typeof global !== "undefined" ? global.moment : null);		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var Sprite = require('./Sprite.jsx');
 var Arrow = require('./Arrow.jsx');
 
 
+
+
+
+/*
+*	Component Globals
+*/
+
 var staticData = require('gw2w2w-static');
+var mapsStatic = staticData.objective_map;
 var objectivesNames = staticData.objective_names;
 var objectivesTypes = staticData.objective_types;
 var objectivesMeta = staticData.objective_meta;
@@ -4322,115 +5126,163 @@ var colDefaults = {
 	arrow: false,
 	sprite: false,
 	name: false,
+	eventType: false,
 	guildName: false,
 	guildTag: false,
 	timer: false,
 };
 
 
-module.exports = React.createClass({displayName: 'exports',
-
-	render: function() {
-		var objectiveId = this.props.objectiveId;
-
-		// short circuit
-		if (!_.has(objectivesMeta, objectiveId)) {
-			return null;
-		}
 
 
-		var dateNow = this.props.dateNow;
-		var timeOffset = this.props.timeOffset;
-		var nowOffset = dateNow + timeOffset;
-
-
-		var lang = this.props.lang;
-		var owner = this.props.owner;
-		var claimer = this.props.claimer;
-		var guild = this.props.guild;
-
-		var cols = _.defaults(this.props.cols, colDefaults);
-
-
-
-		var oMeta = objectivesMeta[objectiveId];
-		var oName = objectivesNames[objectiveId];
-		var oLabel = objectivesLabels[objectiveId];
-		var oType = objectivesTypes[oMeta.type];
-
-		var offsetTimestamp = owner.timestamp + timeOffset;
-		var expires = offsetTimestamp + (5 * 60);
-		var timerActive = (expires >= dateNow + 5); // show for 5 seconds after expiring
-		var secondsRemaining = expires - dateNow;
-		var expiration = moment(secondsRemaining * 1000);
-
-		var timestamp = moment((owner.timestamp + timeOffset) * 1000);
-
-
-		// console.log(objective.lastCap, objective.expires, now, objective.expires > now);
-
-		var className = [
-			'objective',
-			'team',
-			owner.world,
-		].join(' ');
-
-		var timerClass = [
-			'timer',
-			(timerActive) ? 'active' : 'inactive',
-		].join(' ');
-
-		var timerHtml = (timerActive) ? expiration.format('m:ss') : '0:00';
-
-		return (
-			React.createElement("div", {className: className}, 
-				(cols.elapsed) ?
-					React.createElement("div", {className: "objective-relative"}, 
-						React.createElement("span", null, timestamp.twitterShort())
-					)
-				: null, 
-				(cols.timestamp) ?
-					React.createElement("div", {className: "objective-timestamp"}, 
-						timestamp.format('hh:mm:ss')
-					)
-				: null, 
-				(cols.mapAbbrev) ?
-					React.createElement("div", {className: "objective-map"}
-					)
-				: null, 
-				(cols.arrow || cols.sprite) ?
-					React.createElement("div", {className: "objective-icons"}, 
-						(cols.arrow) ?
-							React.createElement(Arrow, {oMeta: oMeta})
-						: null, 
-						(cols.sprite) ?
-	 						React.createElement(Sprite, {type: oType.name, color: owner.world})
-						: null
-					)
-				: null, 
-				(cols.name) ?
-					React.createElement("div", {className: "objective-label"}, 
-						React.createElement("span", null, oLabel[lang.slug])
-					)
-				: null, 
-				(claimer || cols.timer) ?
-					React.createElement("div", {className: "objective-state"}, 
-						(claimer) ?
-							renderGuild(claimer.guild, guild, cols)
-						: null, 
-						(cols.timer) ?
-							React.createElement("span", {className: timerClass}, timerHtml)
-						: null
-					)
-				: null
-			)
-		);
-	},
-});
 
 /*
-					<span title={mapMeta.name}>{mapMeta.abbr}</span>
+*	Component Export
+*/
 
+module.exports = React.createClass({displayName: 'exports',
+	render: render,
+});
+
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var objectiveId = props.objectiveId;
+
+	// short circuit
+	if (!_.has(objectivesMeta, objectiveId)) {
+		return null;
+	}
+
+	var lang = props.lang;
+	var dateNow = props.dateNow;
+	var timeOffset = props.timeOffset;
+	var guilds = props.guilds;
+
+	var worldColor = props.worldColor;
+	var timestamp = props.timestamp;
+	var guildId = props.guildId;
+	var eventType = props.eventType || null;
+
+	var cols = _.defaults(props.cols, colDefaults);
+
+
+	var offsetTimestamp = timestamp + timeOffset;
+	var expires = offsetTimestamp + (5 * 60);
+	var timerActive = (expires >= dateNow + 5); // show for 5 seconds after expiring
+	var secondsRemaining = expires - dateNow;
+
+
+	var oMeta = objectivesMeta[objectiveId];
+	var oName = objectivesNames[objectiveId];
+	var oLabel = objectivesLabels[objectiveId];
+	var oType = objectivesTypes[oMeta.type];
+
+	var guild = (guildId && guilds[guildId]) ? guilds[guildId] : null;
+
+	var mapMeta = _.find(mapsStatic, {mapIndex: oMeta.map});
+
+
+
+	var className = [
+		'objective',
+		'team',
+		worldColor,
+	].join(' ');
+
+	var timerClass = [
+		'timer',
+		(timerActive) ? 'active' : 'inactive',
+	].join(' ');
+
+
+
+
+	var expiration = moment(secondsRemaining * 1000);
+	var timestampMoment = moment((timestamp + timeOffset) * 1000);
+
+	var timestampRelative = timestampMoment.twitterShort();
+	var timestampHtml = timestampMoment.format('hh:mm:ss');
+	var timerHtml = (timerActive) ? expiration.format('m:ss') : '0:00';
+
+
+
+	return (
+		React.createElement("div", {className: className}, 
+			(cols.elapsed) ?
+				React.createElement("div", {className: "objective-relative"}, 
+					React.createElement("span", null, timestampRelative)
+				)
+			: null, 
+			(cols.timestamp) ?
+				React.createElement("div", {className: "objective-timestamp"}, 
+					timestampHtml
+				)
+			: null, 
+			(cols.mapAbbrev) ?
+				React.createElement("div", {className: "objective-map"}, 
+					React.createElement("span", {title: mapMeta.name}, mapMeta.abbr)
+				)
+			: null, 
+			(cols.arrow || cols.sprite) ?
+				React.createElement("div", {className: "objective-icons"}, 
+					(cols.arrow) ?
+						React.createElement(Arrow, {oMeta: oMeta})
+					: null, 
+					(cols.sprite) ?
+ 						React.createElement(Sprite, {type: oType.name, color: worldColor})
+					: null
+				)
+			: null, 
+			(cols.name) ?
+				React.createElement("div", {className: "objective-label"}, 
+					React.createElement("span", null, oLabel[lang.slug])
+				)
+			: null, 
+			/*(cols.eventType && eventType) ?
+				<div className="objective-event">
+					<span>{(eventType === 'claim') ? 'Claimed by ' : 'Captured by ' + worldColor}</span>
+				</div>
+			: null*/
+			(guildId || cols.timer) ?
+				React.createElement("div", {className: "objective-state"}, 
+					(guildId) ?
+						renderGuild(guildId, guild, cols)
+					: null, 
+					(cols.timer) ?
+						React.createElement("span", {className: timerClass}, timerHtml)
+					: null
+				)
+			: null
+		)
+	);
+}
+
+
+
+
+
+/*
+*
+*	Private Methods
+*
 */
 
 function renderGuild(guildId, guild, cols){
@@ -4444,30 +5296,65 @@ function renderGuild(guildId, guild, cols){
 		if (cols.guildTag) guildLabel += guild.tag;
 	}
 
-	return React.createElement("a", {className: "guild", href: '#' + guildId}, guildLabel);
+	return React.createElement("span", null, React.createElement("a", {className: "guildname", href: '#' + guildId}, guildLabel));
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./Arrow.jsx":35,"./Sprite.jsx":37,"gw2w2w-static":15}],37:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+
+var PureRenderMixin = React.addons.PureRenderMixin;
+
+
+
+
+/*
+*	Component Export
+*/
 
 module.exports = React.createClass({displayName: 'exports',
-	render: function() {
-		var type = this.props.type;
-		var color = this.props.color;
+	mixins: [PureRenderMixin],
 
-		return (
-			React.createElement("span", {className: ['sprite', type, color].join(' ')})
-		);
-	}
+	render: render,
 });
+
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var type = props.type;
+	var color = props.color;
+
+	return (
+		React.createElement("span", {className: ['sprite', type, color].join(' ')})
+	);
+}
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],38:[function(require,module,exports){
-"use strict";
+'use strict';
 
 module.exports = {
 	dateNow: dateNow,
@@ -4488,15 +5375,42 @@ function add5(inDate) {
 
 },{}],39:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var Overview = require('./jsx/Overview.jsx');
 var Langs = require('./jsx/Langs.jsx');
 
+
+
+
+
+/*
+*	Component Globals
+*/
+
 var langs = require('gw2w2w-static').langs;
+
+
+
+
+
+/*
+*	Export
+*/
 
 module.exports = function overview(ctx) {
 	var langSlug = ctx.params.langSlug || 'en';
@@ -4506,21 +5420,47 @@ module.exports = function overview(ctx) {
 	React.render(React.createElement(Overview, {lang: lang}), document.getElementById('content'));
 };
 
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./jsx/Langs.jsx":19,"./jsx/Overview.jsx":20,"gw2w2w-static":15}],40:[function(require,module,exports){
 (function (global){
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var Tracker = require('./jsx/Tracker.jsx');
 var Langs = require('./jsx/Langs.jsx');
 
+
+
+
+
+/*
+*	Component Globals
+*/
+
 var langs = require('gw2w2w-static').langs;
 var worlds = require('gw2w2w-static').worlds;
+
+
+
+
+
+/*
+*	Export
+*/
 
 module.exports = function overview(ctx) {
 	var langSlug = ctx.params.langSlug;

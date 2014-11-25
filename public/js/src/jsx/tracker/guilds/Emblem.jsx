@@ -11,6 +11,7 @@ var PureRenderMixin = React.addons.PureRenderMixin;
 
 
 
+
 /*
 *	Component Export
 */
@@ -20,7 +21,6 @@ module.exports = React.createClass({
 
 	render: render,
 });
-
 
 
 
@@ -41,10 +41,28 @@ function render() {
 	var component = this;
 	var props = component.props;
 
-	var type = props.type;
-	var color = props.color;
+	var guildName = slugify(props.guildName);
+	var size = props.size;
+
+	var src = 'http://guilds.gw2w2w.com/guilds/' + guildName + '/256.svg';
+
 
 	return (
-		<span className={['sprite', type, color].join(' ')} />
+		<img className="emblem" src={src} width={size} height={size} />
 	);
+}
+
+
+
+
+
+
+/*
+*
+*	Private Methods
+*
+*/
+
+function slugify(str) {
+	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
 }

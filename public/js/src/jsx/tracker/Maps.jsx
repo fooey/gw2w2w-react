@@ -1,124 +1,129 @@
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = require('React');
-var _ = require('lodash');
 
+/*
+*	Dependencies
+*/
+
+var React = require('React');	// browserify shim
+var _ = require('lodash');		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var MapDetails = require('./MapDetails.jsx');
 var Log = require('./log/Log.jsx');
 
-var libDate = require('../../lib/date.js');
+
+
+
+
+/*
+*	Component Globals
+*/
 
 var staticData = require('gw2w2w-static');
 var mapsConfig = staticData.objective_map;
 
+
+
+
+
+/*
+*	Component Export
+*/
+
 module.exports = React.createClass({
-
-	getInitialState: function() {
-		return {dateNow: libDate.dateNow()};
-	},
-	tick: function() {
-		this.setState({dateNow: libDate.dateNow()});
-	},
-	componentDidMount: function() {
-		this.interval = setInterval(this.tick, 1000);
-	},
-	componentWillUnmount: function() {
-		clearInterval(this.interval);
-	},
-
-
-	render: function() {
-		if (!this.props.details.initialized) {
-			return null;
-		}
-
-		var dateNow = this.state.dateNow;
-		var timeOffset = this.props.timeOffset;
-
-		var lang = this.props.lang;
-		var details = this.props.details;
-		var matchWorlds = this.props.matchWorlds;
-		var mapsMeta = this.props.mapsMeta;
-		var guilds = this.props.guilds;
-
-		var eventHistory = details.history;
-
-
-		return (
-			<div id="maps">
-				<div className="row">
-					<div className="col-md-6">
-						<MapDetails
-							dateNow={dateNow}
-							timeOffset={timeOffset}
-							lang={lang}
-							details={details}
-							guilds={guilds}
-							matchWorlds={matchWorlds}
-							mapsMeta={mapsMeta}
-							mapIndex={0}
-						/>
-					</div>
-					<div className="col-md-18">
-
-						<div className="row">
-							<div className="col-md-8">
-								<MapDetails
-									dateNow={dateNow}
-									timeOffset={timeOffset}
-									lang={lang}
-									details={details}
-									guilds={guilds}
-									matchWorlds={matchWorlds}
-									mapsMeta={mapsMeta}
-									mapIndex={1}
-								/>
-							</div>
-							<div className="col-md-8">
-								<MapDetails
-									dateNow={dateNow}
-									timeOffset={timeOffset}
-									lang={lang}
-									details={details}
-									guilds={guilds}
-									matchWorlds={matchWorlds}
-									mapsMeta={mapsMeta}
-									mapIndex={2}
-								/>
-							</div>
-							<div className="col-md-8">
-								<MapDetails
-									dateNow={dateNow}
-									timeOffset={timeOffset}
-									lang={lang}
-									details={details}
-									guilds={guilds}
-									matchWorlds={matchWorlds}
-									mapsMeta={mapsMeta}
-									mapIndex={3}
-								/>
-							</div>
-						</div>
-
-						<div className="row">
-							<div className="col-md-24">
-								<Log
-									dateNow={dateNow}
-									timeOffset={timeOffset}
-									lang={lang}
-									guilds={guilds}
-									eventHistory={eventHistory}
-									matchWorlds={matchWorlds}
-									mapsMeta={mapsMeta}
-								/>
-							</div>
-						</div>
-
-					</div>
-				 </div>
-			</div>
-		);
-	},
+	render: render,
 });
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	if (!props.details.initialized) {
+		return null;
+	}
+
+	var dateNow = props.dateNow;
+	var timeOffset = props.timeOffset;
+
+	var lang = props.lang;
+	var details = props.details;
+	var matchWorlds = props.matchWorlds;
+	var guilds = props.guilds;
+
+	var eventHistory = details.history;
+
+
+
+	function getMapDetails(mapKey) {
+		return (
+			<MapDetails
+				mapKey={mapKey}
+				lang={lang}
+				dateNow={dateNow}
+				timeOffset={timeOffset}
+
+				details={details}
+				guilds={guilds}
+				matchWorlds={matchWorlds}
+			/>);
+	}
+
+
+
+	return (
+		<div id="maps">
+			<h1>Maps</h1>
+			<div className="row">
+
+				<div className="col-md-6">{getMapDetails('Center')}</div>
+
+				<div className="col-md-18">
+
+					<div className="row">
+						<div className="col-md-8">{getMapDetails('RedHome')}</div>
+						<div className="col-md-8">{getMapDetails('BlueHome')}</div>
+						<div className="col-md-8">{getMapDetails('GreenHome')}</div>
+					</div>
+
+					<div className="row">
+						<div className="col-md-24">
+							<Log
+								lang={lang}
+								dateNow={dateNow}
+								timeOffset={timeOffset}
+
+								eventHistory={eventHistory}
+								guilds={guilds}
+								matchWorlds={matchWorlds}
+							/>
+						</div>
+					</div>
+
+				</div>
+			 </div>
+		</div>
+	);
+}

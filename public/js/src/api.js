@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var gw2api = require('gw2api');
 
@@ -31,5 +31,9 @@ function getMatchDetails(matchId, callback) {
 
 
 function getMatchDetailsByWorld(worldSlug, callback) {
+	// setTimeout(
+	// 	gw2api.getMatchDetailsState.bind(null, {world_slug: worldSlug}, callback),
+	// 	3000
+	// );
 	gw2api.getMatchDetailsState({world_slug: worldSlug}, callback);
 }

@@ -1,11 +1,29 @@
-/*jslint node: true */
-"use strict";
+'use strict';
 
-var React = require('React');
-var _ = require('lodash');
+/*
+*	Dependencies
+*/
 
+var React = require('React');	// browserify shim
+var _ = require('lodash');		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
 
 var Objective = require('./objectives/Objective.jsx');
+
+
+
+
+
+/*
+*	Component Globals
+*/
 
 var objectiveCols = {
 	elapsed: false,
@@ -14,52 +32,79 @@ var objectiveCols = {
 	arrow: true,
 	sprite: true,
 	name: true,
+	eventType: false,
 	guildName: false,
 	guildTag: true,
 	timer: true,
 };
 
 
+
+
+
+/*
+*	Component Export
+*/
+
 module.exports = React.createClass({
-
-	render: function() {
-
-		var dateNow = this.props.dateNow;
-		var timeOffset = this.props.timeOffset;
-		var lang = this.props.lang;
-		var mapSection = this.props.mapSection;
-		var owners = this.props.owners;
-		var claimers = this.props.claimers;
-		var guilds = this.props.guilds;
-		var mapsMeta = this.props.mapsMeta;
-
-		return (
-			<ul className='list-unstyled'>
-				{_.map(mapSection.objectives, function(objectiveId) {
-
-					var owner = owners[objectiveId];
-					var claimer = claimers[objectiveId];
-					var guild = (claimer && guilds[claimer.guild]) ? guilds[claimer.guild] : null;
-
-					return (
-						<li key={objectiveId} id={'objective-' + objectiveId}>
-							<Objective
-								dateNow={dateNow}
-								timeOffset={timeOffset}
-								cols={objectiveCols}
-								lang={lang}
-
-								objectiveId={objectiveId}
-								owner={owner}
-								claimer={claimer}
-								guild={guild}
-								mapsMeta={mapsMeta}
-							/>
-						</li>
-					);
-
-				})}
-			</ul>
-		);
-	},
+	render: render,
 });
+
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var dateNow = props.dateNow;
+	var timeOffset = props.timeOffset;
+	var lang = props.lang;
+	var mapSection = props.mapSection;
+	var owners = props.owners;
+	var claimers = props.claimers;
+	var guilds = props.guilds;
+	var mapMeta = props.mapMeta;
+
+	return (
+		<ul className='list-unstyled'>
+			{_.map(mapSection.objectives, function(objectiveId) {
+
+				var owner = owners[objectiveId];
+				var claimer = claimers[objectiveId];
+				var guildId = (claimer) ? claimer.guild : null;
+
+				return (
+					<li key={objectiveId} id={'objective-' + objectiveId}>
+						<Objective
+							lang={lang}
+							dateNow={dateNow}
+							timeOffset={timeOffset}
+							cols={objectiveCols}
+
+							objectiveId={objectiveId}
+							worldColor={owner.world}
+							timestamp={owner.timestamp}
+							guildId={guildId}
+							guilds={guilds}
+						/>
+					</li>
+				);
+
+			})}
+		</ul>
+	);
+}
