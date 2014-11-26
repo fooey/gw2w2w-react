@@ -178,7 +178,7 @@ function render() {
 			: null*/}
 			{(guildId || cols.timer) ?
 				<div className="objective-state">
-					{(guildId) ?
+					{(guildId && (cols.guildName || cols.guildTag)) ?
 						renderGuild(guildId, guild, cols)
 					: null}
 					{(cols.timer) ?

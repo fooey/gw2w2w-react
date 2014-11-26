@@ -18,6 +18,8 @@ var $ = require('jquery');		// browserify shim
 
 var Objective = require('../objectives/Objective.jsx');
 
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 
 
 
@@ -37,7 +39,7 @@ var objectiveCols = {
 	arrow: true,
 	sprite: true,
 	name: true,
-	eventType: true,
+	eventType: false,
 	guildName: true,
 	guildTag: true,
 	timer: false,
@@ -115,7 +117,7 @@ function render() {
 			var guildId = (entry.guild) ? entry.guild : null;
 
 			return (
-				<li key={key} className="transition">
+				<li key={key}>
 					<Objective
 						lang={lang}
 						dateNow={dateNow}
@@ -173,9 +175,9 @@ function render() {
 				</div>
 			</div>
 
-			<ul className="list-unstyled" id="log">
+			<ReactCSSTransitionGroup transitionName="transition-fade-in" component="ul" className="list-unstyled" id="log">
 				{eventHistory}
-			</ul>
+			</ReactCSSTransitionGroup>
 
 		</div>
 	);

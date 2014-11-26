@@ -1,28 +1,33 @@
-
-&.transition {
-	&.log-entry-enter {
-		overflow: hidden;
-		white-space: nowrap;
-		max-height: 0;
+.transition {
+	&-fade-in-enter {
 		.opacity(0);
 
 		&-active {
-			max-height: 1.6em;
 			.opacity(1);
 			.transition(all 400ms ease-in);
 		}
+
 	}
-
-	&.guild-enter {
-		overflow: hidden;
-		white-space: nowrap;
-		max-height: 0;
-		.opacity(0);
+	&-fade-out-leave {
+		.opacity(1);
 
 		&-active {
-			max-height: 256px;
-			.opacity(1);
+			.opacity(0);
 			.transition(all 400ms ease-in);
 		}
+
 	}
 }
+
+// &.guild-enter {
+// 	overflow: hidden;
+// 	white-space: nowrap;
+// 	max-height: 0;
+// 	.opacity(0);
+
+// 	&-active {
+// 		max-height: 256px;
+// 		.opacity(1);
+// 		.transition(all 400ms ease-in);
+// 	}
+// }

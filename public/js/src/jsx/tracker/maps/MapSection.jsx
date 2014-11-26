@@ -15,7 +15,7 @@ var _ = require('lodash');		// browserify shim
 *	React Components
 */
 
-var Objective = require('./objectives/Objective.jsx');
+var Objective = require('../objectives/Objective.jsx');
 
 
 

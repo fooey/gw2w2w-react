@@ -16,7 +16,7 @@ var _ = require('lodash');		// browserify shim
 *	React Components
 */
 
-var MapDetails = require('./MapDetails.jsx');
+var MapDetails = require('./maps/MapDetails.jsx');
 var Log = require('./log/Log.jsx');
 
 

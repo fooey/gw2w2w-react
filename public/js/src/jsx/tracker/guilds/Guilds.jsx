@@ -16,7 +16,7 @@ var _ = require('lodash');		// browserify shim
 */
 
 var Emblem = require('./Emblem.jsx');
-var Objective = require('./Objective.jsx');
+var Objective = require('../objectives/Objective.jsx');
 
 
 
@@ -28,6 +28,19 @@ var Objective = require('./Objective.jsx');
 
 var staticData = require('gw2w2w-static');
 var mapsStatic = staticData.objective_map;
+
+var objectiveCols = {
+	elapsed: true,
+	timestamp: true,
+	mapAbbrev: true,
+	arrow: true,
+	sprite: true,
+	name: true,
+	eventType: false,
+	guildName: false,
+	guildTag: false,
+	timer: false,
+};
 
 
 
@@ -90,9 +103,11 @@ function render() {
 		<div id="guilds">
 			{(guilds && guilds.length) ? <hr /> : null }
 
-			{_.map(guilds, function(guild, guildId) {
+			{_.map(guilds, function(guild, ixGuild) {
+				var key = guild.guild_id + guild.lastClaim;
+
 				return (
-					<div key={guild.guild_id} id={guild.guild_id} className="guild">
+					<div key={key} id={guild.guild_id} className="guild">
 						<div className="row">
 							<div className="col-sm-4">
 								<Emblem guildName={guild.guild_name} />
@@ -104,11 +119,17 @@ function render() {
 										return (
 											<li key={guild.guild_id + '-' + ixEntry}>
 												<Objective
-													timeOffset={timeOffset}
-													dateNow={dateNow}
 													lang={lang}
-													entry={entry}
-													ixEntry={ixEntry}
+													dateNow={dateNow}
+													timeOffset={timeOffset}
+													cols={objectiveCols}
+
+													objectiveId={entry.objectiveId}
+													worldColor={entry.world}
+													timestamp={entry.timestamp}
+													guildId={guild.guild_id}
+													eventType={entry.type}
+													guilds={guilds}
 												/>
 											</li>
 										);
