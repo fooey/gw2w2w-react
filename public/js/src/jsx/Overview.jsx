@@ -158,12 +158,12 @@ function getMatches() {
 	var component = this;
 
 	api.getMatches(function(err, data) {
-		if (!err) {
+		if (!err && data && _.isPlainObject(data)) {
 			component.setState({matches: data});
 		}
 
 		var interval = _.random(2000, 4000);
-		component.updateTimer = setTimeout(component.getMatches, interval);
+		component.updateTimer = window.setTimeout(component.getMatches, interval);
 	});
 
 }
