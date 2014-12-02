@@ -51,10 +51,12 @@ function render() {
 	var region = props.region;
 	var lang = props.lang;
 
+	var matches = _.sortBy(region.matches, 'id');
+
 	return (
 		<div className="RegionMatches">
 			<h2>{region.label}</h2>
-			{_.map(region.matches, function(match){
+			{_.map(matches, function(match){
 				return (
 					<Match
 						key={match.id}
