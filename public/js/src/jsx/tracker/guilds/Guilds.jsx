@@ -117,7 +117,7 @@ function render() {
 								<ul className="list-unstyled">
 									{_.map(guild.claims, function(entry, ixEntry) {
 										return (
-											<li key={guild.guild_id + '-' + ixEntry}>
+											<li key={entry.id}>
 												<Objective
 													lang={lang}
 													dateNow={dateNow}

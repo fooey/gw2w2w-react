@@ -112,12 +112,10 @@ function render() {
 		.sortBy('timestamp')
 		.reverse()
 		.map(function(entry, ixEntry) {
-
-			var key = entry.timestamp + '-' + entry.objectiveId  + '-' + entry.type;
 			var guildId = (entry.guild) ? entry.guild : null;
 
 			return (
-				<li key={key}>
+				<li key={entry.id}>
 					<Objective
 						lang={lang}
 						dateNow={dateNow}
