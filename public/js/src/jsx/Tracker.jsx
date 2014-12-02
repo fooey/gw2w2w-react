@@ -103,7 +103,7 @@ function componentWillMount() {
 function componentDidMount() {
 	var component = this;
 
-	component.interval = setInterval(component.tick, 1000);
+	component.interval = window.setInterval(component.tick, 1000);
 
 	component.updateTimer = null;
 	process.nextTick(component.getMatchDetails);
@@ -260,31 +260,39 @@ function getMatchDetails() {
 function onMatchDetails(err, data) {
 	var component = this;
 	var props = component.props;
+	var state = component.state;
+
 
 	if(component.isMounted()) {
-		if (!err) {
-			var msOffset = Date.now() - data.now;
-			var secOffset = Math.floor(msOffset / 1000);
+		if (!err && data && data.match && data.details) {
 
-			component.setState({
-				hasData: true,
-				lastmod: data.now,
-				timeOffset: secOffset,
-				match: data.match,
-				details: data.details,
-			});
+			var isModified = (data.match.lastmod !== state.match.lastmod);
 
-			var claimCurrent = _.pluck(data.details.objectives.claimers, 'guild');
-			var claimHistory = _.chain(data.details.history)
-				.filter({type: 'claim'})
-				.pluck('guild')
-				.value();
+			if (isModified) {
+				var msOffset = Date.now() - data.now;
+				var secOffset = Math.floor(msOffset / 1000);
 
-			var guilds = claimCurrent.concat(claimHistory);
+				component.setState({
+					hasData: true,
+					lastmod: data.now,
+					timeOffset: secOffset,
+					match: data.match,
+					details: data.details,
+				});
 
-			if(guilds.length) {
-				process.nextTick(component.queueGuildLookups.bind(null, guilds));
+				var claimCurrent = _.pluck(data.details.objectives.claimers, 'guild');
+				var claimHistory = _.chain(data.details.history)
+					.filter({type: 'claim'})
+					.pluck('guild')
+					.value();
+
+				var guilds = claimCurrent.concat(claimHistory);
+
+				if(guilds.length) {
+					process.nextTick(component.queueGuildLookups.bind(null, guilds));
+				}
 			}
+
 		}
 	}
 	else {
@@ -294,7 +302,7 @@ function onMatchDetails(err, data) {
 	}
 
 	var refreshTime = _.random(1000*2, 1000*4);
-	component.updateTimer = setTimeout(component.getMatchDetails, refreshTime);
+	component.updateTimer = window.setTimeout(component.getMatchDetails, refreshTime);
 
 }
 

@@ -3052,12 +3052,12 @@ function getMatches() {
 	var component = this;
 
 	api.getMatches(function(err, data) {
-		if (!err) {
+		if (!err && data && _.isPlainObject(data)) {
 			component.setState({matches: data});
 		}
 
 		var interval = _.random(2000, 4000);
-		component.updateTimer = setTimeout(component.getMatches, interval);
+		component.updateTimer = window.setTimeout(component.getMatches, interval);
 	});
 
 }
@@ -3192,7 +3192,7 @@ function componentWillMount() {
 function componentDidMount() {
 	var component = this;
 
-	component.interval = setInterval(component.tick, 1000);
+	component.interval = window.setInterval(component.tick, 1000);
 
 	component.updateTimer = null;
 	process.nextTick(component.getMatchDetails);
@@ -3349,31 +3349,39 @@ function getMatchDetails() {
 function onMatchDetails(err, data) {
 	var component = this;
 	var props = component.props;
+	var state = component.state;
+
 
 	if(component.isMounted()) {
-		if (!err) {
-			var msOffset = Date.now() - data.now;
-			var secOffset = Math.floor(msOffset / 1000);
+		if (!err && data && data.match && data.details) {
 
-			component.setState({
-				hasData: true,
-				lastmod: data.now,
-				timeOffset: secOffset,
-				match: data.match,
-				details: data.details,
-			});
+			var isModified = (data.match.lastmod !== state.match.lastmod);
 
-			var claimCurrent = _.pluck(data.details.objectives.claimers, 'guild');
-			var claimHistory = _.chain(data.details.history)
-				.filter({type: 'claim'})
-				.pluck('guild')
-				.value();
+			if (isModified) {
+				var msOffset = Date.now() - data.now;
+				var secOffset = Math.floor(msOffset / 1000);
 
-			var guilds = claimCurrent.concat(claimHistory);
+				component.setState({
+					hasData: true,
+					lastmod: data.now,
+					timeOffset: secOffset,
+					match: data.match,
+					details: data.details,
+				});
 
-			if(guilds.length) {
-				process.nextTick(component.queueGuildLookups.bind(null, guilds));
+				var claimCurrent = _.pluck(data.details.objectives.claimers, 'guild');
+				var claimHistory = _.chain(data.details.history)
+					.filter({type: 'claim'})
+					.pluck('guild')
+					.value();
+
+				var guilds = claimCurrent.concat(claimHistory);
+
+				if(guilds.length) {
+					process.nextTick(component.queueGuildLookups.bind(null, guilds));
+				}
 			}
+
 		}
 	}
 	else {
@@ -3383,7 +3391,7 @@ function onMatchDetails(err, data) {
 	}
 
 	var refreshTime = _.random(1000*2, 1000*4);
-	component.updateTimer = setTimeout(component.getMatchDetails, refreshTime);
+	component.updateTimer = window.setTimeout(component.getMatchDetails, refreshTime);
 
 }
 
@@ -3692,10 +3700,12 @@ function render() {
 	var region = props.region;
 	var lang = props.lang;
 
+	var matches = _.sortBy(region.matches, 'id');
+
 	return (
 		React.createElement("div", {className: "RegionMatches"}, 
 			React.createElement("h2", null, region.label), 
-			_.map(region.matches, function(match){
+			_.map(matches, function(match){
 				return (
 					React.createElement(Match, {
 						key: match.id, 
@@ -4344,7 +4354,7 @@ function render() {
 								React.createElement("ul", {className: "list-unstyled"}, 
 									_.map(guild.claims, function(entry, ixEntry) {
 										return (
-											React.createElement("li", {key: guild.guild_id + '-' + ixEntry}, 
+											React.createElement("li", {key: entry.id}, 
 												React.createElement(Objective, {
 													lang: lang, 
 													dateNow: dateNow, 
@@ -4499,12 +4509,10 @@ function render() {
 		.sortBy('timestamp')
 		.reverse()
 		.map(function(entry, ixEntry) {
-
-			var key = entry.timestamp + '-' + entry.objectiveId  + '-' + entry.type;
 			var guildId = (entry.guild) ? entry.guild : null;
 
 			return (
-				React.createElement("li", {key: key}, 
+				React.createElement("li", {key: entry.id}, 
 					React.createElement(Objective, {
 						lang: lang, 
 						dateNow: dateNow, 
@@ -4961,26 +4969,41 @@ function render() {
 	var component = this;
 	var props = component.props;
 
-	var meta = props.oMeta;
+	var src = getArrowSrc(props.oMeta);
 
-	if (meta.d) {
-		var src = ['/img/icons/dist/arrow'];
 
-		if (meta.n) {src.push('north'); }
-		else if (meta.s) {src.push('south'); }
+	return (
+		React.createElement("span", {className: "direction"}, 
+			src ? React.createElement("img", {src: src}) : null
+		)
+	);
+}
 
-		if (meta.w) {src.push('west'); }
-		else if (meta.e) {src.push('east'); }
 
-		return (
-			React.createElement("span", {className: "direction"}, 
-				React.createElement("img", {src: src.join('-') + '.svg'})
-			)
-		);
+
+
+
+
+/*
+*
+*	Static Methods
+*
+*/
+
+function getArrowSrc(meta) {
+	if (!meta.d) {
+		return null;
 	}
-	else {
-		return React.createElement("span", {className: "direction"});
-	}
+
+	var src = ['/img/icons/dist/arrow'];
+
+	if (meta.n) {src.push('north'); }
+	else if (meta.s) {src.push('south'); }
+
+	if (meta.w) {src.push('west'); }
+	else if (meta.e) {src.push('east'); }
+
+	return src.join('-') + '.svg';
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],35:[function(require,module,exports){
