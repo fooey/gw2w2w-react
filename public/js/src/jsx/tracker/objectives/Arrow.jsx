@@ -40,24 +40,39 @@ function render() {
 	var component = this;
 	var props = component.props;
 
-	var meta = props.oMeta;
+	var src = getArrowSrc(props.oMeta);
 
-	if (meta.d) {
-		var src = ['/img/icons/dist/arrow'];
 
-		if (meta.n) {src.push('north'); }
-		else if (meta.s) {src.push('south'); }
+	return (
+		<span className="direction">
+			{src ? <img src={src} /> : null}
+		</span>
+	);
+}
 
-		if (meta.w) {src.push('west'); }
-		else if (meta.e) {src.push('east'); }
 
-		return (
-			<span className="direction">
-				<img src={src.join('-') + '.svg'} />
-			</span>
-		);
+
+
+
+
+/*
+*
+*	Static Methods
+*
+*/
+
+function getArrowSrc(meta) {
+	if (!meta.d) {
+		return null;
 	}
-	else {
-		return <span className="direction" />;
-	}
+
+	var src = ['/img/icons/dist/arrow'];
+
+	if (meta.n) {src.push('north'); }
+	else if (meta.s) {src.push('south'); }
+
+	if (meta.w) {src.push('west'); }
+	else if (meta.e) {src.push('east'); }
+
+	return src.join('-') + '.svg';
 }
