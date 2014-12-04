@@ -1,0 +1,50 @@
+#maps {
+	.map {
+		padding: 1em .25em;
+
+		h2 {
+			cursor: pointer;
+		}
+
+		&.map-blur {
+			.scale(.9);
+			.blur(1);
+			.opacity(.6);
+		}
+	}
+
+	.mapScores {
+		text-align: center;
+		h2 {
+			font-size: 14pt;
+			font-weight: 400;
+			padding: 0 0 .25em;
+			margin: 0 0 .1em;
+			border-bottom: 1px solid rgba(0,0,0,.1)
+		}
+
+		li {
+			font-size: 9pt;
+		}
+	}
+
+	.map-section {
+		margin: 0 0 20px 0;
+		padding: 0;
+
+		@media(min-width: @screen-sm-min) and (max-width: @screen-sm-max) { padding: 0 .25em; }
+
+		ul, li {
+			margin: 0;
+			padding: 0;
+		}
+
+		.section-label {
+			font-size: 10pt;
+			line-height: 20px;
+			font-weight: 700;
+			margin: 0;
+			padding: 0;
+		}
+	}
+}

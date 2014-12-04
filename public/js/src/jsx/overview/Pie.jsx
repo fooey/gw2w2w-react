@@ -38,7 +38,6 @@ module.exports = React.createClass({
 *	Component Lifecyle Methods
 */
 
-
 function render() {
 	var component = this;
 	var props = component.props;

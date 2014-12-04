@@ -15,8 +15,7 @@ var _ = require('lodash');		// browserify shim
 *	React Components
 */
 
-var Emblem = require('./Emblem.jsx');
-var Objective = require('../objectives/Objective.jsx');
+var Guild = require('./Guild.jsx');
 
 
 
@@ -25,9 +24,6 @@ var Objective = require('../objectives/Objective.jsx');
 /*
 *	Component Globals
 */
-
-var staticData = require('gw2w2w-static');
-var mapsStatic = staticData.objective_map;
 
 var objectiveCols = {
 	elapsed: true,
@@ -51,6 +47,7 @@ var objectiveCols = {
 */
 
 module.exports = React.createClass({
+	getInitialState: getInitialState,
 	render: render,
 });
 
@@ -69,9 +66,18 @@ module.exports = React.createClass({
 *	Component Lifecyle Methods
 */
 
+function getInitialState() {
+	return {
+		animateEntry: false,
+	};
+}
+
+
+
 function render() {
 	var component = this;
 	var props = component.props;
+	var state = component.state;
 
 	var timeOffset = props.timeOffset;
 	var dateNow = props.dateNow;
@@ -104,40 +110,18 @@ function render() {
 			{(guilds && guilds.length) ? <hr /> : null }
 
 			{_.map(guilds, function(guild, ixGuild) {
-				var key = guild.guild_id + guild.lastClaim;
+				var key = guild.guild_id + '@' + guild.lastClaim;
 
 				return (
-					<div key={key} id={guild.guild_id} className="guild">
-						<div className="row">
-							<div className="col-sm-4">
-								<Emblem guildName={guild.guild_name} />
-							</div>
-							<div className="col-sm-20">
-								<h1>{guild.guild_name} [{guild.tag}]</h1>
-								<ul className="list-unstyled">
-									{_.map(guild.claims, function(entry, ixEntry) {
-										return (
-											<li key={entry.id}>
-												<Objective
-													lang={lang}
-													dateNow={dateNow}
-													timeOffset={timeOffset}
-													cols={objectiveCols}
+					<Guild
+						key={key}
+						dateNow={dateNow}
+						timeOffset={timeOffset}
+						lang={lang}
 
-													objectiveId={entry.objectiveId}
-													worldColor={entry.world}
-													timestamp={entry.timestamp}
-													guildId={guild.guild_id}
-													eventType={entry.type}
-													guilds={guilds}
-												/>
-											</li>
-										);
-									})}
-								</ul>
-							</div>
-						</div>
-					</div>
+						animateEntry={state.animateEntry}
+						guild={guild}
+					/>
 				);
 			})}
 		</div>
@@ -147,10 +131,8 @@ function render() {
 
 
 
+function componentDidMount() {
+	var component = this;
 
-
-/*
-*
-*	Private Methods
-*
-*/
+	component.setState({animateEntry: true});
+}

@@ -101,8 +101,11 @@ function render() {
 
 	var offsetTimestamp = timestamp + timeOffset;
 	var expires = offsetTimestamp + (5 * 60);
-	var timerActive = (expires >= dateNow + 5); // show for 5 seconds after expiring
 	var secondsRemaining = expires - dateNow;
+
+	var isTimerFresh = (dateNow - offsetTimestamp < 10);
+	var isTimerActive = (expires >= dateNow);
+	var isTimerVisible = (expires + 10 >= dateNow); // show for 10 seconds after expiring
 
 
 	var oMeta = objectivesMeta[objectiveId];
@@ -110,7 +113,7 @@ function render() {
 	var oLabel = objectivesLabels[objectiveId];
 	var oType = objectivesTypes[oMeta.type];
 
-	var guild = (guildId && guilds[guildId]) ? guilds[guildId] : null;
+	var guild = (guilds && guildId && guilds[guildId]) ? guilds[guildId] : null;
 
 	var mapMeta = _.find(mapsStatic, {mapIndex: oMeta.map});
 
@@ -120,11 +123,13 @@ function render() {
 		'objective',
 		'team',
 		worldColor,
+		(isTimerFresh) ? 'fresh' : '',
 	].join(' ');
 
 	var timerClass = [
 		'timer',
-		(timerActive) ? 'active' : 'inactive',
+		(isTimerVisible) ? 'active' : 'inactive',
+		(isTimerActive) ? '' : 'expired',
 	].join(' ');
 
 
@@ -135,7 +140,7 @@ function render() {
 
 	var timestampRelative = timestampMoment.twitterShort();
 	var timestampHtml = timestampMoment.format('hh:mm:ss');
-	var timerHtml = (timerActive) ? expiration.format('m:ss') : '0:00';
+	var timerHtml = (isTimerActive) ? expiration.format('m:ss') : '0:00';
 
 
 
@@ -207,9 +212,28 @@ function renderGuild(guildId, guild, cols){
 		guildLabel = <i className="fa fa-spinner fa-spin"></i>;
 	}
 	else {
-		if (cols.guildName) guildLabel += guild.guild_name;
-		if (cols.guildTag) guildLabel += guild.tag;
+		if (cols.guildName) {
+			guildLabel += guild.guild_name;
+		}
+		if (cols.guildTag) {
+			if (cols.guildName) {
+				guildLabel += ('[' + guild.tag + ']');
+			}
+			else {
+				guildLabel += guild.tag;
+			}
+		}
 	}
 
-	return <span><a className="guildname" href={'#' + guildId}>{guildLabel}</a></span>;
+	return (
+		<span>
+			<a 	className="guildname"
+				href={'#' + guildId}
+				title={guild ? guild.guild_name + ' [' + guild.tag + ']' : null}>
+
+				{guildLabel}
+
+			</a>
+		</span>
+	);
 }

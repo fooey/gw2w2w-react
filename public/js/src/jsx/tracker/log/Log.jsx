@@ -16,9 +16,7 @@ var $ = require('jquery');		// browserify shim
 *	React Components
 */
 
-var Objective = require('../objectives/Objective.jsx');
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var Entry = require('./Entry.jsx');
 
 
 
@@ -32,19 +30,6 @@ var staticData = require('gw2w2w-static');
 var mapsStatic = staticData.objective_map;
 var objectivesMeta = staticData.objective_meta;
 
-var objectiveCols = {
-	elapsed: true,
-	timestamp: true,
-	mapAbbrev: true,
-	arrow: true,
-	sprite: true,
-	name: true,
-	eventType: false,
-	guildName: true,
-	guildTag: true,
-	timer: false,
-};
-
 
 
 
@@ -56,6 +41,8 @@ var objectiveCols = {
 module.exports = React.createClass({
 	getInitialState: getInitialState,
 	render: render,
+	componentDidMount: componentDidMount,
+	componentDidUpdate: componentDidUpdate,
 
 	setWorld: setWorld,
 	setEvent: setEvent,
@@ -81,6 +68,7 @@ function getInitialState() {
 	return {
 		mapFilter: 'all',
 		eventFilter: 'all',
+		animateEntry: false,
 	};
 }
 
@@ -115,21 +103,21 @@ function render() {
 			var guildId = (entry.guild) ? entry.guild : null;
 
 			return (
-				<li key={entry.id}>
-					<Objective
-						lang={lang}
-						dateNow={dateNow}
-						timeOffset={timeOffset}
-						cols={objectiveCols}
+				<Entry
+					key={entry.id}
+					lang={lang}
+					dateNow={dateNow}
+					timeOffset={timeOffset}
 
-						objectiveId={entry.objectiveId}
-						worldColor={entry.world}
-						timestamp={entry.timestamp}
-						guildId={guildId}
-						eventType={entry.type}
-						guilds={guilds}
-					/>
-				</li>
+					animateEntry={state.animateEntry}
+					entryId={entry.id}
+					objectiveId={entry.objectiveId}
+					worldColor={entry.world}
+					timestamp={entry.timestamp}
+					guildId={guildId}
+					eventType={entry.type}
+					guilds={guilds}
+				/>
 			);
 		})
 		.value();
@@ -173,13 +161,35 @@ function render() {
 				</div>
 			</div>
 
-			<ReactCSSTransitionGroup transitionName="transition-fade-in" component="ul" className="list-unstyled" id="log">
+			<ul className="list-unstyled" id="log">
 				{eventHistory}
-			</ReactCSSTransitionGroup>
+			</ul>
 
 		</div>
 	);
 }
+
+
+
+
+function componentDidMount() {
+	var component = this;
+
+	component.setState({animateEntry: true});
+}
+
+
+
+
+function componentDidUpdate() {
+	var component = this;
+	var state = component.state;
+
+	if (!state.animateEntry) {
+		component.setState({animateEntry: true});
+	}
+}
+
 
 
 
@@ -192,10 +202,9 @@ function render() {
 function setWorld(e) {
 	var component = this;
 
-	var filter = $(e.target).data('filter');
-	console.log('setWorld', filter);
+	var filter = e.target.getAttribute('data-filter');
 
-	component.setState({mapFilter: filter});
+	component.setState({mapFilter: filter, animateEntry: false});
 }
 
 
@@ -203,7 +212,7 @@ function setWorld(e) {
 function setEvent(e) {
 	var component = this;
 
-	var filter = $(e.target).data('filter');
+	var filter = e.target.getAttribute('data-filter');
 
-	component.setState({eventFilter: filter});
+	component.setState({eventFilter: filter, animateEntry: false});
 }

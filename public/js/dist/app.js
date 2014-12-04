@@ -22,7 +22,7 @@ $(function() {
 	});
 });
 
-},{"./overview.jsx":38,"./tracker.jsx":39,"page":16}],2:[function(require,module,exports){
+},{"./overview.jsx":40,"./tracker.jsx":41,"page":16}],2:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -291,7 +291,8 @@ exports.encode = exports.stringify = require('./encode');
 
 },{"./decode":3,"./encode":4}],6:[function(require,module,exports){
 /*
-*	package.json reqwrites to this from getData.js for Browserify
+*	Browserify uses this instead of getData.js
+*	configured in package.json
 */
 
 "use strict";
@@ -377,7 +378,7 @@ module.exports = {
 
 var endPoints = {
 	worldNames: 'https://api.guildwars2.com/v2/worlds',							// https://api.guildwars2.com/v2/worlds?page=0
-
+	colors: 'https://api.guildwars2.com/v1/colors.json',						// http://wiki.guildwars2.com/wiki/API:1/colors
 	guildDetails: 'https://api.guildwars2.com/v1/guild_details.json',			// http://wiki.guildwars2.com/wiki/API:1/guild_details
 
 	items: 'https://api.guildwars2.com/v1/items.json',							// http://wiki.guildwars2.com/wiki/API:1/items
@@ -3463,7 +3464,7 @@ function setPageTitle(lang, world) {
 	$('title').text(title.join(' - '));
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../api":18,"../lib/date.js":37,"./tracker/Maps.jsx":27,"./tracker/Scoreboard.jsx":28,"./tracker/guilds/Guilds.jsx":30,"_process":2,"gw2w2w-static":15}],22:[function(require,module,exports){
+},{"../api":18,"../lib/date.js":39,"./tracker/Maps.jsx":27,"./tracker/Scoreboard.jsx":28,"./tracker/guilds/Guilds.jsx":31,"_process":2,"gw2w2w-static":15}],22:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3507,9 +3508,10 @@ var worldsStatic = require('gw2w2w-static').worlds;
 */
 
 module.exports = React.createClass({displayName: 'exports',
-	mixins: [PureRenderMixin],
+	// mixins: [PureRenderMixin],
 
 	render: render,
+	shouldComponentUpdate: shouldComponentUpdate,
 });
 
 
@@ -3580,6 +3582,19 @@ function render() {
 		)
 	);
 }
+
+
+
+function shouldComponentUpdate(nextProps) {
+	var component = this;
+	var props = component.props;
+
+	var newScore = !_.isEqual(props.match.scores, nextProps.match.scores);
+	var newMatch = (props.match.startTime !== nextProps.match.startTime);
+
+	return (newScore || newMatch);
+}
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./Pie.jsx":23,"./Score.jsx":26,"gw2w2w-static":15}],23:[function(require,module,exports){
 (function (global){
@@ -3623,7 +3638,6 @@ module.exports = React.createClass({displayName: 'exports',
 *	Component Lifecyle Methods
 */
 
-
 function render() {
 	var component = this;
 	var props = component.props;
@@ -3644,6 +3658,7 @@ function render() {
 			React.createElement("span", null)
 	);
 }
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],24:[function(require,module,exports){
 (function (global){
@@ -3833,9 +3848,10 @@ var numeral = (typeof window !== "undefined" ? window.numeral : typeof global !=
 
 module.exports = React.createClass({displayName: 'exports',
 	getInitialState: getInitialState,
-	componentWillReceiveProps: componentWillReceiveProps,
-	componentDidUpdate: componentDidUpdate,
 	render: render,
+	componentWillReceiveProps: componentWillReceiveProps,
+	shouldComponentUpdate: shouldComponentUpdate,
+	componentDidUpdate: componentDidUpdate,
 });
 
 
@@ -3869,22 +3885,6 @@ function componentWillReceiveProps(nextProps){
 
 
 
-function componentDidUpdate() {
-	var component = this;
-	var state = component.state;
-
-	if(state.diff > 0) {
-		var $diff = $('.diff', component.getDOMNode());
-
-		$diff
-			.velocity('fadeOut', {duration: 0})
-			.velocity('fadeIn', {duration: 200})
-			.velocity('fadeOut', {duration: 1200, delay: 400});
-	}
-}
-
-
-
 function render() {
 	var component = this;
 	var props = component.props;
@@ -3905,6 +3905,35 @@ function render() {
 		)
 	);
 }
+
+
+
+function shouldComponentUpdate(nextProps) {
+	var component = this;
+	var props = component.props;
+
+	var newScore = (props.score !== nextProps.score);
+
+	return newScore;
+}
+
+
+
+
+function componentDidUpdate() {
+	var component = this;
+	var state = component.state;
+
+	if(state.diff > 0) {
+		var $diff = $('.diff', component.getDOMNode());
+
+		$diff
+			.velocity('fadeOut', {duration: 0})
+			.velocity('fadeIn', {duration: 200})
+			.velocity('fadeOut', {duration: 1200, delay: 400});
+	}
+}
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],27:[function(require,module,exports){
 (function (global){
@@ -4039,7 +4068,7 @@ function render() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./log/Log.jsx":31,"./maps/MapDetails.jsx":32,"gw2w2w-static":15}],28:[function(require,module,exports){
+},{"./log/Log.jsx":33,"./maps/MapDetails.jsx":34,"gw2w2w-static":15}],28:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4162,7 +4191,7 @@ function render() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./objectives/Sprite.jsx":36,"gw2w2w-static":15}],29:[function(require,module,exports){
+},{"./objectives/Sprite.jsx":38,"gw2w2w-static":15}],29:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4255,6 +4284,8 @@ var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined
 var Emblem = require('./Emblem.jsx');
 var Objective = require('../objectives/Objective.jsx');
 
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 
 
 
@@ -4262,9 +4293,6 @@ var Objective = require('../objectives/Objective.jsx');
 /*
 *	Component Globals
 */
-
-var staticData = require('gw2w2w-static');
-var mapsStatic = staticData.objective_map;
 
 var objectiveCols = {
 	elapsed: true,
@@ -4289,6 +4317,7 @@ var objectiveCols = {
 
 module.exports = React.createClass({displayName: 'exports',
 	render: render,
+	componentDidMount: componentDidMount,
 });
 
 
@@ -4309,6 +4338,151 @@ module.exports = React.createClass({displayName: 'exports',
 function render() {
 	var component = this;
 	var props = component.props;
+
+	var guild = props.guild;
+	var timeOffset = props.timeOffset;
+	var dateNow = props.dateNow;
+	var lang = props.lang;
+
+
+	return (
+		React.createElement("div", {className: "guild", id: guild.guild_id}, 
+			React.createElement("div", {className: "row"}, 
+
+				React.createElement("div", {className: "col-sm-4"}, 
+					React.createElement(Emblem, {guildName: guild.guild_name})
+				), 
+
+				React.createElement("div", {className: "col-sm-20"}, 
+					React.createElement("h1", null, guild.guild_name, " [", guild.tag, "]"), 
+
+					React.createElement("ul", {className: "list-unstyled"}, 
+						_.map(guild.claims, function(entry, ixEntry) {
+							return (
+								React.createElement("li", {key: entry.id}, 
+									React.createElement(Objective, {
+										lang: lang, 
+										dateNow: dateNow, 
+										timeOffset: timeOffset, 
+										cols: objectiveCols, 
+
+										objectiveId: entry.objectiveId, 
+										worldColor: entry.world, 
+										timestamp: entry.timestamp, 
+										guildId: guild.guild_id, 
+										eventType: entry.type}
+									)
+								)
+							);
+						})
+					)
+
+				)
+
+			)
+		)
+	);
+}
+
+
+
+
+function componentDidMount() {
+	var component = this;
+	var props = component.props;
+
+	if (props.animateEntry) {
+		var $node = $(component.getDOMNode());
+
+		$node
+			.velocity('slideUp', {duration: 0})
+			.velocity('slideDown', {duration: 800});
+	}
+}
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../objectives/Objective.jsx":37,"./Emblem.jsx":29}],31:[function(require,module,exports){
+(function (global){
+'use strict';
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
+
+var Guild = require('./Guild.jsx');
+
+
+
+
+
+/*
+*	Component Globals
+*/
+
+var objectiveCols = {
+	elapsed: true,
+	timestamp: true,
+	mapAbbrev: true,
+	arrow: true,
+	sprite: true,
+	name: true,
+	eventType: false,
+	guildName: false,
+	guildTag: false,
+	timer: false,
+};
+
+
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	getInitialState: getInitialState,
+	render: render,
+});
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function getInitialState() {
+	return {
+		animateEntry: false,
+	};
+}
+
+
+
+function render() {
+	var component = this;
+	var props = component.props;
+	var state = component.state;
 
 	var timeOffset = props.timeOffset;
 	var dateNow = props.dateNow;
@@ -4341,39 +4515,17 @@ function render() {
 			(guilds && guilds.length) ? React.createElement("hr", null) : null, 
 
 			_.map(guilds, function(guild, ixGuild) {
-				var key = guild.guild_id + guild.lastClaim;
+				var key = guild.guild_id + '@' + guild.lastClaim;
 
 				return (
-					React.createElement("div", {key: key, id: guild.guild_id, className: "guild"}, 
-						React.createElement("div", {className: "row"}, 
-							React.createElement("div", {className: "col-sm-4"}, 
-								React.createElement(Emblem, {guildName: guild.guild_name})
-							), 
-							React.createElement("div", {className: "col-sm-20"}, 
-								React.createElement("h1", null, guild.guild_name, " [", guild.tag, "]"), 
-								React.createElement("ul", {className: "list-unstyled"}, 
-									_.map(guild.claims, function(entry, ixEntry) {
-										return (
-											React.createElement("li", {key: entry.id}, 
-												React.createElement(Objective, {
-													lang: lang, 
-													dateNow: dateNow, 
-													timeOffset: timeOffset, 
-													cols: objectiveCols, 
+					React.createElement(Guild, {
+						key: key, 
+						dateNow: dateNow, 
+						timeOffset: timeOffset, 
+						lang: lang, 
 
-													objectiveId: entry.objectiveId, 
-													worldColor: entry.world, 
-													timestamp: entry.timestamp, 
-													guildId: guild.guild_id, 
-													eventType: entry.type, 
-													guilds: guilds}
-												)
-											)
-										);
-									})
-								)
-							)
-						)
+						animateEntry: state.animateEntry, 
+						guild: guild}
 					)
 				);
 			})
@@ -4384,16 +4536,14 @@ function render() {
 
 
 
+function componentDidMount() {
+	var component = this;
 
-
-/*
-*
-*	Private Methods
-*
-*/
+	component.setState({animateEntry: true});
+}
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Objective.jsx":35,"./Emblem.jsx":29,"gw2w2w-static":15}],31:[function(require,module,exports){
+},{"./Guild.jsx":30}],32:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4415,8 +4565,6 @@ var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined
 
 var Objective = require('../objectives/Objective.jsx');
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-
 
 
 
@@ -4424,10 +4572,6 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 /*
 *	Component Globals
 */
-
-var staticData = require('gw2w2w-static');
-var mapsStatic = staticData.objective_map;
-var objectivesMeta = staticData.objective_meta;
 
 var objectiveCols = {
 	elapsed: true,
@@ -4451,8 +4595,128 @@ var objectiveCols = {
 */
 
 module.exports = React.createClass({displayName: 'exports',
+	render: render,
+	componentDidMount: componentDidMount,
+});
+
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var lang = props.lang;
+	var dateNow = props.dateNow;
+	var timeOffset = props.timeOffset;
+	var cols = props.objectiveCols;
+
+	var animateEntry = props.animateEntry;
+	var entryId = props.entryId;
+	var objectiveId = props.objectiveId;
+	var worldColor = props.worldColor;
+	var timestamp = props.timestamp;
+	var guildId = props.guildId;
+	var eventType = props.eventType;
+	var guilds = props.guilds;
+
+	return (
+		React.createElement("li", null, 
+			React.createElement(Objective, {
+				lang: lang, 
+				dateNow: dateNow, 
+				timeOffset: timeOffset, 
+				cols: objectiveCols, 
+
+				objectiveId: objectiveId, 
+				worldColor: worldColor, 
+				timestamp: timestamp, 
+				guildId: guildId, 
+				eventType: eventType, 
+				guilds: guilds}
+			)
+		)
+	);
+}
+
+
+
+
+function componentDidMount() {
+	var component = this;
+	var props = component.props;
+
+	if (props.animateEntry) {
+		var $node = $(component.getDOMNode());
+
+		$node
+			.velocity('slideUp', {duration: 0})
+			.velocity('slideDown', {duration: 800});
+	}
+}
+
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../objectives/Objective.jsx":37}],33:[function(require,module,exports){
+(function (global){
+'use strict';
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
+
+var Entry = require('./Entry.jsx');
+
+
+
+
+
+/*
+*	Component Globals
+*/
+
+var staticData = require('gw2w2w-static');
+var mapsStatic = staticData.objective_map;
+var objectivesMeta = staticData.objective_meta;
+
+
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
 	getInitialState: getInitialState,
 	render: render,
+	componentDidMount: componentDidMount,
+	componentDidUpdate: componentDidUpdate,
 
 	setWorld: setWorld,
 	setEvent: setEvent,
@@ -4478,6 +4742,7 @@ function getInitialState() {
 	return {
 		mapFilter: 'all',
 		eventFilter: 'all',
+		animateEntry: false,
 	};
 }
 
@@ -4512,20 +4777,20 @@ function render() {
 			var guildId = (entry.guild) ? entry.guild : null;
 
 			return (
-				React.createElement("li", {key: entry.id}, 
-					React.createElement(Objective, {
-						lang: lang, 
-						dateNow: dateNow, 
-						timeOffset: timeOffset, 
-						cols: objectiveCols, 
+				React.createElement(Entry, {
+					key: entry.id, 
+					lang: lang, 
+					dateNow: dateNow, 
+					timeOffset: timeOffset, 
 
-						objectiveId: entry.objectiveId, 
-						worldColor: entry.world, 
-						timestamp: entry.timestamp, 
-						guildId: guildId, 
-						eventType: entry.type, 
-						guilds: guilds}
-					)
+					animateEntry: state.animateEntry, 
+					entryId: entry.id, 
+					objectiveId: entry.objectiveId, 
+					worldColor: entry.world, 
+					timestamp: entry.timestamp, 
+					guildId: guildId, 
+					eventType: entry.type, 
+					guilds: guilds}
 				)
 			);
 		})
@@ -4570,13 +4835,35 @@ function render() {
 				)
 			), 
 
-			React.createElement(ReactCSSTransitionGroup, {transitionName: "transition-fade-in", component: "ul", className: "list-unstyled", id: "log"}, 
+			React.createElement("ul", {className: "list-unstyled", id: "log"}, 
 				eventHistory
 			)
 
 		)
 	);
 }
+
+
+
+
+function componentDidMount() {
+	var component = this;
+
+	component.setState({animateEntry: true});
+}
+
+
+
+
+function componentDidUpdate() {
+	var component = this;
+	var state = component.state;
+
+	if (!state.animateEntry) {
+		component.setState({animateEntry: true});
+	}
+}
+
 
 
 
@@ -4589,10 +4876,9 @@ function render() {
 function setWorld(e) {
 	var component = this;
 
-	var filter = $(e.target).data('filter');
-	console.log('setWorld', filter);
+	var filter = e.target.getAttribute('data-filter');
 
-	component.setState({mapFilter: filter});
+	component.setState({mapFilter: filter, animateEntry: false});
 }
 
 
@@ -4600,13 +4886,13 @@ function setWorld(e) {
 function setEvent(e) {
 	var component = this;
 
-	var filter = $(e.target).data('filter');
+	var filter = e.target.getAttribute('data-filter');
 
-	component.setState({eventFilter: filter});
+	component.setState({eventFilter: filter, animateEntry: false});
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Objective.jsx":35,"gw2w2w-static":15}],32:[function(require,module,exports){
+},{"./Entry.jsx":32,"gw2w2w-static":15}],34:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4812,7 +5098,7 @@ function getSectionClass(mapKey, sectionLabel) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./MapSection.jsx":33,"gw2w2w-static":15}],33:[function(require,module,exports){
+},{"./MapSection.jsx":35,"gw2w2w-static":15}],35:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4925,7 +5211,7 @@ function render() {
 	);
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Objective.jsx":35}],34:[function(require,module,exports){
+},{"../objectives/Objective.jsx":37}],36:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5006,7 +5292,7 @@ function getArrowSrc(meta) {
 	return src.join('-') + '.svg';
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],35:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5111,8 +5397,11 @@ function render() {
 
 	var offsetTimestamp = timestamp + timeOffset;
 	var expires = offsetTimestamp + (5 * 60);
-	var timerActive = (expires >= dateNow + 5); // show for 5 seconds after expiring
 	var secondsRemaining = expires - dateNow;
+
+	var isTimerFresh = (dateNow - offsetTimestamp < 10);
+	var isTimerActive = (expires >= dateNow);
+	var isTimerVisible = (expires + 10 >= dateNow); // show for 10 seconds after expiring
 
 
 	var oMeta = objectivesMeta[objectiveId];
@@ -5120,7 +5409,7 @@ function render() {
 	var oLabel = objectivesLabels[objectiveId];
 	var oType = objectivesTypes[oMeta.type];
 
-	var guild = (guildId && guilds[guildId]) ? guilds[guildId] : null;
+	var guild = (guilds && guildId && guilds[guildId]) ? guilds[guildId] : null;
 
 	var mapMeta = _.find(mapsStatic, {mapIndex: oMeta.map});
 
@@ -5130,11 +5419,13 @@ function render() {
 		'objective',
 		'team',
 		worldColor,
+		(isTimerFresh) ? 'fresh' : '',
 	].join(' ');
 
 	var timerClass = [
 		'timer',
-		(timerActive) ? 'active' : 'inactive',
+		(isTimerVisible) ? 'active' : 'inactive',
+		(isTimerActive) ? '' : 'expired',
 	].join(' ');
 
 
@@ -5145,7 +5436,7 @@ function render() {
 
 	var timestampRelative = timestampMoment.twitterShort();
 	var timestampHtml = timestampMoment.format('hh:mm:ss');
-	var timerHtml = (timerActive) ? expiration.format('m:ss') : '0:00';
+	var timerHtml = (isTimerActive) ? expiration.format('m:ss') : '0:00';
 
 
 
@@ -5217,15 +5508,34 @@ function renderGuild(guildId, guild, cols){
 		guildLabel = React.createElement("i", {className: "fa fa-spinner fa-spin"});
 	}
 	else {
-		if (cols.guildName) guildLabel += guild.guild_name;
-		if (cols.guildTag) guildLabel += guild.tag;
+		if (cols.guildName) {
+			guildLabel += guild.guild_name;
+		}
+		if (cols.guildTag) {
+			if (cols.guildName) {
+				guildLabel += ('[' + guild.tag + ']');
+			}
+			else {
+				guildLabel += guild.tag;
+			}
+		}
 	}
 
-	return React.createElement("span", null, React.createElement("a", {className: "guildname", href: '#' + guildId}, guildLabel));
+	return (
+		React.createElement("span", null, 
+			React.createElement("a", {	className: "guildname", 
+				href: '#' + guildId, 
+				title: guild ? guild.guild_name + ' [' + guild.tag + ']' : null}, 
+
+				guildLabel
+
+			)
+		)
+	);
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Arrow.jsx":34,"./Sprite.jsx":36,"gw2w2w-static":15}],36:[function(require,module,exports){
+},{"./Arrow.jsx":36,"./Sprite.jsx":38,"gw2w2w-static":15}],38:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5278,7 +5588,7 @@ function render() {
 	);
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -5298,7 +5608,7 @@ function add5(inDate) {
 	return (_baseDate + (5 * 60));
 }
 
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5346,7 +5656,7 @@ module.exports = function overview(ctx) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./jsx/Langs.jsx":19,"./jsx/Overview.jsx":20,"gw2w2w-static":15}],39:[function(require,module,exports){
+},{"./jsx/Langs.jsx":19,"./jsx/Overview.jsx":20,"gw2w2w-static":15}],41:[function(require,module,exports){
 (function (global){
 'use strict';
 

@@ -1,0 +1,54 @@
+#log-container {
+	.log-tabs {
+		border-bottom: 1px solid @gray-lighter;
+		padding-bottom: 4px;
+		margin-bottom: 8px;
+		li{
+			margin: 0;
+			padding: 0;
+		}
+		a {
+			margin: 0;
+			padding: .2em .5em;
+			font-size: 8pt;
+			cursor: pointer;
+		}
+
+		#log-event-filters {
+			margin-right: 2em;
+			li {
+				float: right;
+			}
+		}
+	}
+
+
+	#log {
+		margin: 0 .5em;
+		max-height: 13em;
+		overflow-y: scroll;
+
+		li:nth-child(even){
+			background-color: @gray-lightest;
+		}
+
+		.objective {
+			font-size: 10pt;
+
+			&:hover{
+				background-color: @gray-lighter;
+			}
+		}
+
+
+		.objective-relative,
+		.objective-timestamp,
+		.objective-map,
+		.objective-guild {
+			font-size: 9pt;
+		}
+		.objective-event {
+			font-size: 7pt;
+		}
+	}
+}

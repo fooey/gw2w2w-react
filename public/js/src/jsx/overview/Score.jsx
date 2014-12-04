@@ -20,9 +20,10 @@ var numeral = require('numeral');	// browserify shim
 
 module.exports = React.createClass({
 	getInitialState: getInitialState,
-	componentWillReceiveProps: componentWillReceiveProps,
-	componentDidUpdate: componentDidUpdate,
 	render: render,
+	componentWillReceiveProps: componentWillReceiveProps,
+	shouldComponentUpdate: shouldComponentUpdate,
+	componentDidUpdate: componentDidUpdate,
 });
 
 
@@ -56,22 +57,6 @@ function componentWillReceiveProps(nextProps){
 
 
 
-function componentDidUpdate() {
-	var component = this;
-	var state = component.state;
-
-	if(state.diff > 0) {
-		var $diff = $('.diff', component.getDOMNode());
-
-		$diff
-			.velocity('fadeOut', {duration: 0})
-			.velocity('fadeIn', {duration: 200})
-			.velocity('fadeOut', {duration: 1200, delay: 400});
-	}
-}
-
-
-
 function render() {
 	var component = this;
 	var props = component.props;
@@ -91,4 +76,32 @@ function render() {
 			<span className="value">{numeral(score).format('0,0')}</span>
 		</div>
 	);
+}
+
+
+
+function shouldComponentUpdate(nextProps) {
+	var component = this;
+	var props = component.props;
+
+	var newScore = (props.score !== nextProps.score);
+
+	return newScore;
+}
+
+
+
+
+function componentDidUpdate() {
+	var component = this;
+	var state = component.state;
+
+	if(state.diff > 0) {
+		var $diff = $('.diff', component.getDOMNode());
+
+		$diff
+			.velocity('fadeOut', {duration: 0})
+			.velocity('fadeIn', {duration: 200})
+			.velocity('fadeOut', {duration: 1200, delay: 400});
+	}
 }

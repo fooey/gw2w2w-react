@@ -1,0 +1,29 @@
+#guilds {
+	.guild {
+		.transition(background-color 2s ease-in);
+
+		& + .guild {
+			margin-top: 2em;
+		}
+
+		&:nth-child(even) {
+			background-color: @gray-lightest;
+		}
+
+		h1 {
+			font-size: 32pt;
+			font-size: 24pt;
+			@media(min-width: @screen-md-min) { font-size: 32pt; }
+		}
+
+		img.emblem {
+			width: 256px;
+			max-width: 100%;
+			height: auto;
+		}
+
+		ul {
+			margin-left: 1em;
+		}
+	}
+}

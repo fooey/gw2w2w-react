@@ -40,9 +40,10 @@ var worldsStatic = require('gw2w2w-static').worlds;
 */
 
 module.exports = React.createClass({
-	mixins: [PureRenderMixin],
+	// mixins: [PureRenderMixin],
 
 	render: render,
+	shouldComponentUpdate: shouldComponentUpdate,
 });
 
 
@@ -112,4 +113,16 @@ function render() {
 			</table>
 		</div>
 	);
+}
+
+
+
+function shouldComponentUpdate(nextProps) {
+	var component = this;
+	var props = component.props;
+
+	var newScore = !_.isEqual(props.match.scores, nextProps.match.scores);
+	var newMatch = (props.match.startTime !== nextProps.match.startTime);
+
+	return (newScore || newMatch);
 }

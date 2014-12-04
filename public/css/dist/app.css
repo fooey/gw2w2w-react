@@ -7067,160 +7067,83 @@ body {
   width: 70px;
   text-align: right;
 }
-.sprite {
+#tracker .sprite {
   background-image: url(/img/sprite16.png);
   background-repeat: no-repeat;
   display: inline-block;
   width: 16px;
   height: 16px;
 }
-.sprite,
-.sprite.neutral,
-.sprite.camp,
-.sprite.neutral.camp {
+#tracker .sprite,
+#tracker .sprite.neutral,
+#tracker .sprite.camp,
+#tracker .sprite.neutral.camp {
   background-position: 0px 0px;
 }
-.sprite.tower,
-.sprite.neutral.tower {
+#tracker .sprite.tower,
+#tracker .sprite.neutral.tower {
   background-position: -17px 0px;
 }
-.sprite.keep,
-.sprite.neutral.keep {
+#tracker .sprite.keep,
+#tracker .sprite.neutral.keep {
   background-position: -32px 0px;
 }
-.sprite.castle,
-.sprite.neutral.castle {
+#tracker .sprite.castle,
+#tracker .sprite.neutral.castle {
   background-position: -48px 0px;
 }
-.sprite.red,
-.sprite.red.camp {
+#tracker .sprite.red,
+#tracker .sprite.red.camp {
   background-position: 0px -16px;
 }
-.sprite.red.tower {
+#tracker .sprite.red.tower {
   background-position: -17px -16px;
 }
-.sprite.red.keep {
+#tracker .sprite.red.keep {
   background-position: -32px -16px;
 }
-.sprite.red.castle {
+#tracker .sprite.red.castle {
   background-position: -48px -16px;
 }
-.sprite.blue,
-.sprite.blue.camp {
+#tracker .sprite.blue,
+#tracker .sprite.blue.camp {
   background-position: 0px -32px;
 }
-.sprite.blue.tower {
+#tracker .sprite.blue.tower {
   background-position: -17px -32px;
 }
-.sprite.blue.keep {
+#tracker .sprite.blue.keep {
   background-position: -32px -32px;
 }
-.sprite.blue.castle {
+#tracker .sprite.blue.castle {
   background-position: -48px -32px;
 }
-.sprite.green,
-.sprite.green.camp {
+#tracker .sprite.green,
+#tracker .sprite.green.camp {
   background-position: 0px -48px;
 }
-.sprite.green.tower {
+#tracker .sprite.green.tower {
   background-position: -17px -48px;
 }
-.sprite.green.keep {
+#tracker .sprite.green.keep {
   background-position: -32px -48px;
 }
-.sprite.green.castle {
+#tracker .sprite.green.castle {
   background-position: -48px -48px;
-}
-#tracker #scoreboards .scoreboard {
-  margin: 0 1px;
-  padding: .5em;
-}
-#tracker #scoreboards .scoreboard h1 {
-  font-size: 18pt;
-  font-weight: 400;
-  padding: 0;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-#tracker #scoreboards .scoreboard h2 {
-  font-size: 14pt;
-  font-weight: 400;
-  margin: .25em 0 .75em 0;
-  padding: 0;
-}
-#tracker #scoreboards .scoreboard ul {
-  margin: 0;
-}
-#tracker #scoreboards .scoreboard li {
-  line-height: 20px;
-  height: 20px;
-  display: inline-block;
-  font-size: 10pt;
-}
-#tracker .map {
-  padding: 1em .25em;
-}
-#tracker .map h2 {
-  cursor: pointer;
-}
-#tracker .map.map-blur {
-  -moz-transform: scale(0.9);
-  -webkit-transform: scale(0.9);
-  -ms-transform: scale(0.9);
-  -o-transform: scale(0.9);
-  transform: scale(0.9);
-  -webkit-filter: blur(1px);
-  -moz-filter: blur(1px);
-  -ms-filter: blur(1px);
-  filter: blur(1px);
-  zoom: 1;
-  -webkit-opacity: 0.6;
-  -moz-opacity: 0.6;
-  opacity: 0.6;
-  filter: alpha(opacity=60);
-}
-#tracker .mapScores {
-  text-align: center;
-}
-#tracker .mapScores h2 {
-  font-size: 14pt;
-  font-weight: 400;
-  padding: 0 0 .25em;
-  margin: 0 0 .1em;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-#tracker .mapScores li {
-  font-size: 9pt;
-}
-#tracker .map-section {
-  margin: 0 0 20px 0;
-  padding: 0;
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  #tracker .map-section {
-    padding: 0 .25em;
-  }
-}
-#tracker .map-section ul,
-#tracker .map-section li {
-  margin: 0;
-  padding: 0;
-}
-#tracker .map-section .section-label {
-  font-size: 10pt;
-  line-height: 20px;
-  font-weight: 700;
-  margin: 0;
-  padding: 0;
 }
 #tracker .objective {
   display: table;
   width: 100%;
   line-height: 20px;
   height: 20px;
+  -moz-transition: all 400ms ease-in;
+  -webkit-transition: all 400ms ease-in;
+  -o-transition: all 400ms ease-in;
+  transition: all 400ms ease-in;
   font-size: 12pt;
+}
+#tracker .objective.fresh {
+  background-color: #ffc;
 }
 #tracker .objective > div {
   display: table-cell;
@@ -7295,65 +7218,164 @@ body {
   cursor: pointer;
 }
 #tracker .objective .timer {
+  display: inline-block;
   line-height: 16px;
-  padding: 0 .5em;
   font-size: 8pt;
   color: #333;
   background-color: #ffc;
-}
-#tracker .objective .timer.active.unknown {
+  -moz-transition: all 400ms ease-in;
+  -webkit-transition: all 400ms ease-in;
+  -o-transition: all 400ms ease-in;
+  transition: all 400ms ease-in;
   zoom: 1;
-  -webkit-opacity: 0.3;
-  -moz-opacity: 0.3;
-  opacity: 0.3;
-  filter: alpha(opacity=30);
-  background-color: #eeeeee;
+  -webkit-opacity: 0;
+  -moz-opacity: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  max-height: 0;
+  max-width: 0;
+  padding: 0;
 }
-#tracker .objective .timer.inactive {
-  display: none;
+#tracker .objective .timer.active {
+  zoom: 1;
+  -webkit-opacity: 1;
+  -moz-opacity: 1;
+  opacity: 1;
+  filter: alpha(opacity=100);
+  max-width: 4em;
+  max-height: 20px;
+  padding: 0 .5em;
 }
-#tracker .log-tabs {
+#tracker .objective .timer.active.expired {
+  background-color: #f00;
+  color: #fff;
+}
+#tracker #scoreboards .scoreboard {
+  margin: 0 1px;
+  padding: .5em;
+}
+#tracker #scoreboards .scoreboard h1 {
+  font-size: 18pt;
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#tracker #scoreboards .scoreboard h2 {
+  font-size: 14pt;
+  font-weight: 400;
+  margin: .25em 0 .75em 0;
+  padding: 0;
+}
+#tracker #scoreboards .scoreboard ul {
+  margin: 0;
+}
+#tracker #scoreboards .scoreboard li {
+  line-height: 20px;
+  height: 20px;
+  display: inline-block;
+  font-size: 10pt;
+}
+#tracker #maps .map {
+  padding: 1em .25em;
+}
+#tracker #maps .map h2 {
+  cursor: pointer;
+}
+#tracker #maps .map.map-blur {
+  -moz-transform: scale(0.9);
+  -webkit-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  -o-transform: scale(0.9);
+  transform: scale(0.9);
+  -webkit-filter: blur(1px);
+  -moz-filter: blur(1px);
+  -ms-filter: blur(1px);
+  filter: blur(1px);
+  zoom: 1;
+  -webkit-opacity: 0.6;
+  -moz-opacity: 0.6;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+#tracker #maps .mapScores {
+  text-align: center;
+}
+#tracker #maps .mapScores h2 {
+  font-size: 14pt;
+  font-weight: 400;
+  padding: 0 0 .25em;
+  margin: 0 0 .1em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+#tracker #maps .mapScores li {
+  font-size: 9pt;
+}
+#tracker #maps .map-section {
+  margin: 0 0 20px 0;
+  padding: 0;
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  #tracker #maps .map-section {
+    padding: 0 .25em;
+  }
+}
+#tracker #maps .map-section ul,
+#tracker #maps .map-section li {
+  margin: 0;
+  padding: 0;
+}
+#tracker #maps .map-section .section-label {
+  font-size: 10pt;
+  line-height: 20px;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+}
+#tracker #log-container .log-tabs {
   border-bottom: 1px solid #eeeeee;
   padding-bottom: 4px;
   margin-bottom: 8px;
 }
-#tracker .log-tabs li {
+#tracker #log-container .log-tabs li {
   margin: 0;
   padding: 0;
 }
-#tracker .log-tabs a {
+#tracker #log-container .log-tabs a {
   margin: 0;
   padding: .2em .5em;
   font-size: 8pt;
   cursor: pointer;
 }
-#tracker .log-tabs #log-event-filters {
+#tracker #log-container .log-tabs #log-event-filters {
   margin-right: 2em;
 }
-#tracker .log-tabs #log-event-filters li {
+#tracker #log-container .log-tabs #log-event-filters li {
   float: right;
 }
-#tracker #log {
+#tracker #log-container #log {
   margin: 0 .5em;
   max-height: 13em;
   overflow-y: scroll;
 }
-#tracker #log li:nth-child(even) {
+#tracker #log-container #log li:nth-child(even) {
   background-color: #f6f6f6;
 }
-#tracker #log .objective {
+#tracker #log-container #log .objective {
   font-size: 10pt;
 }
-#tracker #log .objective:hover {
+#tracker #log-container #log .objective:hover {
   background-color: #eeeeee;
 }
-#tracker #log .objective-relative,
-#tracker #log .objective-timestamp,
-#tracker #log .objective-map,
-#tracker #log .objective-guild {
+#tracker #log-container #log .objective-relative,
+#tracker #log-container #log .objective-timestamp,
+#tracker #log-container #log .objective-map,
+#tracker #log-container #log .objective-guild {
   font-size: 9pt;
 }
-#tracker #log .objective-event {
+#tracker #log-container #log .objective-event {
   font-size: 7pt;
 }
 #tracker #guilds .guild {
