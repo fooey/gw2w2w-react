@@ -7,7 +7,16 @@
 
 var React = require('React');		// browserify shim
 
-var PureRenderMixin = React.addons.PureRenderMixin;
+
+
+
+
+/*
+*	Component Globals
+*/
+
+var pieSize = 60;
+var pieStroke = 2;
 
 
 
@@ -18,9 +27,11 @@ var PureRenderMixin = React.addons.PureRenderMixin;
 */
 
 module.exports = React.createClass({
-	mixins: [PureRenderMixin],
-
 	render: render,
+	componentDidMount: componentDidMount,
+	componentDidUpdate: componentDidMount,
+
+	setImageSrc: setImageSrc,
 });
 
 
@@ -42,19 +53,66 @@ function render() {
 	var component = this;
 	var props = component.props;
 
-	var size = props.size || '60';
-	var stroke = props.stroke || 2;
-	var scores = props.scores || [];
-
-	var pieSrc = 'http://www.piely.net/' + size + '/' + scores.join(',') + '?strokeWidth=' + stroke;
+	var scores = props.scores;
 
 	return (
-		(scores.length) ?
-			<img
-				width="60" height="60"
-				key={'pie-' + props.matchId}
-				src={pieSrc}
-			/> :
-			<span />
+		(scores && scores.length)
+			? <img width='60' height='60' />
+			: null
+
 	);
+}
+
+
+
+function componentDidMount() {
+	var component = this;
+	var props = component.props;
+
+	var scores = props.scores;
+
+	var src = getImageSource(scores);
+
+	component.setImageSrc(src);
+}
+
+
+
+function componentDidUpdate() {
+	var component = this;
+	var props = component.props;
+
+	var scores = props.scores;
+
+	var newImage = new Image(pieSize, pieSize);
+	newImage.src = getImageSource(scores);
+
+	newImage.onload = function(){
+		component.setImageSrc(newImage.src);
+	};
+}
+
+
+
+/*
+*	Component Helpers
+*/
+
+function setImageSrc(src) {
+	var component = this;
+
+	component.getDOMNode().setAttribute('src', src);
+}
+
+
+
+
+/*
+*
+*	Private Methods
+*
+*/
+
+function getImageSource(scores) {
+	return 'http://www.piely.net/' + pieSize + '/' + scores.join(',') + '?strokeWidth=' + pieStroke;
 }
