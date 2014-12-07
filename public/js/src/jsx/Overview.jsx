@@ -71,23 +71,6 @@ function getInitialState() {
 
 
 
-function componentDidMount() {
-	var component = this;
-
-	component.updateTimer = null;
-	component.getMatches();
-}
-
-
-
-function componentWillUnmount() {
-	var component = this;
-
-	clearTimeout(component.updateTimer);
-}
-
-
-
 function render() {
 	var component = this;
 	var props = component.props;
@@ -149,6 +132,23 @@ function render() {
 
 
 
+function componentDidMount() {
+	var component = this;
+
+	component.updateTimer = null;
+	component.getMatches();
+}
+
+
+
+function componentWillUnmount() {
+	var component = this;
+
+	clearTimeout(component.updateTimer);
+}
+
+
+
 
 /*
 *	Component Helper Methods
@@ -158,12 +158,14 @@ function getMatches() {
 	var component = this;
 
 	api.getMatches(function(err, data) {
-		if (!err && data && _.isPlainObject(data)) {
-			component.setState({matches: data});
-		}
+		if(component.isMounted()) {
+			if (!err && data && Object.keys(data).length) {
+				component.setState({matches: data});
+			}
 
-		var interval = _.random(2000, 4000);
-		component.updateTimer = window.setTimeout(component.getMatches, interval);
+			var interval = _.random(2000, 4000);
+			component.updateTimer = window.setTimeout(component.getMatches, interval);
+		}
 	});
 
 }
