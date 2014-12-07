@@ -96,7 +96,7 @@ function componentDidUpdate() {
 	var component = this;
 	var state = component.state;
 
-	if(state.diff > 0) {
+	if(state.diff) {
 		var $diff = $('.diff', component.getDOMNode());
 
 		$diff
