@@ -3536,6 +3536,7 @@ function render() {
 	var match = props.match;
 	var lang = props.lang;
 
+	var matchId = match.id;
 	var scores = match.scores;
 
 	var redWorld = worldsStatic[match.redId][lang.slug];
@@ -3549,7 +3550,7 @@ function render() {
 	};
 
 	return (
-		React.createElement("div", {className: "matchContainer", key: match.id}, 
+		React.createElement("div", {className: "matchContainer", key: matchId}, 
 			React.createElement("table", {className: "match"}, 
 				_.map(matchWorlds, function(mw, color) {
 					var world = mw.world;
@@ -3565,14 +3566,14 @@ function render() {
 							), 
 							React.createElement("td", {className: "team score " + color}, 
 								React.createElement(Score, {
-									key: match.id, 
-									matchId: match.id, 
+									key: matchId, 
+									matchId: matchId, 
 									team: color, 
 									score: score}
 								)
 							), 
 							(color === 'red') ?
-								React.createElement("td", {rowSpan: "3", className: "pie"}, React.createElement(Pie, {scores: match.scores, size: "60", matchId: match.id})) :
+								React.createElement("td", {rowSpan: "3", className: "pie"}, React.createElement(Pie, {scores: scores, size: "60", matchId: matchId})) :
 								null
 							
 						)
@@ -3612,26 +3613,11 @@ var React = (typeof window !== "undefined" ? window.React : typeof global !== "u
 
 
 /*
-*	Component Globals
-*/
-
-var pieSize = 60;
-var pieStroke = 2;
-
-
-
-
-
-/*
 *	Component Export
 */
 
 module.exports = React.createClass({displayName: 'exports',
 	render: render,
-	componentDidMount: componentDidMount,
-	componentDidUpdate: componentDidMount,
-
-	setImageSrc: setImageSrc,
 });
 
 
@@ -3655,53 +3641,7 @@ function render() {
 
 	var scores = props.scores;
 
-	return (
-		(scores && scores.length)
-			? React.createElement("img", {width: "60", height: "60"})
-			: null
-
-	);
-}
-
-
-
-function componentDidMount() {
-	var component = this;
-	var props = component.props;
-
-	var scores = props.scores;
-
-	var src = getImageSource(scores);
-
-	component.setImageSrc(src);
-}
-
-
-
-function componentDidUpdate() {
-	var component = this;
-	var props = component.props;
-
-	var scores = props.scores;
-
-	var newImage = new Image(pieSize, pieSize);
-	newImage.src = getImageSource(scores);
-
-	newImage.onload = function(){
-		component.setImageSrc(newImage.src);
-	};
-}
-
-
-
-/*
-*	Component Helpers
-*/
-
-function setImageSrc(src) {
-	var component = this;
-
-	component.getDOMNode().setAttribute('src', src);
+	return React.createElement("img", {width: "60", height: "60", src: getImageSource(scores)});
 }
 
 
@@ -3714,6 +3654,9 @@ function setImageSrc(src) {
 */
 
 function getImageSource(scores) {
+	var pieSize = 60;
+	var pieStroke = 2;
+
 	return 'http://www.piely.net/' + pieSize + '/' + scores.join(',') + '?strokeWidth=' + pieStroke;
 }
 
@@ -3982,7 +3925,7 @@ function componentDidUpdate() {
 	var component = this;
 	var state = component.state;
 
-	if(state.diff > 0) {
+	if(state.diff) {
 		var $diff = $('.diff', component.getDOMNode());
 
 		$diff

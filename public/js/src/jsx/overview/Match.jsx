@@ -68,6 +68,7 @@ function render() {
 	var match = props.match;
 	var lang = props.lang;
 
+	var matchId = match.id;
 	var scores = match.scores;
 
 	var redWorld = worldsStatic[match.redId][lang.slug];
@@ -81,7 +82,7 @@ function render() {
 	};
 
 	return (
-		<div className="matchContainer" key={match.id}>
+		<div className="matchContainer" key={matchId}>
 			<table className="match">
 				{_.map(matchWorlds, function(mw, color) {
 					var world = mw.world;
@@ -97,14 +98,14 @@ function render() {
 							</td>
 							<td className={"team score " + color}>
 								<Score
-									key={match.id}
-									matchId={match.id}
+									key={matchId}
+									matchId={matchId}
 									team={color}
 									score={score}
 								/>
 							</td>
 							{(color === 'red') ?
-								<td rowSpan="3" className="pie"><Pie scores={match.scores} size="60" matchId={match.id} /></td> :
+								<td rowSpan="3" className="pie"><Pie scores={scores} size="60" matchId={matchId} /></td> :
 								null
 							}
 						</tr>
