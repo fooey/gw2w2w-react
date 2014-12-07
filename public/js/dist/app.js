@@ -2902,7 +2902,6 @@ function render() {
 
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
 var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
-var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);		// browserify shim
 
 var api = require('../api');
 
@@ -3084,7 +3083,7 @@ function setPageTitle(lang) {
 		}
 	}
 
-	$('title').text(title.join(' - '));
+	document.getElementsByTagName('title')[0].innerHTML = title.join(' - ');
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})

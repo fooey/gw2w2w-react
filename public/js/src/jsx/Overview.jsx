@@ -7,7 +7,6 @@
 
 var React = require('React');	// browserify shim
 var _ = require('lodash');		// browserify shim
-var $ = require('jquery');		// browserify shim
 
 var api = require('../api');
 
@@ -189,5 +188,5 @@ function setPageTitle(lang) {
 		}
 	}
 
-	$('title').text(title.join(' - '));
+	document.getElementsByTagName('title')[0].innerHTML = title.join(' - ');
 }
