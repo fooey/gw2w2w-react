@@ -1,0 +1,11 @@
+<svg height="60" width="60" viewport="0 0 60 60" xmlns="http://www.w3.org/2000/svg" class="piely-chart">
+  <path stroke="#fff" stroke-width="2" fill="#a94442" d="M30,30 L58,30 A28,28 0 0,1 16,54 z">
+    <animateTransform attributeName="transform" type="rotate" from="0 30 30" to="360 30 30" dur="2s" repeatCount="indefinite"></animateTransform>
+  </path>
+  <path stroke="#fff" stroke-width="2" fill="#31708f" d="M30,30 L16,54 A28,28 0 0,1 16,6 z">
+    <animateTransform attributeName="transform" type="rotate" from="0 30 30" to="360 30 30" dur="2s" repeatCount="indefinite"></animateTransform>
+  </path>
+  <path stroke="#fff" stroke-width="2" fill="#3c763d" d="M30,30 L16,6 A28,28 0 0,1 58,30 z">
+    <animateTransform attributeName="transform" type="rotate" from="0 30 30" to="360 30 30" dur="2s" repeatCount="indefinite"></animateTransform>
+  </path>
+</svg>
