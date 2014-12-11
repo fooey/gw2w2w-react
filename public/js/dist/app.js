@@ -2175,14 +2175,23 @@ module.exports = {
   var hashbang = false;
 
   /**
+   * Previous context, for capturing
+   * page exit events.
+   */
+
+  var prevContext;
+
+  /**
    * Register `path` with callback `fn()`,
-   * or route `path`, or `page.start()`.
+   * or route `path`, or redirection,
+   * or `page.start()`.
    *
    *   page(fn);
    *   page('*', fn);
    *   page('/user/:id', load, user);
    *   page('/user/' + user.id, { some: 'thing' });
    *   page('/user/' + user.id);
+   *   page('/from', '/to')
    *   page();
    *
    * @param {String|Function} path
@@ -2218,6 +2227,7 @@ module.exports = {
    */
 
   page.callbacks = [];
+  page.exits = [];
 
   /**
    * Get or set basepath to `path`.
@@ -2290,18 +2300,29 @@ module.exports = {
   };
 
   /**
-   * Show `path` with optional `state` object.
+   * Register route to redirect from one path to other
+   * or just redirect to another route
    *
-   * @param {String} from
-   * @param {String} to
+   * @param {String} from - if param 'to' is undefined redirects to 'from'
+   * @param {String} [to]
    * @api public
    */
   page.redirect = function(from, to) {
-    page(from, function (e) {
-      setTimeout(function() {
-        page.replace(to);
+    // Define route from a path to another
+    if ('string' === typeof from && 'string' === typeof to) {
+      page(from, function (e) {
+        setTimeout(function() {
+          page.replace(to);
+        },0);
       });
-    });
+    }
+
+    // Wait for the push state and replace it with another
+    if('string' === typeof from && 'undefined' === typeof to) {
+      setTimeout(function() {
+          page.replace(from);
+      },0);
+    }
   };
 
   /**
@@ -2329,15 +2350,29 @@ module.exports = {
    */
 
   page.dispatch = function(ctx){
+    var prev = prevContext;
     var i = 0;
+    var j = 0;
 
-    function next() {
-      var fn = page.callbacks[i++];
-      if (!fn) return unhandled(ctx);
-      fn(ctx, next);
+    prevContext = ctx;
+
+    function nextExit() {
+      var fn = page.exits[j++];
+      if (!fn) return nextEnter();
+      fn(prev, nextExit);
     }
 
-    next();
+    function nextEnter() {
+      var fn = page.callbacks[i++];
+      if (!fn) return unhandled(ctx);
+      fn(ctx, nextEnter);
+    }
+
+    if (prev) {
+      nextExit();
+    } else {
+      nextEnter();
+    }
   };
 
   /**
@@ -2366,6 +2401,34 @@ module.exports = {
   }
 
   /**
+   * Register an exit route on `path` with
+   * callback `fn()`, which will be called
+   * on the previous context when a new
+   * page is visited.
+   */
+  page.exit = function(path, fn) {
+    if (typeof path == 'function') {
+      return page.exit('*', path);
+    };
+
+    var route = new Route(path);
+    for (var i = 1; i < arguments.length; ++i) {
+      page.exits.push(route.middleware(arguments[i]));
+    }
+  };
+
+  /**
+  * Remove URL encoding from the given `str`.
+  * Accommodates whitespace in both x-www-form-urlencoded
+  * and regular percent-encoded form.
+  *
+  * @param {str} URL component to decode
+  */
+  function decodeURLEncodedURIComponent(str) {
+    return decodeURIComponent(str.replace(/\+/g, ' '));
+  }
+
+  /**
    * Initialize a new "request" `Context`
    * with the given `path` and optional initial `state`.
    *
@@ -2375,6 +2438,7 @@ module.exports = {
    */
 
   function Context(path, state) {
+    path = decodeURLEncodedURIComponent(path);
     if ('/' === path[0] && 0 !== path.indexOf(base)) path = base + path;
     var i = path.indexOf('?');
 
@@ -2545,6 +2609,9 @@ module.exports = {
     var el = e.target;
     while (el && 'A' != el.nodeName) el = el.parentNode;
     if (!el || 'A' != el.nodeName) return;
+
+    // Ignore if tag has a "download" attribute
+    if (el.getAttribute("download")) return;
 
     // ensure non-hash for the same path
     var link = el.getAttribute('href');
