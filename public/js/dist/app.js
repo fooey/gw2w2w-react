@@ -22,7 +22,7 @@ $(function() {
 	});
 });
 
-},{"./overview.jsx":40,"./tracker.jsx":41,"page":16}],2:[function(require,module,exports){
+},{"./overview.jsx":41,"./tracker.jsx":42,"page":16}],2:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3061,7 +3061,6 @@ function getMatches() {
 			component.updateTimer = window.setTimeout(component.getMatches, interval);
 		}
 	});
-
 }
 
 
@@ -3098,9 +3097,13 @@ function setPageTitle(lang) {
 
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
 var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);		// browserify shim
 var async = (typeof window !== "undefined" ? window.async : typeof global !== "undefined" ? global.async : null);	// browserify shim
+var moment = (typeof window !== "undefined" ? window.moment : typeof global !== "undefined" ? global.moment : null);	// browserify shim
 
 var api = require('../api');
+var libDate = require('../lib/date.js');
+var trackerTimers = require('../lib/trackerTimers');
 
 
 
@@ -3112,7 +3115,8 @@ var api = require('../api');
 
 var Scoreboard = require('./tracker/Scoreboard.jsx');
 var Maps = require('./tracker/Maps.jsx');
-var Guilds = require('./tracker/guilds/Guilds.jsx');
+// var Options = require('./tracker/Options.jsx');
+var Guilds = require('./tracker/Guilds.jsx');
 
 
 
@@ -3122,7 +3126,6 @@ var Guilds = require('./tracker/guilds/Guilds.jsx');
 *	Component Globals
 */
 
-var libDate = require('../lib/date.js');
 var staticData = require('gw2w2w-static');
 var worldsStatic = staticData.worlds;
 
@@ -3143,13 +3146,15 @@ module.exports = React.createClass({displayName: 'exports',
 	render: render,
 
 
-	tick: tick,
+	updateTimers: updateTimers,
 
 	getMatchDetails: getMatchDetails,
 	onMatchDetails: onMatchDetails,
 
 	queueGuildLookups: queueGuildLookups,
 	getGuildDetails: getGuildDetails,
+
+	// setOptions: setOptions,
 });
 
 
@@ -3173,50 +3178,58 @@ function getInitialState() {
 	return {
 		hasData: false,
 
-		dateNow: libDate.dateNow(),
+		// dateNow: libDate.dateNow(),
 		lastmod: 0,
 		timeOffset: 0,
 
 		match: [],
 		details: [],
 		guilds: {},
+		// options: Options.getDefaultOptions(),
 	};
 }
 
 
 
 function componentWillMount() {
-	var component = this;
+	// var component = this;
 }
 
 
 
 function componentDidMount() {
 	var component = this;
+	// window.console.log('Tracker::componentDidMount');
 
-	component.interval = window.setInterval(component.tick, 1000);
+	component.intervals = {
+		timers: null,
+	};
+	component.timeouts = {
+		data: null,
+	};
 
-	component.updateTimer = null;
+	component.intervals.timers = window.setInterval(component.updateTimers, 1000);
+	process.nextTick(component.updateTimers);
+
 	process.nextTick(component.getMatchDetails);
 }
 
 
 
 function shouldComponentUpdate(nextProps, nextState) {
-	var component = this;
-	var props = component.props;
-	var state = component.state;
+	// var component = this;
+	// var props = component.props;
+	// var state = component.state;
 
-	// don't update more often than once per second
-	// helps greatly during initialization while guilds are loading
+	// var langChanged = (props.lang !== nextProps.lang);
+	// var isModified = (state.lastmod !== nextState.lastmod);
+	// var newGuildData = !_.isEqual(state.guilds, nextState.guilds);
+	// // console.log('newGuildData', newGuildData,_.isEqual(state.guilds, nextState.guilds));
+	// var shouldUpdate = (isModified || langChanged || newGuildData);
 
-	var isNewTick = (state.dateNow !== nextState.dateNow);
-	var langChange = (props.lang !== nextProps.lang);
-	var shouldUpdate = (isNewTick || langChange);
+	// console.log(Date.now(), shouldUpdate);
 
-	// console.log(shouldUpdate, isFirstUpdate, isNewNow);
-
-	return shouldUpdate;
+	return true;
 }
 
 
@@ -3224,8 +3237,12 @@ function shouldComponentUpdate(nextProps, nextState) {
 function componentWillUnmount() {
 	var component = this;
 
-	clearTimeout(component.updateTimer);
-	clearInterval(component.interval);
+	_.each(component.intervals, function(windowInterval) {
+		window.clearInterval(windowInterval);
+	});
+	_.each(component.timeouts, function(windowTimeout) {
+		window.clearInterval(windowTimeout);
+	});
 }
 
 
@@ -3248,7 +3265,7 @@ function render() {
 		setPageTitle(lang, world);
 
 
-		var dateNow = state.dateNow;
+		// var dateNow = state.dateNow;
 		var timeOffset = state.timeOffset;
 		var match = state.match;
 		var guilds = state.guilds;
@@ -3292,26 +3309,35 @@ function render() {
 
 				React.createElement(Maps, {
 					lang: lang, 
-					timeOffset: timeOffset, 
-					dateNow: dateNow, 
 
 					details: details, 
 					matchWorlds: matchWorlds, 
 					guilds: guilds}
 				), 
 
-				React.createElement(Guilds, {
-					lang: lang, 
-					timeOffset: timeOffset, 
-					dateNow: dateNow, 
+				React.createElement("div", {className: "row"}, 
+					React.createElement("div", {className: "col-sm-6"}
+					), 
+					React.createElement("div", {className: "col-sm-18"}, 
+						React.createElement(Guilds, {
+							lang: lang, 
 
-					guilds: guilds, 
-					eventHistory: eventHistory}
+							guilds: guilds, 
+							eventHistory: eventHistory}
+						)
+					)
 				)
 
 			)
 		);
 	}
+
+	/*
+						<Options
+							options={state.options}
+							setOptions={component.setOptions}
+						/>
+	*/
 
 }
 
@@ -3322,11 +3348,24 @@ function render() {
 *	Component Helper Methods
 */
 
-function tick() {
+// function tick() {
+// 	var component = this;
+
+// 	if(component.isMounted()) {
+// 		component.setState({dateNow: libDate.dateNow()});
+// 	}
+// }
+
+
+function updateTimers() {
 	var component = this;
 
 	if(component.isMounted()) {
-		component.setState({dateNow: libDate.dateNow()});
+		var state = component.state;
+		var timeOffset = state.timeOffset;
+		var now = libDate.dateNow() - timeOffset;
+
+		trackerTimers.update(now, timeOffset);
 	}
 }
 
@@ -3393,7 +3432,7 @@ function onMatchDetails(err, data) {
 	}
 
 	var refreshTime = _.random(1000*2, 1000*4);
-	component.updateTimer = window.setTimeout(component.getMatchDetails, refreshTime);
+	component.timeouts.data = window.setTimeout(component.getMatchDetails, refreshTime);
 
 }
 
@@ -3433,9 +3472,8 @@ function getGuildDetails(guildId, onComplete) {
 		guildId,
 		function(err, data) {
 			if(!err) {
-				state.guilds[guildId] = data;
-
 				if(component.isMounted()) {
+					state.guilds[guildId] = data;
 					component.setState({guilds: state.guilds});
 				}
 			}
@@ -3443,6 +3481,17 @@ function getGuildDetails(guildId, onComplete) {
 		}
 	);
 }
+
+
+
+// function setOptions(newOptions) {
+// 	var component = this;
+// 	var props = component.props;
+
+// 	console.log('Tracker::setOptions', newOptions);
+
+// 	component.setState({options: newOptions});
+// }
 
 
 
@@ -3455,7 +3504,6 @@ function getGuildDetails(guildId, onComplete) {
 */
 
 function setPageTitle(lang, world) {
-	var $ = (typeof window !== "undefined" ? window.$ : typeof global !== "undefined" ? global.$ : null);
 	var title = [world[lang.slug].name, 'gw2w2w'];
 
 	if (lang.slug !== 'en') {
@@ -3465,7 +3513,7 @@ function setPageTitle(lang, world) {
 	$('title').text(title.join(' - '));
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../api":18,"../lib/date.js":39,"./tracker/Maps.jsx":27,"./tracker/Scoreboard.jsx":28,"./tracker/guilds/Guilds.jsx":31,"_process":2,"gw2w2w-static":15}],22:[function(require,module,exports){
+},{"../api":18,"../lib/date.js":39,"../lib/trackerTimers":40,"./tracker/Guilds.jsx":27,"./tracker/Maps.jsx":28,"./tracker/Scoreboard.jsx":29,"_process":2,"gw2w2w-static":15}],22:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3941,6 +3989,147 @@ function componentDidUpdate() {
 (function (global){
 'use strict';
 
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
+
+var Guild = require('./guilds/Guild.jsx');
+
+
+
+
+
+/*
+*	Component Globals
+*/
+
+var objectiveCols = {
+	elapsed: true,
+	timestamp: true,
+	mapAbbrev: true,
+	arrow: true,
+	sprite: true,
+	name: true,
+	eventType: false,
+	guildName: false,
+	guildTag: false,
+	timer: false,
+};
+
+
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	getInitialState: getInitialState,
+	render: render,
+});
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function getInitialState() {
+	return {
+		animateEntry: false,
+	};
+}
+
+
+
+function render() {
+	var component = this;
+	var props = component.props;
+	var state = component.state;
+
+	var timeOffset = props.timeOffset;
+	var dateNow = props.dateNow;
+	var lang = props.lang;
+	var eventHistory = props.eventHistory;
+
+	var guilds = _
+		.chain(props.guilds)
+		.map(function(guild){
+			guild.claims = _.chain(eventHistory)
+				.filter(function(entry){
+					return (entry.type === 'claim' && entry.guild === guild.guild_id);
+				})
+				.sortBy('timestamp')
+				.reverse()
+				.value();
+
+			guild.lastClaim = (guild.claims && guild.claims.length) ? guild.claims[0].timestamp : 0;
+			return guild;
+		})
+		.sortBy('guild_name')
+		.sortBy(function(guild){
+			return -guild.lastClaim;
+		})
+		.value();
+
+
+	return (
+		React.createElement("section", {id: "guilds"}, 
+			React.createElement("h2", {className: "section-header"}, "Guild Claims"), 
+			_.map(guilds, function(guild, ixGuild) {
+				var key = guild.guild_id + '@' + guild.lastClaim;
+
+				return (
+					React.createElement(Guild, {
+						key: key, 
+						dateNow: dateNow, 
+						timeOffset: timeOffset, 
+						lang: lang, 
+
+						animateEntry: state.animateEntry, 
+						guild: guild}
+					)
+				);
+			})
+		)
+	);
+}
+
+
+
+
+function componentDidMount() {
+	var component = this;
+
+	component.setState({animateEntry: true});
+}
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./guilds/Guild.jsx":31}],28:[function(require,module,exports){
+(function (global){
+'use strict';
+
 
 /*
 *	Dependencies
@@ -4006,9 +4195,6 @@ function render() {
 		return null;
 	}
 
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
-
 	var lang = props.lang;
 	var details = props.details;
 	var matchWorlds = props.matchWorlds;
@@ -4023,8 +4209,6 @@ function render() {
 			React.createElement(MapDetails, {
 				mapKey: mapKey, 
 				lang: lang, 
-				dateNow: dateNow, 
-				timeOffset: timeOffset, 
 
 				details: details, 
 				guilds: guilds, 
@@ -4035,7 +4219,7 @@ function render() {
 
 
 	return (
-		React.createElement("div", {id: "maps"}, 
+		React.createElement("section", {id: "maps"}, 
 			React.createElement("h1", null, "Maps"), 
 			React.createElement("div", {className: "row"}, 
 
@@ -4053,8 +4237,6 @@ function render() {
 						React.createElement("div", {className: "col-md-24"}, 
 							React.createElement(Log, {
 								lang: lang, 
-								dateNow: dateNow, 
-								timeOffset: timeOffset, 
 
 								eventHistory: eventHistory, 
 								guilds: guilds, 
@@ -4070,7 +4252,7 @@ function render() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./log/Log.jsx":33,"./maps/MapDetails.jsx":34,"gw2w2w-static":15}],28:[function(require,module,exports){
+},{"./log/Log.jsx":33,"./maps/MapDetails.jsx":34,"gw2w2w-static":15}],29:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4140,7 +4322,7 @@ function render() {
 	var matchWorlds = props.matchWorlds;
 
 	return (
-		React.createElement("div", {className: "row", id: "scoreboards"}, 
+		React.createElement("section", {className: "row", id: "scoreboards"}, 
 			_.map(matchWorlds, function(mw, color) {
 				var worldName = (mw.world) ? mw.world[lang.slug].name : color;
 				var score = mw.score;
@@ -4193,7 +4375,7 @@ function render() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./objectives/Sprite.jsx":38,"gw2w2w-static":15}],29:[function(require,module,exports){
+},{"./objectives/Sprite.jsx":38,"gw2w2w-static":15}],30:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4264,7 +4446,7 @@ function slugify(str) {
 	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4364,15 +4546,13 @@ function render() {
 								React.createElement("li", {key: entry.id}, 
 									React.createElement(Objective, {
 										lang: lang, 
-										dateNow: dateNow, 
-										timeOffset: timeOffset, 
 										cols: objectiveCols, 
 
 										objectiveId: entry.objectiveId, 
 										worldColor: entry.world, 
 										timestamp: entry.timestamp, 
 										guildId: guild.guild_id, 
-										eventType: entry.type}
+										guild: guild}
 									)
 								)
 							);
@@ -4403,149 +4583,7 @@ function componentDidMount() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Objective.jsx":37,"./Emblem.jsx":29}],31:[function(require,module,exports){
-(function (global){
-'use strict';
-
-/*
-*	Dependencies
-*/
-
-var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
-var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);		// browserify shim
-
-
-
-
-
-/*
-*	React Components
-*/
-
-var Guild = require('./Guild.jsx');
-
-
-
-
-
-/*
-*	Component Globals
-*/
-
-var objectiveCols = {
-	elapsed: true,
-	timestamp: true,
-	mapAbbrev: true,
-	arrow: true,
-	sprite: true,
-	name: true,
-	eventType: false,
-	guildName: false,
-	guildTag: false,
-	timer: false,
-};
-
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({displayName: 'exports',
-	getInitialState: getInitialState,
-	render: render,
-});
-
-
-
-
-
-/*
-*
-*	Component Methods
-*
-*/
-
-
-/*
-*	Component Lifecyle Methods
-*/
-
-function getInitialState() {
-	return {
-		animateEntry: false,
-	};
-}
-
-
-
-function render() {
-	var component = this;
-	var props = component.props;
-	var state = component.state;
-
-	var timeOffset = props.timeOffset;
-	var dateNow = props.dateNow;
-	var lang = props.lang;
-	var eventHistory = props.eventHistory;
-
-	var guilds = _
-		.chain(props.guilds)
-		.map(function(guild){
-			guild.claims = _.chain(eventHistory)
-				.filter(function(entry){
-					return (entry.type === 'claim' && entry.guild === guild.guild_id);
-				})
-				.sortBy('timestamp')
-				.reverse()
-				.value();
-
-			guild.lastClaim = (guild.claims && guild.claims.length) ? guild.claims[0].timestamp : 0;
-			return guild;
-		})
-		.sortBy('guild_name')
-		.sortBy(function(guild){
-			return -guild.lastClaim;
-		})
-		.value();
-
-
-	return (
-		React.createElement("div", {id: "guilds"}, 
-			(guilds && guilds.length) ? React.createElement("hr", null) : null, 
-
-			_.map(guilds, function(guild, ixGuild) {
-				var key = guild.guild_id + '@' + guild.lastClaim;
-
-				return (
-					React.createElement(Guild, {
-						key: key, 
-						dateNow: dateNow, 
-						timeOffset: timeOffset, 
-						lang: lang, 
-
-						animateEntry: state.animateEntry, 
-						guild: guild}
-					)
-				);
-			})
-		)
-	);
-}
-
-
-
-
-function componentDidMount() {
-	var component = this;
-
-	component.setState({animateEntry: true});
-}
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Guild.jsx":30}],32:[function(require,module,exports){
+},{"../objectives/Objective.jsx":37,"./Emblem.jsx":30}],32:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4622,8 +4660,6 @@ function render() {
 	var props = component.props;
 
 	var lang = props.lang;
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
 	var cols = props.objectiveCols;
 
 	var animateEntry = props.animateEntry;
@@ -4633,14 +4669,12 @@ function render() {
 	var timestamp = props.timestamp;
 	var guildId = props.guildId;
 	var eventType = props.eventType;
-	var guilds = props.guilds;
+	var guild = props.guild;
 
 	return (
 		React.createElement("li", null, 
 			React.createElement(Objective, {
 				lang: lang, 
-				dateNow: dateNow, 
-				timeOffset: timeOffset, 
 				cols: objectiveCols, 
 
 				objectiveId: objectiveId, 
@@ -4648,7 +4682,7 @@ function render() {
 				timestamp: timestamp, 
 				guildId: guildId, 
 				eventType: eventType, 
-				guilds: guilds}
+				guild: guild}
 			)
 		)
 	);
@@ -4776,23 +4810,26 @@ function render() {
 		.sortBy('timestamp')
 		.reverse()
 		.map(function(entry, ixEntry) {
-			var guildId = (entry.guild) ? entry.guild : null;
+			var guildId, guild;
+
+			if (entry.type === 'claim') {
+				guildId = entry.guild;
+				guild = (guilds && guildId && guilds[guildId]) ? guilds[guildId] : null;
+			}
 
 			return (
 				React.createElement(Entry, {
 					key: entry.id, 
 					lang: lang, 
-					dateNow: dateNow, 
-					timeOffset: timeOffset, 
 
 					animateEntry: state.animateEntry, 
 					entryId: entry.id, 
 					objectiveId: entry.objectiveId, 
 					worldColor: entry.world, 
 					timestamp: entry.timestamp, 
-					guildId: guildId, 
 					eventType: entry.type, 
-					guilds: guilds}
+					guildId: guildId, 
+					guild: guild}
 				)
 			);
 		})
@@ -4962,8 +4999,6 @@ function render() {
 	var component = this;
 	var props = component.props;
 
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
 	var lang = props.lang;
 	var details = props.details;
 	var guilds = props.guilds;
@@ -5008,8 +5043,6 @@ function render() {
 						React.createElement("div", {className: sectionClass, key: ixSection}, 
 							React.createElement(MapSection, {
 								lang: lang, 
-								dateNow: dateNow, 
-								timeOffset: timeOffset, 
 
 								mapSection: mapSection, 
 								owners: owners, 
@@ -5174,8 +5207,6 @@ function render() {
 	var component = this;
 	var props = component.props;
 
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
 	var lang = props.lang;
 	var mapSection = props.mapSection;
 	var owners = props.owners;
@@ -5190,20 +5221,19 @@ function render() {
 				var owner = owners[objectiveId];
 				var claimer = claimers[objectiveId];
 				var guildId = (claimer) ? claimer.guild : null;
+				var guild = (guilds && guildId && guilds[guildId]) ? guilds[guildId] : null;
 
 				return (
 					React.createElement("li", {key: objectiveId, id: 'objective-' + objectiveId}, 
 						React.createElement(Objective, {
 							lang: lang, 
-							dateNow: dateNow, 
-							timeOffset: timeOffset, 
 							cols: objectiveCols, 
 
 							objectiveId: objectiveId, 
 							worldColor: owner.world, 
 							timestamp: owner.timestamp, 
 							guildId: guildId, 
-							guilds: guilds}
+							guild: guild}
 						)
 					)
 				);
@@ -5317,6 +5347,8 @@ var moment = (typeof window !== "undefined" ? window.moment : typeof global !== 
 var Sprite = require('./Sprite.jsx');
 var Arrow = require('./Arrow.jsx');
 
+var PureRenderMixin = React.addons.PureRenderMixin;
+
 
 
 
@@ -5354,6 +5386,8 @@ var colDefaults = {
 */
 
 module.exports = React.createClass({displayName: 'exports',
+	mixins: [PureRenderMixin],
+
 	render: render,
 });
 
@@ -5385,60 +5419,39 @@ function render() {
 	}
 
 	var lang = props.lang;
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
-	var guilds = props.guilds;
-
 	var worldColor = props.worldColor;
 	var timestamp = props.timestamp;
 	var guildId = props.guildId;
+	var guild = props.guild;
 	var eventType = props.eventType || null;
 
 	var cols = _.defaults(props.cols, colDefaults);
 
 
-	var offsetTimestamp = timestamp + timeOffset;
-	var expires = offsetTimestamp + (5 * 60);
-	var secondsRemaining = expires - dateNow;
-
-	var isTimerFresh = (dateNow - offsetTimestamp < 10);
-	var isTimerActive = (expires >= dateNow);
-	var isTimerVisible = (expires + 10 >= dateNow); // show for 10 seconds after expiring
-
-
+	var expires = timestamp + (5 * 60);
 	var oMeta = objectivesMeta[objectiveId];
 	var oName = objectivesNames[objectiveId];
 	var oLabel = objectivesLabels[objectiveId];
 	var oType = objectivesTypes[oMeta.type];
 
-	var guild = (guilds && guildId && guilds[guildId]) ? guilds[guildId] : null;
-
 	var mapMeta = _.find(mapsStatic, {mapIndex: oMeta.map});
 
-
+	// console.log(oLabel, oName);
 
 	var className = [
 		'objective',
 		'team',
 		worldColor,
-		(isTimerFresh) ? 'fresh' : '',
 	].join(' ');
 
 	var timerClass = [
 		'timer',
-		(isTimerVisible) ? 'active' : 'inactive',
-		(isTimerActive) ? '' : 'expired',
+		'countdown',
+		'inactive',
 	].join(' ');
 
 
-
-
-	var expiration = moment(secondsRemaining * 1000);
-	var timestampMoment = moment((timestamp + timeOffset) * 1000);
-
-	var timestampRelative = timestampMoment.twitterShort();
-	var timestampHtml = timestampMoment.format('hh:mm:ss');
-	var timerHtml = (isTimerActive) ? expiration.format('m:ss') : '0:00';
+	var timestampHtml = moment((timestamp) * 1000).format('hh:mm:ss');
 
 
 
@@ -5446,7 +5459,9 @@ function render() {
 		React.createElement("div", {className: className}, 
 			(cols.elapsed) ?
 				React.createElement("div", {className: "objective-relative"}, 
-					React.createElement("span", null, timestampRelative)
+					React.createElement("span", {className: "timer relative", 'data-timestamp': timestamp}, 
+						React.createElement("i", {className: "fa fa-spinner fa-spin"})
+					)
 				)
 			: null, 
 			(cols.timestamp) ?
@@ -5485,7 +5500,9 @@ function render() {
 						renderGuild(guildId, guild, cols)
 					: null, 
 					(cols.timer) ?
-						React.createElement("span", {className: timerClass}, timerHtml)
+						React.createElement("span", {className: timerClass, 'data-expires': expires}, 
+							React.createElement("i", {className: "fa fa-spinner fa-spin"})
+						)
 					: null
 				)
 			: null
@@ -5611,6 +5628,120 @@ function add5(inDate) {
 }
 
 },{}],40:[function(require,module,exports){
+'use strict';
+
+module.exports = {update: update};
+
+
+
+
+function update(now, timeOffset) {
+	var $timers = $('.timer');
+	var $countdowns = $timers.filter('.countdown');
+	var $relatives = $timers.filter('.relative');
+
+	async.parallel([
+		updateRelativeTimers.bind(null, $relatives, timeOffset),
+		updateCountdownTimers.bind(null, $countdowns, now),
+	], _.noop);
+}
+
+
+
+function updateRelativeTimers(relatives, timeOffset, cb) {
+	async.each(
+		relatives,
+		updateRelativeTimeNode.bind(null, timeOffset),
+		cb
+	);
+}
+
+
+
+function updateCountdownTimers(countdowns, now, cb) {
+	async.each(
+		countdowns,
+		updateCountdownTimerNode.bind(null, now),
+		cb
+	);
+}
+
+
+
+function updateRelativeTimeNode(timeOffset, el, next) {
+	var $el = $(el);
+
+	var timestamp = _.parseInt($el.attr('data-timestamp'));
+	var offsetTimestamp = timestamp + timeOffset;
+	var timestampMoment = moment(offsetTimestamp * 1000);
+	var timestampRelative = timestampMoment.twitterShort();
+
+	$el.text(timestampRelative);
+
+	next();
+}
+
+
+
+function updateCountdownTimerNode(now, el, next) {
+	var $el = $(el);
+
+	var dataExpires = $el.attr('data-expires');
+	var expires = _.parseInt(dataExpires);
+	var secRemaining = (expires - now);
+	var secElapsed = 300 - secRemaining;
+
+	var highliteTime = 10;
+	var isVisible = expires + highliteTime >= now;
+	var isExpired = expires < now;
+	var isActive = !isExpired;
+	var isTimerHighlighted = (secRemaining <= Math.abs(highliteTime));
+	var isTimerFresh = (secElapsed <= highliteTime);
+
+
+	var timerText = (isActive)
+		? moment(secRemaining * 1000).format('m:ss')
+		: '0:00';
+
+
+	if (isVisible) {
+		var $objective = $el.closest('.objective');
+		var hasClassHighlight = $el.hasClass('highlight');
+		var hasClassFresh = $objective.hasClass('fresh');
+
+		if (isTimerHighlighted && !hasClassHighlight) {
+			$el.addClass('highlight');
+		}
+		else if (!isTimerHighlighted && hasClassHighlight) {
+			$el.removeClass('highlight');
+		}
+
+		if (isTimerFresh && !hasClassFresh) {
+			$objective.addClass('fresh');
+		}
+		else if (!isTimerFresh && hasClassFresh) {
+			$objective.removeClass('fresh');
+		}
+
+		$el.text(timerText)
+			.filter('.inactive')
+				.addClass('active')
+				.removeClass('inactive')
+			.end();
+
+	}
+	else {
+		$el.filter('.active')
+			.addClass('inactive')
+			.removeClass('active')
+			.removeClass('highlight')
+		.end();
+	}
+
+	next();
+}
+
+},{}],41:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5658,7 +5789,7 @@ module.exports = function overview(ctx) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./jsx/Langs.jsx":19,"./jsx/Overview.jsx":20,"gw2w2w-static":15}],41:[function(require,module,exports){
+},{"./jsx/Langs.jsx":19,"./jsx/Overview.jsx":20,"gw2w2w-static":15}],42:[function(require,module,exports){
 (function (global){
 'use strict';
 

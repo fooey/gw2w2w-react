@@ -66,7 +66,7 @@ function render() {
 	var matchWorlds = props.matchWorlds;
 
 	return (
-		<div className="row" id="scoreboards">{
+		<section className="row" id="scoreboards">{
 			_.map(matchWorlds, function(mw, color) {
 				var worldName = (mw.world) ? mw.world[lang.slug].name : color;
 				var score = mw.score;
@@ -114,6 +114,6 @@ function render() {
 					</div>
 				);
 			})
-		}</div>
+		}</section>
 	);
 }

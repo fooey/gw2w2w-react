@@ -15,7 +15,7 @@ var _ = require('lodash');		// browserify shim
 *	React Components
 */
 
-var Guild = require('./Guild.jsx');
+var Guild = require('./guilds/Guild.jsx');
 
 
 
@@ -106,9 +106,8 @@ function render() {
 
 
 	return (
-		<div id="guilds">
-			{(guilds && guilds.length) ? <hr /> : null }
-
+		<section id="guilds">
+			<h2 className="section-header">Guild Claims</h2>
 			{_.map(guilds, function(guild, ixGuild) {
 				var key = guild.guild_id + '@' + guild.lastClaim;
 
@@ -124,7 +123,7 @@ function render() {
 					/>
 				);
 			})}
-		</div>
+		</section>
 	);
 }
 

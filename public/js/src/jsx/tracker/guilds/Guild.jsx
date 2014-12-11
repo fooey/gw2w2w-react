@@ -96,15 +96,13 @@ function render() {
 								<li key={entry.id}>
 									<Objective
 										lang={lang}
-										dateNow={dateNow}
-										timeOffset={timeOffset}
 										cols={objectiveCols}
 
 										objectiveId={entry.objectiveId}
 										worldColor={entry.world}
 										timestamp={entry.timestamp}
 										guildId={guild.guild_id}
-										eventType={entry.type}
+										guild={guild}
 									/>
 								</li>
 							);

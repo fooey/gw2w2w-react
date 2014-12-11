@@ -70,8 +70,6 @@ function render() {
 	var component = this;
 	var props = component.props;
 
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
 	var lang = props.lang;
 	var mapSection = props.mapSection;
 	var owners = props.owners;
@@ -86,20 +84,19 @@ function render() {
 				var owner = owners[objectiveId];
 				var claimer = claimers[objectiveId];
 				var guildId = (claimer) ? claimer.guild : null;
+				var guild = (guilds && guildId && guilds[guildId]) ? guilds[guildId] : null;
 
 				return (
 					<li key={objectiveId} id={'objective-' + objectiveId}>
 						<Objective
 							lang={lang}
-							dateNow={dateNow}
-							timeOffset={timeOffset}
 							cols={objectiveCols}
 
 							objectiveId={objectiveId}
 							worldColor={owner.world}
 							timestamp={owner.timestamp}
 							guildId={guildId}
-							guilds={guilds}
+							guild={guild}
 						/>
 					</li>
 				);

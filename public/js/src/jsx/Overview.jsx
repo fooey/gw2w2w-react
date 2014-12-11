@@ -166,7 +166,6 @@ function getMatches() {
 			component.updateTimer = window.setTimeout(component.getMatches, interval);
 		}
 	});
-
 }
 
 

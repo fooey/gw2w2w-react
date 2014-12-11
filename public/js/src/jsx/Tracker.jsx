@@ -7,9 +7,13 @@
 
 var React = require('React');	// browserify shim
 var _ = require('lodash');		// browserify shim
+var $ = require('jquery');		// browserify shim
 var async = require('async');	// browserify shim
+var moment = require('moment');	// browserify shim
 
 var api = require('../api');
+var libDate = require('../lib/date.js');
+var trackerTimers = require('../lib/trackerTimers');
 
 
 
@@ -21,7 +25,8 @@ var api = require('../api');
 
 var Scoreboard = require('./tracker/Scoreboard.jsx');
 var Maps = require('./tracker/Maps.jsx');
-var Guilds = require('./tracker/guilds/Guilds.jsx');
+// var Options = require('./tracker/Options.jsx');
+var Guilds = require('./tracker/Guilds.jsx');
 
 
 
@@ -31,7 +36,6 @@ var Guilds = require('./tracker/guilds/Guilds.jsx');
 *	Component Globals
 */
 
-var libDate = require('../lib/date.js');
 var staticData = require('gw2w2w-static');
 var worldsStatic = staticData.worlds;
 
@@ -52,13 +56,15 @@ module.exports = React.createClass({
 	render: render,
 
 
-	tick: tick,
+	updateTimers: updateTimers,
 
 	getMatchDetails: getMatchDetails,
 	onMatchDetails: onMatchDetails,
 
 	queueGuildLookups: queueGuildLookups,
 	getGuildDetails: getGuildDetails,
+
+	// setOptions: setOptions,
 });
 
 
@@ -82,50 +88,58 @@ function getInitialState() {
 	return {
 		hasData: false,
 
-		dateNow: libDate.dateNow(),
+		// dateNow: libDate.dateNow(),
 		lastmod: 0,
 		timeOffset: 0,
 
 		match: [],
 		details: [],
 		guilds: {},
+		// options: Options.getDefaultOptions(),
 	};
 }
 
 
 
 function componentWillMount() {
-	var component = this;
+	// var component = this;
 }
 
 
 
 function componentDidMount() {
 	var component = this;
+	// window.console.log('Tracker::componentDidMount');
 
-	component.interval = window.setInterval(component.tick, 1000);
+	component.intervals = {
+		timers: null,
+	};
+	component.timeouts = {
+		data: null,
+	};
 
-	component.updateTimer = null;
+	component.intervals.timers = window.setInterval(component.updateTimers, 1000);
+	process.nextTick(component.updateTimers);
+
 	process.nextTick(component.getMatchDetails);
 }
 
 
 
 function shouldComponentUpdate(nextProps, nextState) {
-	var component = this;
-	var props = component.props;
-	var state = component.state;
+	// var component = this;
+	// var props = component.props;
+	// var state = component.state;
 
-	// don't update more often than once per second
-	// helps greatly during initialization while guilds are loading
+	// var langChanged = (props.lang !== nextProps.lang);
+	// var isModified = (state.lastmod !== nextState.lastmod);
+	// var newGuildData = !_.isEqual(state.guilds, nextState.guilds);
+	// // console.log('newGuildData', newGuildData,_.isEqual(state.guilds, nextState.guilds));
+	// var shouldUpdate = (isModified || langChanged || newGuildData);
 
-	var isNewTick = (state.dateNow !== nextState.dateNow);
-	var langChange = (props.lang !== nextProps.lang);
-	var shouldUpdate = (isNewTick || langChange);
+	// console.log(Date.now(), shouldUpdate);
 
-	// console.log(shouldUpdate, isFirstUpdate, isNewNow);
-
-	return shouldUpdate;
+	return true;
 }
 
 
@@ -133,8 +147,12 @@ function shouldComponentUpdate(nextProps, nextState) {
 function componentWillUnmount() {
 	var component = this;
 
-	clearTimeout(component.updateTimer);
-	clearInterval(component.interval);
+	_.each(component.intervals, function(windowInterval) {
+		window.clearInterval(windowInterval);
+	});
+	_.each(component.timeouts, function(windowTimeout) {
+		window.clearInterval(windowTimeout);
+	});
 }
 
 
@@ -157,7 +175,7 @@ function render() {
 		setPageTitle(lang, world);
 
 
-		var dateNow = state.dateNow;
+		// var dateNow = state.dateNow;
 		var timeOffset = state.timeOffset;
 		var match = state.match;
 		var guilds = state.guilds;
@@ -201,26 +219,35 @@ function render() {
 
 				<Maps
 					lang={lang}
-					timeOffset={timeOffset}
-					dateNow={dateNow}
 
 					details={details}
 					matchWorlds={matchWorlds}
 					guilds={guilds}
 				/>
 
-				<Guilds
-					lang={lang}
-					timeOffset={timeOffset}
-					dateNow={dateNow}
+				<div className="row">
+					<div className="col-sm-6">
+					</div>
+					<div className="col-sm-18">
+						<Guilds
+							lang={lang}
 
-					guilds={guilds}
-					eventHistory={eventHistory}
-				/>
+							guilds={guilds}
+							eventHistory={eventHistory}
+						/>
+					</div>
+				</div>
 
 			</div>
 		);
 	}
+
+	/*
+						<Options
+							options={state.options}
+							setOptions={component.setOptions}
+						/>
+	*/
 
 }
 
@@ -231,11 +258,24 @@ function render() {
 *	Component Helper Methods
 */
 
-function tick() {
+// function tick() {
+// 	var component = this;
+
+// 	if(component.isMounted()) {
+// 		component.setState({dateNow: libDate.dateNow()});
+// 	}
+// }
+
+
+function updateTimers() {
 	var component = this;
 
 	if(component.isMounted()) {
-		component.setState({dateNow: libDate.dateNow()});
+		var state = component.state;
+		var timeOffset = state.timeOffset;
+		var now = libDate.dateNow() - timeOffset;
+
+		trackerTimers.update(now, timeOffset);
 	}
 }
 
@@ -302,7 +342,7 @@ function onMatchDetails(err, data) {
 	}
 
 	var refreshTime = _.random(1000*2, 1000*4);
-	component.updateTimer = window.setTimeout(component.getMatchDetails, refreshTime);
+	component.timeouts.data = window.setTimeout(component.getMatchDetails, refreshTime);
 
 }
 
@@ -342,9 +382,8 @@ function getGuildDetails(guildId, onComplete) {
 		guildId,
 		function(err, data) {
 			if(!err) {
-				state.guilds[guildId] = data;
-
 				if(component.isMounted()) {
+					state.guilds[guildId] = data;
 					component.setState({guilds: state.guilds});
 				}
 			}
@@ -352,6 +391,17 @@ function getGuildDetails(guildId, onComplete) {
 		}
 	);
 }
+
+
+
+// function setOptions(newOptions) {
+// 	var component = this;
+// 	var props = component.props;
+
+// 	console.log('Tracker::setOptions', newOptions);
+
+// 	component.setState({options: newOptions});
+// }
 
 
 
@@ -364,7 +414,6 @@ function getGuildDetails(guildId, onComplete) {
 */
 
 function setPageTitle(lang, world) {
-	var $ = require('jquery');
 	var title = [world[lang.slug].name, 'gw2w2w'];
 
 	if (lang.slug !== 'en') {

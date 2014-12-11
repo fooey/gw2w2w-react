@@ -64,8 +64,6 @@ function render() {
 	var component = this;
 	var props = component.props;
 
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
 	var lang = props.lang;
 	var details = props.details;
 	var guilds = props.guilds;
@@ -110,8 +108,6 @@ function render() {
 						<div className={sectionClass} key={ixSection}>
 							<MapSection
 								lang={lang}
-								dateNow={dateNow}
-								timeOffset={timeOffset}
 
 								mapSection={mapSection}
 								owners={owners}

@@ -65,9 +65,6 @@ function render() {
 		return null;
 	}
 
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
-
 	var lang = props.lang;
 	var details = props.details;
 	var matchWorlds = props.matchWorlds;
@@ -82,8 +79,6 @@ function render() {
 			<MapDetails
 				mapKey={mapKey}
 				lang={lang}
-				dateNow={dateNow}
-				timeOffset={timeOffset}
 
 				details={details}
 				guilds={guilds}
@@ -94,7 +89,7 @@ function render() {
 
 
 	return (
-		<div id="maps">
+		<section id="maps">
 			<h1>Maps</h1>
 			<div className="row">
 
@@ -112,8 +107,6 @@ function render() {
 						<div className="col-md-24">
 							<Log
 								lang={lang}
-								dateNow={dateNow}
-								timeOffset={timeOffset}
 
 								eventHistory={eventHistory}
 								guilds={guilds}
@@ -124,6 +117,6 @@ function render() {
 
 				</div>
 			 </div>
-		</div>
+		</section>
 	);
 }

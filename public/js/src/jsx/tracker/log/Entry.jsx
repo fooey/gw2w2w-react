@@ -73,8 +73,6 @@ function render() {
 	var props = component.props;
 
 	var lang = props.lang;
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
 	var cols = props.objectiveCols;
 
 	var animateEntry = props.animateEntry;
@@ -84,14 +82,12 @@ function render() {
 	var timestamp = props.timestamp;
 	var guildId = props.guildId;
 	var eventType = props.eventType;
-	var guilds = props.guilds;
+	var guild = props.guild;
 
 	return (
 		<li>
 			<Objective
 				lang={lang}
-				dateNow={dateNow}
-				timeOffset={timeOffset}
 				cols={objectiveCols}
 
 				objectiveId={objectiveId}
@@ -99,7 +95,7 @@ function render() {
 				timestamp={timestamp}
 				guildId={guildId}
 				eventType={eventType}
-				guilds={guilds}
+				guild={guild}
 			/>
 		</li>
 	);

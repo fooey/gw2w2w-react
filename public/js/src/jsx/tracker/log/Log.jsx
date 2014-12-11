@@ -100,23 +100,26 @@ function render() {
 		.sortBy('timestamp')
 		.reverse()
 		.map(function(entry, ixEntry) {
-			var guildId = (entry.guild) ? entry.guild : null;
+			var guildId, guild;
+
+			if (entry.type === 'claim') {
+				guildId = entry.guild;
+				guild = (guilds && guildId && guilds[guildId]) ? guilds[guildId] : null;
+			}
 
 			return (
 				<Entry
 					key={entry.id}
 					lang={lang}
-					dateNow={dateNow}
-					timeOffset={timeOffset}
 
 					animateEntry={state.animateEntry}
 					entryId={entry.id}
 					objectiveId={entry.objectiveId}
 					worldColor={entry.world}
 					timestamp={entry.timestamp}
-					guildId={guildId}
 					eventType={entry.type}
-					guilds={guilds}
+					guildId={guildId}
+					guild={guild}
 				/>
 			);
 		})

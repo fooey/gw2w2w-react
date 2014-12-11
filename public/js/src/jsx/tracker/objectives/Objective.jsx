@@ -19,6 +19,8 @@ var moment = require('moment');		// browserify shim
 var Sprite = require('./Sprite.jsx');
 var Arrow = require('./Arrow.jsx');
 
+var PureRenderMixin = React.addons.PureRenderMixin;
+
 
 
 
@@ -56,6 +58,8 @@ var colDefaults = {
 */
 
 module.exports = React.createClass({
+	mixins: [PureRenderMixin],
+
 	render: render,
 });
 
@@ -87,60 +91,39 @@ function render() {
 	}
 
 	var lang = props.lang;
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
-	var guilds = props.guilds;
-
 	var worldColor = props.worldColor;
 	var timestamp = props.timestamp;
 	var guildId = props.guildId;
+	var guild = props.guild;
 	var eventType = props.eventType || null;
 
 	var cols = _.defaults(props.cols, colDefaults);
 
 
-	var offsetTimestamp = timestamp + timeOffset;
-	var expires = offsetTimestamp + (5 * 60);
-	var secondsRemaining = expires - dateNow;
-
-	var isTimerFresh = (dateNow - offsetTimestamp < 10);
-	var isTimerActive = (expires >= dateNow);
-	var isTimerVisible = (expires + 10 >= dateNow); // show for 10 seconds after expiring
-
-
+	var expires = timestamp + (5 * 60);
 	var oMeta = objectivesMeta[objectiveId];
 	var oName = objectivesNames[objectiveId];
 	var oLabel = objectivesLabels[objectiveId];
 	var oType = objectivesTypes[oMeta.type];
 
-	var guild = (guilds && guildId && guilds[guildId]) ? guilds[guildId] : null;
-
 	var mapMeta = _.find(mapsStatic, {mapIndex: oMeta.map});
 
-
+	// console.log(oLabel, oName);
 
 	var className = [
 		'objective',
 		'team',
 		worldColor,
-		(isTimerFresh) ? 'fresh' : '',
 	].join(' ');
 
 	var timerClass = [
 		'timer',
-		(isTimerVisible) ? 'active' : 'inactive',
-		(isTimerActive) ? '' : 'expired',
+		'countdown',
+		'inactive',
 	].join(' ');
 
 
-
-
-	var expiration = moment(secondsRemaining * 1000);
-	var timestampMoment = moment((timestamp + timeOffset) * 1000);
-
-	var timestampRelative = timestampMoment.twitterShort();
-	var timestampHtml = timestampMoment.format('hh:mm:ss');
-	var timerHtml = (isTimerActive) ? expiration.format('m:ss') : '0:00';
+	var timestampHtml = moment((timestamp) * 1000).format('hh:mm:ss');
 
 
 
@@ -148,7 +131,9 @@ function render() {
 		<div className={className}>
 			{(cols.elapsed) ?
 				<div className="objective-relative">
-					<span>{timestampRelative}</span>
+					<span className="timer relative" data-timestamp={timestamp}>
+						<i className="fa fa-spinner fa-spin"></i>
+					</span>
 				</div>
 			: null}
 			{(cols.timestamp) ?
@@ -187,7 +172,9 @@ function render() {
 						renderGuild(guildId, guild, cols)
 					: null}
 					{(cols.timer) ?
-						<span className={timerClass}>{timerHtml}</span>
+						<span className={timerClass} data-expires={expires}>
+							<i className="fa fa-spinner fa-spin"></i>
+						</span>
 					: null}
 				</div>
 			: null}

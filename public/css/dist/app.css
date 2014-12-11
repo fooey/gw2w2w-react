@@ -7136,10 +7136,10 @@ body {
   width: 100%;
   line-height: 20px;
   height: 20px;
-  -moz-transition: all 400ms ease-in;
-  -webkit-transition: all 400ms ease-in;
-  -o-transition: all 400ms ease-in;
-  transition: all 400ms ease-in;
+  -moz-transition: all 800ms ease-in;
+  -webkit-transition: all 800ms ease-in;
+  -o-transition: all 800ms ease-in;
+  transition: all 800ms ease-in;
   font-size: 12pt;
 }
 #tracker .objective.fresh {
@@ -7217,38 +7217,39 @@ body {
   margin-right: 4px;
   cursor: pointer;
 }
-#tracker .objective .timer {
+#tracker .objective .timer.countdown {
   display: inline-block;
   line-height: 16px;
+  height: 16px;
   font-size: 8pt;
   color: #333;
   background-color: #ffc;
-  -moz-transition: all 400ms ease-in;
-  -webkit-transition: all 400ms ease-in;
-  -o-transition: all 400ms ease-in;
-  transition: all 400ms ease-in;
-  zoom: 1;
-  -webkit-opacity: 0;
-  -moz-opacity: 0;
-  opacity: 0;
-  filter: alpha(opacity=0);
-  max-height: 0;
-  max-width: 0;
-  padding: 0;
+  -moz-transition: all 800ms ease-in;
+  -webkit-transition: all 800ms ease-in;
+  -o-transition: all 800ms ease-in;
+  transition: all 800ms ease-in;
 }
-#tracker .objective .timer.active {
+#tracker .objective .timer.countdown.active {
   zoom: 1;
   -webkit-opacity: 1;
   -moz-opacity: 1;
   opacity: 1;
   filter: alpha(opacity=100);
-  max-width: 4em;
-  max-height: 20px;
   padding: 0 .5em;
+  max-width: 3em;
 }
-#tracker .objective .timer.active.expired {
+#tracker .objective .timer.countdown.active.highlight {
   background-color: #f00;
   color: #fff;
+}
+#tracker .objective .timer.countdown.inactive {
+  zoom: 1;
+  -webkit-opacity: 0;
+  -moz-opacity: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  padding: 0;
+  max-width: 0;
 }
 #tracker #scoreboards .scoreboard {
   margin: 0 1px;
@@ -7406,6 +7407,11 @@ body {
 }
 #tracker #guilds .guild ul {
   margin-left: 1em;
+}
+#tracker .section-header {
+  margin: 1em .5em .5em 0;
+  padding: 0 0 .25em;
+  border-bottom: 1px solid #eee;
 }
 
 /*# sourceMappingURL=app.css.map */
