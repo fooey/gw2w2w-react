@@ -22,7 +22,7 @@ $(function() {
 	});
 });
 
-},{"./overview.jsx":41,"./tracker.jsx":42,"page":16}],2:[function(require,module,exports){
+},{"./overview.jsx":43,"./tracker.jsx":44,"page":16}],2:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3182,7 +3182,7 @@ var trackerTimers = require('../lib/trackerTimers');
 
 var Scoreboard = require('./tracker/Scoreboard.jsx');
 var Maps = require('./tracker/Maps.jsx');
-// var Options = require('./tracker/Options.jsx');
+var Options = require('./tracker/Options.jsx');
 var Guilds = require('./tracker/Guilds.jsx');
 
 
@@ -3206,9 +3206,10 @@ var worldsStatic = staticData.worlds;
 
 module.exports = React.createClass({displayName: 'exports',
 	getInitialState: getInitialState,
-	componentWillMount: componentWillMount,
+	// componentWillMount: componentWillMount,
 	componentDidMount: componentDidMount,
-	shouldComponentUpdate: shouldComponentUpdate,
+	// shouldComponentUpdate: shouldComponentUpdate,
+	// componentDidUpdate: componentDidUpdate,
 	componentWillUnmount: componentWillUnmount,
 	render: render,
 
@@ -3221,7 +3222,7 @@ module.exports = React.createClass({displayName: 'exports',
 	queueGuildLookups: queueGuildLookups,
 	getGuildDetails: getGuildDetails,
 
-	// setOptions: setOptions,
+	setOptions: setOptions,
 });
 
 
@@ -3252,15 +3253,15 @@ function getInitialState() {
 		match: [],
 		details: [],
 		guilds: {},
-		// options: Options.getDefaultOptions(),
+		options: Options.getDefaultOptions(),
 	};
 }
 
 
 
-function componentWillMount() {
-	// var component = this;
-}
+// function componentWillMount() {
+// 	// var component = this;
+// }
 
 
 
@@ -3283,21 +3284,21 @@ function componentDidMount() {
 
 
 
-function shouldComponentUpdate(nextProps, nextState) {
-	// var component = this;
-	// var props = component.props;
-	// var state = component.state;
+// function shouldComponentUpdate(nextProps, nextState) {
+// 	// var component = this;
+// 	// var props = component.props;
+// 	// var state = component.state;
 
-	// var langChanged = (props.lang !== nextProps.lang);
-	// var isModified = (state.lastmod !== nextState.lastmod);
-	// var newGuildData = !_.isEqual(state.guilds, nextState.guilds);
-	// // console.log('newGuildData', newGuildData,_.isEqual(state.guilds, nextState.guilds));
-	// var shouldUpdate = (isModified || langChanged || newGuildData);
+// 	// var langChanged = (props.lang !== nextProps.lang);
+// 	// var isModified = (state.lastmod !== nextState.lastmod);
+// 	// var newGuildData = !_.isEqual(state.guilds, nextState.guilds);
+// 	// // console.log('newGuildData', newGuildData,_.isEqual(state.guilds, nextState.guilds));
+// 	// var shouldUpdate = (isModified || langChanged || newGuildData);
 
-	// console.log(Date.now(), shouldUpdate);
+// 	// console.log(Date.now(), shouldUpdate);
 
-	return true;
-}
+// 	return true;
+// }
 
 
 
@@ -3311,6 +3312,12 @@ function componentWillUnmount() {
 		window.clearInterval(windowTimeout);
 	});
 }
+
+
+
+// function componentDidUpdate() {
+// 	console.log('Tracker::componentDidUpdate()');
+// }
 
 
 
@@ -3383,9 +3390,14 @@ function render() {
 				), 
 
 				React.createElement("div", {className: "row"}, 
-					React.createElement("div", {className: "col-sm-6"}
+					React.createElement("div", {className: "col-md-6"}, 
+						React.createElement(Options, {
+							lang: lang, 
+							options: state.options, 
+							setOptions: component.setOptions}
+						)
 					), 
-					React.createElement("div", {className: "col-sm-18"}, 
+					React.createElement("div", {className: "col-md-18"}, 
 						React.createElement(Guilds, {
 							lang: lang, 
 
@@ -3393,6 +3405,14 @@ function render() {
 							eventHistory: eventHistory}
 						)
 					)
+				), 
+
+
+				React.createElement("audio", {
+					ref: "audio", 
+					src: "/audio/beep-27.mp3", 
+					preload: "auto", 
+					volume: "0.1"}
 				)
 
 			)
@@ -3400,10 +3420,6 @@ function render() {
 	}
 
 	/*
-						<Options
-							options={state.options}
-							setOptions={component.setOptions}
-						/>
 	*/
 
 }
@@ -3488,6 +3504,12 @@ function onMatchDetails(err, data) {
 				if(guilds.length) {
 					process.nextTick(component.queueGuildLookups.bind(null, guilds));
 				}
+
+
+
+				if(state.options.audio.enabled && !_.isEqual(data.details.objectives, state.details.objectives)) {
+					component.refs.audio.getDOMNode().play()
+				}
 			}
 
 		}
@@ -3551,14 +3573,13 @@ function getGuildDetails(guildId, onComplete) {
 
 
 
-// function setOptions(newOptions) {
-// 	var component = this;
-// 	var props = component.props;
+function setOptions(newOptions) {
+	var component = this;
 
-// 	console.log('Tracker::setOptions', newOptions);
+	// console.log('Tracker::setOptions', newOptions);
 
-// 	component.setState({options: newOptions});
-// }
+	component.setState({options: newOptions});
+}
 
 
 
@@ -3580,7 +3601,7 @@ function setPageTitle(lang, world) {
 	$('title').text(title.join(' - '));
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../api":18,"../lib/date.js":39,"../lib/trackerTimers":40,"./tracker/Guilds.jsx":27,"./tracker/Maps.jsx":28,"./tracker/Scoreboard.jsx":29,"_process":2,"gw2w2w-static":15}],22:[function(require,module,exports){
+},{"../api":18,"../lib/date.js":41,"../lib/trackerTimers":42,"./tracker/Guilds.jsx":27,"./tracker/Maps.jsx":28,"./tracker/Options.jsx":29,"./tracker/Scoreboard.jsx":30,"_process":2,"gw2w2w-static":15}],22:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4193,7 +4214,7 @@ function componentDidMount() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./guilds/Guild.jsx":31}],28:[function(require,module,exports){
+},{"./guilds/Guild.jsx":32}],28:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4319,7 +4340,148 @@ function render() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./log/Log.jsx":33,"./maps/MapDetails.jsx":34,"gw2w2w-static":15}],29:[function(require,module,exports){
+},{"./log/Log.jsx":34,"./maps/MapDetails.jsx":35,"gw2w2w-static":15}],29:[function(require,module,exports){
+(function (global){
+'use strict';
+
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);		// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);			// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
+
+var Audio = require('./options/Audio.jsx');
+
+
+
+
+
+/*
+*	Component Globals
+*/
+
+
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	render: render,
+	shouldComponentUpdate: shouldComponentUpdate,
+
+	setOptions: setOptions,
+	setAudioOptions: setAudioOptions,
+
+	statics: {
+		getDefaultOptions: getDefaultOptions,
+	}
+});
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var lang = props.lang;
+	var options = props.options;
+
+	// console.log('Options::render()');
+	// console.log('Options::render', 'options.audio.enabled', options.audio.enabled);
+
+	return (
+		React.createElement("section", {id: "options"}, 
+			React.createElement("h2", {className: "section-header"}, "Options"), 
+			React.createElement(Audio, {
+				lang: lang, 
+				options: options.audio, 
+				setOptions: component.setAudioOptions}
+			)
+		)
+	);
+}
+
+
+
+function shouldComponentUpdate(nextProps) {
+	var component = this;
+	var props = component.props;
+
+	var optionsChanged = !(_.isEqual(props.options, nextProps.options));
+
+	// console.log('Options::shouldComponentUpdate()', optionsChanged, props.options.audio.enabled, nextProps.options.audio.enabled);
+
+	return !!(optionsChanged);
+}
+
+
+
+/*
+*	Component Helper Methods
+*/
+
+function setOptions(category, categoryOptions) {
+	var component = this;
+	var props = component.props;
+	// console.log('Options::setOptions()', category, categoryOptions);
+
+	var options = _.cloneDeep(props.options);
+	options[category] = categoryOptions;
+
+	props.setOptions(options);
+}
+
+
+
+function setAudioOptions(newOptions) {
+	var component = this;
+	// console.log('Options::setAudioOptions()', newOptions);
+
+	component.setOptions('audio', newOptions);
+}
+
+
+
+
+/*
+*	Component Static Methods
+*/
+
+function getDefaultOptions() {
+	// console.log('Options:getDefaultOptions()', this);
+	return {
+		audio: Audio.getDefaultOptions(),
+	};
+}
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./options/Audio.jsx":40}],30:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4442,7 +4604,7 @@ function render() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./objectives/Sprite.jsx":38,"gw2w2w-static":15}],30:[function(require,module,exports){
+},{"./objectives/Sprite.jsx":39,"gw2w2w-static":15}],31:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4513,7 +4675,7 @@ function slugify(str) {
 	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4650,7 +4812,7 @@ function componentDidMount() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Objective.jsx":37,"./Emblem.jsx":30}],32:[function(require,module,exports){
+},{"../objectives/Objective.jsx":38,"./Emblem.jsx":31}],33:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4773,7 +4935,7 @@ function componentDidMount() {
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Objective.jsx":37}],33:[function(require,module,exports){
+},{"../objectives/Objective.jsx":38}],34:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4998,7 +5160,7 @@ function setEvent(e) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Entry.jsx":32,"gw2w2w-static":15}],34:[function(require,module,exports){
+},{"./Entry.jsx":33,"gw2w2w-static":15}],35:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5200,7 +5362,7 @@ function getSectionClass(mapKey, sectionLabel) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./MapSection.jsx":35,"gw2w2w-static":15}],35:[function(require,module,exports){
+},{"./MapSection.jsx":36,"gw2w2w-static":15}],36:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5310,7 +5472,7 @@ function render() {
 	);
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Objective.jsx":37}],36:[function(require,module,exports){
+},{"../objectives/Objective.jsx":38}],37:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5391,7 +5553,7 @@ function getArrowSrc(meta) {
 	return src.join('-') + '.svg';
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5599,7 +5761,7 @@ function renderGuild(guildId, guild, cols){
 		}
 		if (cols.guildTag) {
 			if (cols.guildName) {
-				guildLabel += ('[' + guild.tag + ']');
+				guildLabel += (' [' + guild.tag + ']');
 			}
 			else {
 				guildLabel += guild.tag;
@@ -5621,7 +5783,7 @@ function renderGuild(guildId, guild, cols){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Arrow.jsx":36,"./Sprite.jsx":38,"gw2w2w-static":15}],38:[function(require,module,exports){
+},{"./Arrow.jsx":37,"./Sprite.jsx":39,"gw2w2w-static":15}],39:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5674,7 +5836,227 @@ function render() {
 	);
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
+(function (global){
+'use strict';
+
+
+/*
+*	Dependencies
+*/
+
+var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);		// browserify shim
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);			// browserify shim
+
+
+
+
+
+/*
+*	React Components
+*/
+
+
+
+
+
+/*
+*	Component Globals
+*/
+
+
+
+
+
+/*
+*	Component Export
+*/
+
+module.exports = React.createClass({displayName: 'exports',
+	render: render,
+	// componentDidUpdate: componentDidUpdate,
+
+	toggleEnabled: toggleEnabled,
+	// toggleMapEnabled: toggleMapEnabled,
+	// getMapOption: getMapOption,
+
+	statics: {
+		getDefaultOptions: getDefaultOptions,
+	}
+});
+
+
+
+
+
+/*
+*
+*	Component Methods
+*
+*/
+
+
+/*
+*	Component Lifecyle Methods
+*/
+
+function render() {
+	var component = this;
+	var props = component.props;
+
+	var lang = props.lang;
+	var options = props.options;
+
+	// console.log('options::Audio::render()');
+
+	return (
+		React.createElement("section", {id: "options-audio"}, 
+			React.createElement("h3", null, "Audio Options ", getAudioIcon(options.enabled)), 
+			React.createElement("div", {className: "checkbox"}, 
+				React.createElement("label", {htmlFor: "audio-enabled"}, 
+					React.createElement("input", {
+						type: "checkbox", 
+						checked: options && options.enabled, 
+						id: "audio-enabled", 
+						name: "audio-enabled", 
+						value: "1", 
+						onChange: component.toggleEnabled}
+					), 
+					' ', " Audio Alerts"
+				)
+			)
+		)
+	);
+			// <div className={(options.enabled ? 'enabled' : 'disabled') + ' sub-options'}>
+			// 	{_.map(['EBG', 'RedHome', 'BlueHome', 'GreenHome'], function(mapName, mapIndex){
+			// 		return (
+			// 			component.getMapOption(
+			// 				mapIndex,
+			// 				mapName
+			// 			)
+			// 		);
+			// 	})}
+			// </div>
+}
+
+
+
+
+// function componentDidUpdate() {
+// 	console.log('options::Audio::componentDidUpdate()');
+// }
+
+
+
+/*
+*	Component Helper Methods
+*/
+
+function toggleEnabled() {
+	var component = this;
+	var props = component.props;
+
+	var toOptions = _.cloneDeep(props.options);
+	toOptions.enabled = !(toOptions.enabled);
+
+	props.setOptions(toOptions);
+}
+
+// function toggleMapEnabled(mapIndex) {
+// 	var component = this;
+// 	var props = component.props;
+// 	console.log('toggleMapEnabled', mapIndex, props.options.maps[mapIndex]);
+
+// 	var toOptions = _.cloneDeep(props.options);
+// 	toOptions.maps[mapIndex] = !(toOptions.maps[mapIndex]);
+
+// 	props.setOptions(toOptions);
+// }
+
+
+
+/*
+*
+*	Component Static Methods
+*
+*/
+
+function getDefaultOptions() {
+	return {
+		enabled: false,
+		// maps: [true, true, true, true],
+		// events: 'all',
+		// color: 'all',
+	};
+}
+
+
+
+/*
+*
+*	Private Methods
+*
+*/
+
+function getAudioIcon(enabled) {
+	var className = [
+		'fa',
+		'fa-stack-2x',
+	];
+
+	if (enabled) {
+		className.push('fa-circle-o');
+		className.push('text-success');
+	}
+	else {
+		className.push('fa-ban');
+		className.push('text-danger');
+	}
+
+	return (
+		React.createElement("span", {className: "fa-stack"}, 
+			React.createElement("i", {className: "fa fa-volume-up fa-stack-1x"}), 
+			React.createElement("i", {className: className.join(' ')})
+		)
+	);
+}
+
+
+
+// function getMapOption(mapIndex, mapName) {
+// 	var component = this;
+// 	var props = component.props;
+
+// 	var masterEnabled = props.options.enabled;
+// 	var enabled = props.options.maps[mapIndex];
+// 	var onChange = component.toggleMapEnabled.bind(component, mapIndex);
+
+// 	var key = "audio-enabled-" + mapIndex;
+
+// 	var wrapperClassName = [
+// 		'checkbox',
+// 		(masterEnabled) ? '' : 'disabled'
+// 	];
+
+// 	return (
+// 		<div className={wrapperClassName.join(' ')} key={key}>
+// 			<label htmlFor={key}>
+// 				<input
+// 					type="checkbox"
+// 					id={key}
+// 					name={key}
+// 					checked={enabled}
+// 					onChange={onChange}
+// 					disabled={!masterEnabled}
+// 				/>
+// 				{' '} {mapName}
+// 			</label>
+// 		</div>
+// 	);
+// }
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],41:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -5694,7 +6076,7 @@ function add5(inDate) {
 	return (_baseDate + (5 * 60));
 }
 
-},{}],40:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 'use strict';
 
 module.exports = {update: update};
@@ -5808,7 +6190,7 @@ function updateCountdownTimerNode(now, el, next) {
 	next();
 }
 
-},{}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5856,7 +6238,7 @@ module.exports = function overview(ctx) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./jsx/Langs.jsx":19,"./jsx/Overview.jsx":20,"gw2w2w-static":15}],42:[function(require,module,exports){
+},{"./jsx/Langs.jsx":19,"./jsx/Overview.jsx":20,"gw2w2w-static":15}],44:[function(require,module,exports){
 (function (global){
 'use strict';
 

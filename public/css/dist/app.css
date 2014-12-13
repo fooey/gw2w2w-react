@@ -7375,6 +7375,30 @@ body {
 #tracker #log-container #log .objective-event {
   font-size: 7pt;
 }
+#tracker #options {
+  padding-right: 1em;
+  -moz-transition: all 400ms ease-in;
+  -webkit-transition: all 400ms ease-in;
+  -o-transition: all 400ms ease-in;
+  transition: all 400ms ease-in;
+}
+#tracker #options .sub-options {
+  padding-left: 1em;
+}
+#tracker #options .disabled {
+  zoom: 1;
+  -webkit-opacity: 0.8;
+  -moz-opacity: 0.8;
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+  -webkit-filter: blur(0.5px);
+  -moz-filter: blur(0.5px);
+  -ms-filter: blur(0.5px);
+  filter: blur(0.5px);
+}
+#tracker #options h3 .fa-stack {
+  font-size: 60%;
+}
 #tracker #guilds .guild {
   -moz-transition: background-color 2s ease-in;
   -webkit-transition: background-color 2s ease-in;
@@ -7405,7 +7429,7 @@ body {
   margin-left: 1em;
 }
 #tracker .section-header {
-  margin: 1em .5em .5em 0;
+  margin: 1em 0 .5em;
   padding: 0 0 .25em;
   border-bottom: 1px solid #eee;
 }

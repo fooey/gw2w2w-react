@@ -34,8 +34,11 @@ var _ = require('lodash');			// browserify shim
 
 module.exports = React.createClass({
 	render: render,
+	// componentDidUpdate: componentDidUpdate,
 
 	toggleEnabled: toggleEnabled,
+	// toggleMapEnabled: toggleMapEnabled,
+	// getMapOption: getMapOption,
 
 	statics: {
 		getDefaultOptions: getDefaultOptions,
@@ -57,24 +60,51 @@ module.exports = React.createClass({
 *	Component Lifecyle Methods
 */
 
-
 function render() {
 	var component = this;
 	var props = component.props;
 
+	var lang = props.lang;
 	var options = props.options;
 
-	console.log('Audio::options', options.enabled);
+	// console.log('options::Audio::render()');
 
 	return (
 		<section id="options-audio">
-			{options && options.enabled
-				? <label onClick={component.toggleEnabled}> Disable</label>
-				: <label onClick={component.toggleEnabled}> Enable</label>
-			}
+			<h3>Audio Options {getAudioIcon(options.enabled)}</h3>
+			<div className="checkbox">
+				<label htmlFor="audio-enabled">
+					<input
+						type="checkbox"
+						checked={options && options.enabled}
+						id="audio-enabled"
+						name="audio-enabled"
+						value="1"
+						onChange={component.toggleEnabled}
+					/>
+					{' '} Audio Alerts
+				</label>
+			</div>
 		</section>
 	);
+			// <div className={(options.enabled ? 'enabled' : 'disabled') + ' sub-options'}>
+			// 	{_.map(['EBG', 'RedHome', 'BlueHome', 'GreenHome'], function(mapName, mapIndex){
+			// 		return (
+			// 			component.getMapOption(
+			// 				mapIndex,
+			// 				mapName
+			// 			)
+			// 		);
+			// 	})}
+			// </div>
 }
+
+
+
+
+// function componentDidUpdate() {
+// 	console.log('options::Audio::componentDidUpdate()');
+// }
 
 
 
@@ -86,27 +116,101 @@ function toggleEnabled() {
 	var component = this;
 	var props = component.props;
 
-	var options = props.options;
-	// var setOptions = props.setOptions;
+	var toOptions = _.cloneDeep(props.options);
+	toOptions.enabled = !(toOptions.enabled);
 
-	options.enabled = !options.enabled;
-
-	console.log('toggleEnabled', options.enabled);
-
-	props.setOptions(options);
+	props.setOptions(toOptions);
 }
+
+// function toggleMapEnabled(mapIndex) {
+// 	var component = this;
+// 	var props = component.props;
+// 	console.log('toggleMapEnabled', mapIndex, props.options.maps[mapIndex]);
+
+// 	var toOptions = _.cloneDeep(props.options);
+// 	toOptions.maps[mapIndex] = !(toOptions.maps[mapIndex]);
+
+// 	props.setOptions(toOptions);
+// }
 
 
 
 /*
+*
 *	Component Static Methods
+*
 */
 
 function getDefaultOptions() {
 	return {
 		enabled: false,
-		maps: 'all',
-		events: 'all',
-		color: 'all',
+		// maps: [true, true, true, true],
+		// events: 'all',
+		// color: 'all',
 	};
 }
+
+
+
+/*
+*
+*	Private Methods
+*
+*/
+
+function getAudioIcon(enabled) {
+	var className = [
+		'fa',
+		'fa-stack-2x',
+	];
+
+	if (enabled) {
+		className.push('fa-circle-o');
+		className.push('text-success');
+	}
+	else {
+		className.push('fa-ban');
+		className.push('text-danger');
+	}
+
+	return (
+		<span className="fa-stack">
+			<i className="fa fa-volume-up fa-stack-1x"></i>
+			<i className={className.join(' ')}></i>
+		</span>
+	);
+}
+
+
+
+// function getMapOption(mapIndex, mapName) {
+// 	var component = this;
+// 	var props = component.props;
+
+// 	var masterEnabled = props.options.enabled;
+// 	var enabled = props.options.maps[mapIndex];
+// 	var onChange = component.toggleMapEnabled.bind(component, mapIndex);
+
+// 	var key = "audio-enabled-" + mapIndex;
+
+// 	var wrapperClassName = [
+// 		'checkbox',
+// 		(masterEnabled) ? '' : 'disabled'
+// 	];
+
+// 	return (
+// 		<div className={wrapperClassName.join(' ')} key={key}>
+// 			<label htmlFor={key}>
+// 				<input
+// 					type="checkbox"
+// 					id={key}
+// 					name={key}
+// 					checked={enabled}
+// 					onChange={onChange}
+// 					disabled={!masterEnabled}
+// 				/>
+// 				{' '} {mapName}
+// 			</label>
+// 		</div>
+// 	);
+// }

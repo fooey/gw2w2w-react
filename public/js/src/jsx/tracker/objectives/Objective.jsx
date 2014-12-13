@@ -204,7 +204,7 @@ function renderGuild(guildId, guild, cols){
 		}
 		if (cols.guildTag) {
 			if (cols.guildName) {
-				guildLabel += ('[' + guild.tag + ']');
+				guildLabel += (' [' + guild.tag + ']');
 			}
 			else {
 				guildLabel += guild.tag;

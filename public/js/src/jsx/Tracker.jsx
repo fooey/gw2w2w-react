@@ -25,7 +25,7 @@ var trackerTimers = require('../lib/trackerTimers');
 
 var Scoreboard = require('./tracker/Scoreboard.jsx');
 var Maps = require('./tracker/Maps.jsx');
-// var Options = require('./tracker/Options.jsx');
+var Options = require('./tracker/Options.jsx');
 var Guilds = require('./tracker/Guilds.jsx');
 
 
@@ -49,9 +49,10 @@ var worldsStatic = staticData.worlds;
 
 module.exports = React.createClass({
 	getInitialState: getInitialState,
-	componentWillMount: componentWillMount,
+	// componentWillMount: componentWillMount,
 	componentDidMount: componentDidMount,
-	shouldComponentUpdate: shouldComponentUpdate,
+	// shouldComponentUpdate: shouldComponentUpdate,
+	// componentDidUpdate: componentDidUpdate,
 	componentWillUnmount: componentWillUnmount,
 	render: render,
 
@@ -64,7 +65,7 @@ module.exports = React.createClass({
 	queueGuildLookups: queueGuildLookups,
 	getGuildDetails: getGuildDetails,
 
-	// setOptions: setOptions,
+	setOptions: setOptions,
 });
 
 
@@ -95,15 +96,15 @@ function getInitialState() {
 		match: [],
 		details: [],
 		guilds: {},
-		// options: Options.getDefaultOptions(),
+		options: Options.getDefaultOptions(),
 	};
 }
 
 
 
-function componentWillMount() {
-	// var component = this;
-}
+// function componentWillMount() {
+// 	// var component = this;
+// }
 
 
 
@@ -126,21 +127,21 @@ function componentDidMount() {
 
 
 
-function shouldComponentUpdate(nextProps, nextState) {
-	// var component = this;
-	// var props = component.props;
-	// var state = component.state;
+// function shouldComponentUpdate(nextProps, nextState) {
+// 	// var component = this;
+// 	// var props = component.props;
+// 	// var state = component.state;
 
-	// var langChanged = (props.lang !== nextProps.lang);
-	// var isModified = (state.lastmod !== nextState.lastmod);
-	// var newGuildData = !_.isEqual(state.guilds, nextState.guilds);
-	// // console.log('newGuildData', newGuildData,_.isEqual(state.guilds, nextState.guilds));
-	// var shouldUpdate = (isModified || langChanged || newGuildData);
+// 	// var langChanged = (props.lang !== nextProps.lang);
+// 	// var isModified = (state.lastmod !== nextState.lastmod);
+// 	// var newGuildData = !_.isEqual(state.guilds, nextState.guilds);
+// 	// // console.log('newGuildData', newGuildData,_.isEqual(state.guilds, nextState.guilds));
+// 	// var shouldUpdate = (isModified || langChanged || newGuildData);
 
-	// console.log(Date.now(), shouldUpdate);
+// 	// console.log(Date.now(), shouldUpdate);
 
-	return true;
-}
+// 	return true;
+// }
 
 
 
@@ -154,6 +155,12 @@ function componentWillUnmount() {
 		window.clearInterval(windowTimeout);
 	});
 }
+
+
+
+// function componentDidUpdate() {
+// 	console.log('Tracker::componentDidUpdate()');
+// }
 
 
 
@@ -226,9 +233,14 @@ function render() {
 				/>
 
 				<div className="row">
-					<div className="col-sm-6">
+					<div className="col-md-6">
+						<Options
+							lang={lang}
+							options={state.options}
+							setOptions={component.setOptions}
+						/>
 					</div>
-					<div className="col-sm-18">
+					<div className="col-md-18">
 						<Guilds
 							lang={lang}
 
@@ -238,15 +250,19 @@ function render() {
 					</div>
 				</div>
 
+
+				<audio
+					ref="audio"
+					src='/audio/beep-27.mp3'
+					preload="auto"
+					volume="0.1"
+				/>
+
 			</div>
 		);
 	}
 
 	/*
-						<Options
-							options={state.options}
-							setOptions={component.setOptions}
-						/>
 	*/
 
 }
@@ -331,6 +347,12 @@ function onMatchDetails(err, data) {
 				if(guilds.length) {
 					process.nextTick(component.queueGuildLookups.bind(null, guilds));
 				}
+
+
+
+				if(state.options.audio.enabled && !_.isEqual(data.details.objectives, state.details.objectives)) {
+					component.refs.audio.getDOMNode().play()
+				}
 			}
 
 		}
@@ -394,14 +416,13 @@ function getGuildDetails(guildId, onComplete) {
 
 
 
-// function setOptions(newOptions) {
-// 	var component = this;
-// 	var props = component.props;
+function setOptions(newOptions) {
+	var component = this;
 
-// 	console.log('Tracker::setOptions', newOptions);
+	// console.log('Tracker::setOptions', newOptions);
 
-// 	component.setState({options: newOptions});
-// }
+	component.setState({options: newOptions});
+}
 
 
 
