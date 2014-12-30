@@ -72,10 +72,12 @@ function render() {
 
 	var lang = props.lang;
 	var mapSection = props.mapSection;
-	var owners = props.owners;
-	var claimers = props.claimers;
 	var guilds = props.guilds;
+	var details = props.details;
 	var mapMeta = props.mapMeta;
+
+	var owners = details.objectives.owners;
+	var claimers = details.objectives.claimers;
 
 	return (
 		<ul className='list-unstyled'>

@@ -7,6 +7,8 @@
 
 var React = require('React');		// browserify shim
 
+var PureRenderMixin = React.addons.PureRenderMixin;
+
 
 
 
@@ -16,6 +18,7 @@ var React = require('React');		// browserify shim
 */
 
 module.exports = React.createClass({
+	mixins: [PureRenderMixin],
 	render: render,
 });
 

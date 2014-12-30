@@ -44,7 +44,9 @@ function render() {
 	var type = props.type;
 	var color = props.color;
 
+	var className = ['sprite', type, color].join(' ');
+
 	return (
-		<span className={['sprite', type, color].join(' ')} />
+		<span className={className} />
 	);
 }

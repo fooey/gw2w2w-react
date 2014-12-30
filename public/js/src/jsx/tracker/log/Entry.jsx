@@ -75,8 +75,8 @@ function render() {
 	var lang = props.lang;
 	var cols = props.objectiveCols;
 
-	var animateEntry = props.animateEntry;
-	var entryId = props.entryId;
+	// var animateEntry = props.animateEntry;
+	// var entryId = props.entryId;
 	var objectiveId = props.objectiveId;
 	var worldColor = props.worldColor;
 	var timestamp = props.timestamp;

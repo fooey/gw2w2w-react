@@ -18,8 +18,6 @@ var _ = require('lodash');		// browserify shim
 var Emblem = require('./Emblem.jsx');
 var Objective = require('../objectives/Objective.jsx');
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-
 
 
 

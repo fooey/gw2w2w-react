@@ -52,7 +52,7 @@ function eml() {
 }
 
 }).call(this,require('_process'))
-},{"./overview.jsx":43,"./tracker.jsx":44,"_process":2,"page":16}],2:[function(require,module,exports){
+},{"./overview.jsx":44,"./tracker.jsx":45,"_process":2,"page":16}],2:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -321,8 +321,7 @@ exports.encode = exports.stringify = require('./encode');
 
 },{"./decode":3,"./encode":4}],6:[function(require,module,exports){
 /*
-*	Browserify uses this instead of getData.js
-*	configured in package.json
+*	package.json reqwrites to this from getData.js for Browserify
 */
 
 "use strict";
@@ -408,7 +407,7 @@ module.exports = {
 
 var endPoints = {
 	worldNames: 'https://api.guildwars2.com/v2/worlds',							// https://api.guildwars2.com/v2/worlds?page=0
-	colors: 'https://api.guildwars2.com/v1/colors.json',						// http://wiki.guildwars2.com/wiki/API:1/colors
+
 	guildDetails: 'https://api.guildwars2.com/v1/guild_details.json',			// http://wiki.guildwars2.com/wiki/API:1/guild_details
 
 	items: 'https://api.guildwars2.com/v1/items.json',							// http://wiki.guildwars2.com/wiki/API:1/items
@@ -2694,6 +2693,8 @@ module.exports = {
   page.sameOrigin = sameOrigin;
 
 },{"path-to-regexp":17}],17:[function(require,module,exports){
+var isArray = require('isarray');
+
 /**
  * Expose `pathtoRegexp`.
  */
@@ -2736,7 +2737,7 @@ function escapeGroup (group) {
  * @param  {Array}  keys
  * @return {RegExp}
  */
-var attachKeys = function (re, keys) {
+function attachKeys (re, keys) {
   re.keys = keys;
 
   return re;
@@ -2754,7 +2755,7 @@ var attachKeys = function (re, keys) {
  * @return {RegExp}
  */
 function pathtoRegexp (path, keys, options) {
-  if (keys && !Array.isArray(keys)) {
+  if (!isArray(keys)) {
     options = keys;
     keys = null;
   }
@@ -2769,32 +2770,35 @@ function pathtoRegexp (path, keys, options) {
 
   if (path instanceof RegExp) {
     // Match all capturing groups of a regexp.
-    var groups = path.source.match(/\((?!\?)/g) || [];
+    var groups = path.source.match(/\((?!\?)/g);
 
-    // Map all the matches to their numeric keys and push into the keys.
-    keys.push.apply(keys, groups.map(function (match, index) {
-      return {
-        name:      index,
-        delimiter: null,
-        optional:  false,
-        repeat:    false
-      };
-    }));
+    // Map all the matches to their numeric indexes and push into the keys.
+    if (groups) {
+      for (var i = 0; i < groups.length; i++) {
+        keys.push({
+          name:      i,
+          delimiter: null,
+          optional:  false,
+          repeat:    false
+        });
+      }
+    }
 
     // Return the source back to the user.
     return attachKeys(path, keys);
   }
 
-  if (Array.isArray(path)) {
-    // Map array parts into regexps and return their source. We also pass
-    // the same keys and options instance into every generation to get
-    // consistent matching groups before we join the sources together.
-    path = path.map(function (value) {
-      return pathtoRegexp(value, keys, options).source;
-    });
+  // Map array parts into regexps and return their source. We also pass
+  // the same keys and options instance into every generation to get
+  // consistent matching groups before we join the sources together.
+  if (isArray(path)) {
+    var parts = [];
 
+    for (var i = 0; i < path.length; i++) {
+      parts.push(pathtoRegexp(path[i], keys, options).source);
+    }
     // Generate a new regexp instance by joining all the parts together.
-    return attachKeys(new RegExp('(?:' + path.join('|') + ')', flags), keys);
+    return attachKeys(new RegExp('(?:' + parts.join('|') + ')', flags), keys);
   }
 
   // Alter the path string into a usable regexp.
@@ -2862,7 +2866,12 @@ function pathtoRegexp (path, keys, options) {
   return attachKeys(new RegExp('^' + path + (end ? '$' : ''), flags), keys);
 };
 
-},{}],18:[function(require,module,exports){
+},{"isarray":18}],18:[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}],19:[function(require,module,exports){
 'use strict';
 
 var gw2api = require('gw2api');
@@ -2903,7 +2912,7 @@ function getMatchDetailsByWorld(worldSlug, callback) {
 	gw2api.getMatchDetailsState({world_slug: worldSlug}, callback);
 }
 
-},{"gw2api":7}],19:[function(require,module,exports){
+},{"gw2api":7}],20:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -2936,7 +2945,7 @@ var worlds = require('gw2w2w-static').worlds;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	mixins: [PureRenderMixin],
 
 	render: render,
@@ -2980,7 +2989,7 @@ function render() {
 			_.map(langs, function(l) {
 				return (
 					React.createElement("li", {key: l.slug, className: (l.slug === lang.slug) ? 'active' : '', title: l.name}, 
-						React.createElement("a", {'data-slug': l.slug, href: l.link}, l.label)
+						React.createElement("a", {"data-slug": l.slug, href: l.link}, l.label)
 					)
 				);
 			})
@@ -2988,7 +2997,7 @@ function render() {
 	);
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"gw2w2w-static":15}],20:[function(require,module,exports){
+},{"gw2w2w-static":15}],21:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3031,7 +3040,7 @@ var worldsStatic = require('gw2w2w-static').worlds;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	getInitialState: getInitialState,
 	// componentWillMount: componentWillMount,
 	componentDidMount: componentDidMount,
@@ -3183,7 +3192,7 @@ function setPageTitle(lang) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../api":18,"./overview/RegionMatches.jsx":24,"./overview/RegionWorlds.jsx":25,"gw2w2w-static":15}],21:[function(require,module,exports){
+},{"../api":19,"./overview/RegionMatches.jsx":25,"./overview/RegionWorlds.jsx":26,"gw2w2w-static":15}],22:[function(require,module,exports){
 (function (process,global){
 'use strict';
 
@@ -3234,7 +3243,7 @@ var worldsStatic = staticData.worlds;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	getInitialState: getInitialState,
 	// componentWillMount: componentWillMount,
 	componentDidMount: componentDidMount,
@@ -3631,7 +3640,7 @@ function setPageTitle(lang, world) {
 	$('title').text(title.join(' - '));
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../api":18,"../lib/date.js":41,"../lib/trackerTimers":42,"./tracker/Guilds.jsx":27,"./tracker/Maps.jsx":28,"./tracker/Options.jsx":29,"./tracker/Scoreboard.jsx":30,"_process":2,"gw2w2w-static":15}],22:[function(require,module,exports){
+},{"../api":19,"../lib/date.js":42,"../lib/trackerTimers":43,"./tracker/Guilds.jsx":28,"./tracker/Maps.jsx":29,"./tracker/Options.jsx":30,"./tracker/Scoreboard.jsx":31,"_process":2,"gw2w2w-static":15}],23:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3643,7 +3652,7 @@ function setPageTitle(lang, world) {
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);	// browserify shim
 var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null);
 
-var PureRenderMixin = React.addons.PureRenderMixin;
+// var PureRenderMixin = React.addons.PureRenderMixin;
 
 
 
@@ -3674,7 +3683,7 @@ var worldsStatic = require('gw2w2w-static').worlds;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	// mixins: [PureRenderMixin],
 
 	render: render,
@@ -3706,15 +3715,8 @@ function render() {
 	var matchId = match.id;
 	var scores = match.scores;
 
-	var redWorld = worldsStatic[match.redId][lang.slug];
-	var blueWorld = worldsStatic[match.blueId][lang.slug];
-	var greenWorld = worldsStatic[match.greenId][lang.slug];
 
-	var matchWorlds = {
-		"red": {"world": redWorld, "score": scores[0]},
-		"blue": {"world": blueWorld, "score": scores[1]},
-		"green": {"world": greenWorld, "score": scores[2]},
-	};
+	var matchWorlds = getMatchWorlds(match, scores, lang);
 
 	return (
 		React.createElement("div", {className: "matchContainer", key: matchId}, 
@@ -3733,15 +3735,16 @@ function render() {
 							), 
 							React.createElement("td", {className: "team score " + color}, 
 								React.createElement(Score, {
-									key: matchId, 
 									matchId: matchId, 
 									team: color, 
 									score: score}
 								)
 							), 
-							(color === 'red') ?
-								React.createElement("td", {rowSpan: "3", className: "pie"}, React.createElement(Pie, {scores: scores, size: "60", matchId: matchId})) :
-								null
+							(color === 'red')
+								? React.createElement("td", {rowSpan: "3", className: "pie"}, 
+									React.createElement(Pie, {scores: scores, size: "60", matchId: matchId})
+								)
+								: null
 							
 						)
 					);
@@ -3763,8 +3766,29 @@ function shouldComponentUpdate(nextProps) {
 	return (newScore || newMatch);
 }
 
+
+
+
+
+/*
+*
+*	Private Methods
+*
+*/
+function getMatchWorlds(match, scores, lang) {
+	var redWorld = worldsStatic[match.redId][lang.slug];
+	var blueWorld = worldsStatic[match.blueId][lang.slug];
+	var greenWorld = worldsStatic[match.greenId][lang.slug];
+
+	return  {
+		"red": {"world": redWorld, "score": scores[0]},
+		"blue": {"world": blueWorld, "score": scores[1]},
+		"green": {"world": greenWorld, "score": scores[2]},
+	};
+}
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Pie.jsx":23,"./Score.jsx":26,"gw2w2w-static":15}],23:[function(require,module,exports){
+},{"./Pie.jsx":24,"./Score.jsx":27,"gw2w2w-static":15}],24:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3775,6 +3799,8 @@ function shouldComponentUpdate(nextProps) {
 
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);		// browserify shim
 
+var PureRenderMixin = React.addons.PureRenderMixin;
+
 
 
 
@@ -3783,7 +3809,8 @@ var React = (typeof window !== "undefined" ? window.React : typeof global !== "u
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
+	mixins: [PureRenderMixin],
 	render: render,
 });
 
@@ -3828,7 +3855,7 @@ function getImageSource(scores) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3857,7 +3884,7 @@ var Match = require('./Match.jsx');
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	render: render,
 });
 
@@ -3902,7 +3929,7 @@ function render() {
 	);
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Match.jsx":22}],25:[function(require,module,exports){
+},{"./Match.jsx":23}],26:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3934,7 +3961,7 @@ var worldsStatic = require('gw2w2w-static').worlds;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	mixins: [PureRenderMixin],
 
 	render: render,
@@ -3992,7 +4019,7 @@ function render() {
 	);
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"gw2w2w-static":15}],26:[function(require,module,exports){
+},{"gw2w2w-static":15}],27:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4014,7 +4041,7 @@ var numeral = (typeof window !== "undefined" ? window.numeral : typeof global !=
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	getInitialState: getInitialState,
 	render: render,
 	componentWillReceiveProps: componentWillReceiveProps,
@@ -4103,7 +4130,7 @@ function componentDidUpdate() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4153,7 +4180,7 @@ var objectiveCols = {
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	getInitialState: getInitialState,
 	render: render,
 });
@@ -4219,14 +4246,12 @@ function render() {
 				var key = guild.guild_id + '@' + guild.lastClaim;
 
 				return (
-					React.createElement(Guild, {
-						key: key, 
-						dateNow: dateNow, 
-						timeOffset: timeOffset, 
-						lang: lang, 
+					React.createElement(Guild, React.__spread({}, 
+						props, 
+						{key: key, 
 
 						animateEntry: state.animateEntry, 
-						guild: guild}
+						guild: guild})
 					)
 				);
 			})
@@ -4244,7 +4269,7 @@ function componentDidMount() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./guilds/Guild.jsx":32}],28:[function(require,module,exports){
+},{"./guilds/Guild.jsx":33}],29:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4286,7 +4311,7 @@ var mapsConfig = staticData.objective_map;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	render: render,
 });
 
@@ -4324,13 +4349,9 @@ function render() {
 
 	function getMapDetails(mapKey) {
 		return (
-			React.createElement(MapDetails, {
-				mapKey: mapKey, 
-				lang: lang, 
-
-				details: details, 
-				guilds: guilds, 
-				matchWorlds: matchWorlds}
+			React.createElement(MapDetails, React.__spread({}, 
+				component.props, 
+				{mapKey: mapKey})
 			));
 	}
 
@@ -4370,7 +4391,7 @@ function render() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./log/Log.jsx":34,"./maps/MapDetails.jsx":35,"gw2w2w-static":15}],29:[function(require,module,exports){
+},{"./log/Log.jsx":35,"./maps/MapDetails.jsx":36,"gw2w2w-static":15}],30:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4408,7 +4429,7 @@ var Audio = require('./options/Audio.jsx');
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	render: render,
 	shouldComponentUpdate: shouldComponentUpdate,
 
@@ -4511,7 +4532,7 @@ function getDefaultOptions() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./options/Audio.jsx":40}],30:[function(require,module,exports){
+},{"./options/Audio.jsx":41}],31:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4553,7 +4574,7 @@ var objectiveTypes = staticData.objective_types;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	render: render,
 });
 
@@ -4634,7 +4655,7 @@ function render() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./objectives/Sprite.jsx":39,"gw2w2w-static":15}],31:[function(require,module,exports){
+},{"./objectives/Sprite.jsx":40,"gw2w2w-static":15}],32:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4654,7 +4675,7 @@ var PureRenderMixin = React.addons.PureRenderMixin;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	mixins: [PureRenderMixin],
 
 	render: render,
@@ -4705,7 +4726,7 @@ function slugify(str) {
 	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4726,8 +4747,6 @@ var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined
 
 var Emblem = require('./Emblem.jsx');
 var Objective = require('../objectives/Objective.jsx');
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 
 
@@ -4758,7 +4777,7 @@ var objectiveCols = {
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	render: render,
 	componentDidMount: componentDidMount,
 });
@@ -4842,7 +4861,7 @@ function componentDidMount() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Objective.jsx":38,"./Emblem.jsx":31}],33:[function(require,module,exports){
+},{"../objectives/Objective.jsx":39,"./Emblem.jsx":32}],34:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4893,7 +4912,7 @@ var objectiveCols = {
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	render: render,
 	componentDidMount: componentDidMount,
 });
@@ -4921,8 +4940,8 @@ function render() {
 	var lang = props.lang;
 	var cols = props.objectiveCols;
 
-	var animateEntry = props.animateEntry;
-	var entryId = props.entryId;
+	// var animateEntry = props.animateEntry;
+	// var entryId = props.entryId;
 	var objectiveId = props.objectiveId;
 	var worldColor = props.worldColor;
 	var timestamp = props.timestamp;
@@ -4965,7 +4984,7 @@ function componentDidMount() {
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Objective.jsx":38}],34:[function(require,module,exports){
+},{"../objectives/Objective.jsx":39}],35:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5007,7 +5026,7 @@ var objectivesMeta = staticData.objective_meta;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	getInitialState: getInitialState,
 	render: render,
 	componentDidMount: componentDidMount,
@@ -5104,13 +5123,13 @@ function render() {
 						React.createElement("ul", {id: "log-map-filters", className: "nav nav-pills"}, 
 
 							React.createElement("li", {className: (mapFilter == 'all') ? 'active': 'null'}, 
-								React.createElement("a", {onClick: component.setWorld, 'data-filter': "all"}, "All")
+								React.createElement("a", {onClick: component.setWorld, "data-filter": "all"}, "All")
 							), 
 
 							_.map(mapsStatic, function(mapMeta, ixMap) {
 								return (
 									React.createElement("li", {key: mapMeta.mapIndex, className: (mapFilter === mapMeta.mapIndex) ? 'active': 'null'}, 
-										React.createElement("a", {onClick: component.setWorld, 'data-filter': mapMeta.mapIndex}, mapMeta.abbr)
+										React.createElement("a", {onClick: component.setWorld, "data-filter": mapMeta.mapIndex}, mapMeta.abbr)
 									)
 								);
 							})
@@ -5120,13 +5139,13 @@ function render() {
 					React.createElement("div", {className: "col-sm-8"}, 
 						React.createElement("ul", {id: "log-event-filters", className: "nav nav-pills"}, 
 							React.createElement("li", {className: (eventFilter === 'claim') ? 'active': 'null'}, 
-								React.createElement("a", {onClick: component.setEvent, 'data-filter': "claim"}, "Claims")
+								React.createElement("a", {onClick: component.setEvent, "data-filter": "claim"}, "Claims")
 							), 
 							React.createElement("li", {className: (eventFilter === 'capture') ? 'active': 'null'}, 
-								React.createElement("a", {onClick: component.setEvent, 'data-filter': "capture"}, "Captures")
+								React.createElement("a", {onClick: component.setEvent, "data-filter": "capture"}, "Captures")
 							), 
 							React.createElement("li", {className: (eventFilter === 'all') ? 'active': 'null'}, 
-								React.createElement("a", {onClick: component.setEvent, 'data-filter': "all"}, "All")
+								React.createElement("a", {onClick: component.setEvent, "data-filter": "all"}, "All")
 							)
 						)
 					)
@@ -5190,7 +5209,7 @@ function setEvent(e) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Entry.jsx":33,"gw2w2w-static":15}],35:[function(require,module,exports){
+},{"./Entry.jsx":34,"gw2w2w-static":15}],36:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5232,7 +5251,7 @@ var mapsStatic = staticData.objective_map;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	render: render,
 
 	onTitleClick: onTitleClick,
@@ -5258,15 +5277,15 @@ function render() {
 	var component = this;
 	var props = component.props;
 
-	var lang = props.lang;
+	// var lang = props.lang;
 	var details = props.details;
-	var guilds = props.guilds;
-	var matchWorlds = props.matchWorlds;
-	var mapsMeta = props.mapsMeta;
+	// var guilds = props.guilds;
+	// var matchWorlds = props.matchWorlds;
+	// var mapsMeta = props.mapsMeta;
 	var mapKey = props.mapKey;
 
-	var owners = details.objectives.owners;
-	var claimers = details.objectives.claimers;
+	// var owners = details.objectives.owners;
+	// var claimers = details.objectives.claimers;
 
 
 	var mapMeta = _.find(mapsStatic, {key: mapKey});
@@ -5300,14 +5319,9 @@ function render() {
 
 					return (
 						React.createElement("div", {className: sectionClass, key: ixSection}, 
-							React.createElement(MapSection, {
-								lang: lang, 
-
-								mapSection: mapSection, 
-								owners: owners, 
-								claimers: claimers, 
-								guilds: guilds, 
-								mapMeta: mapMeta}
+							React.createElement(MapSection, React.__spread({}, 
+								props, 
+								{mapSection: mapSection})
 							)
 						)
 					);
@@ -5392,7 +5406,7 @@ function getSectionClass(mapKey, sectionLabel) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./MapSection.jsx":36,"gw2w2w-static":15}],36:[function(require,module,exports){
+},{"./MapSection.jsx":37,"gw2w2w-static":15}],37:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5442,7 +5456,7 @@ var objectiveCols = {
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	render: render,
 });
 
@@ -5468,10 +5482,12 @@ function render() {
 
 	var lang = props.lang;
 	var mapSection = props.mapSection;
-	var owners = props.owners;
-	var claimers = props.claimers;
 	var guilds = props.guilds;
+	var details = props.details;
 	var mapMeta = props.mapMeta;
+
+	var owners = details.objectives.owners;
+	var claimers = details.objectives.claimers;
 
 	return (
 		React.createElement("ul", {className: "list-unstyled"}, 
@@ -5502,7 +5518,7 @@ function render() {
 	);
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objectives/Objective.jsx":38}],37:[function(require,module,exports){
+},{"../objectives/Objective.jsx":39}],38:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5520,7 +5536,7 @@ var PureRenderMixin = React.addons.PureRenderMixin;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	mixins: [PureRenderMixin],
 
 	render: render,
@@ -5583,7 +5599,7 @@ function getArrowSrc(meta) {
 	return src.join('-') + '.svg';
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5644,7 +5660,7 @@ var colDefaults = {
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	mixins: [PureRenderMixin],
 
 	render: render,
@@ -5718,7 +5734,7 @@ function render() {
 		React.createElement("div", {className: className}, 
 			(cols.elapsed) ?
 				React.createElement("div", {className: "objective-relative"}, 
-					React.createElement("span", {className: "timer relative", 'data-timestamp': timestamp}, 
+					React.createElement("span", {className: "timer relative", "data-timestamp": timestamp}, 
 						React.createElement("i", {className: "fa fa-spinner fa-spin"})
 					)
 				)
@@ -5759,7 +5775,7 @@ function render() {
 						renderGuild(guildId, guild, cols)
 					: null, 
 					(cols.timer) ?
-						React.createElement("span", {className: timerClass, 'data-expires': expires}, 
+						React.createElement("span", {className: timerClass, "data-expires": expires}, 
 							React.createElement("i", {className: "fa fa-spinner fa-spin"})
 						)
 					: null
@@ -5813,7 +5829,7 @@ function renderGuild(guildId, guild, cols){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Arrow.jsx":37,"./Sprite.jsx":39,"gw2w2w-static":15}],39:[function(require,module,exports){
+},{"./Arrow.jsx":38,"./Sprite.jsx":40,"gw2w2w-static":15}],40:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5832,7 +5848,7 @@ var PureRenderMixin = React.addons.PureRenderMixin;
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	mixins: [PureRenderMixin],
 
 	render: render,
@@ -5861,12 +5877,14 @@ function render() {
 	var type = props.type;
 	var color = props.color;
 
+	var className = ['sprite', type, color].join(' ');
+
 	return (
-		React.createElement("span", {className: ['sprite', type, color].join(' ')})
+		React.createElement("span", {className: className})
 	);
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5902,7 +5920,7 @@ var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined
 *	Component Export
 */
 
-module.exports = React.createClass({displayName: 'exports',
+module.exports = React.createClass({displayName: "exports",
 	render: render,
 	// componentDidUpdate: componentDidUpdate,
 
@@ -6086,7 +6104,7 @@ function getAudioIcon(enabled) {
 // }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -6106,7 +6124,7 @@ function add5(inDate) {
 	return (_baseDate + (5 * 60));
 }
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 'use strict';
 
 module.exports = {update: update};
@@ -6220,7 +6238,7 @@ function updateCountdownTimerNode(now, el, next) {
 	next();
 }
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -6268,7 +6286,7 @@ module.exports = function overview(ctx) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./jsx/Langs.jsx":19,"./jsx/Overview.jsx":20,"gw2w2w-static":15}],44:[function(require,module,exports){
+},{"./jsx/Langs.jsx":20,"./jsx/Overview.jsx":21,"gw2w2w-static":15}],45:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -6324,4 +6342,4 @@ module.exports = function overview(ctx) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./jsx/Langs.jsx":19,"./jsx/Tracker.jsx":21,"gw2w2w-static":15}]},{},[1]);
+},{"./jsx/Langs.jsx":20,"./jsx/Tracker.jsx":22,"gw2w2w-static":15}]},{},[1]);

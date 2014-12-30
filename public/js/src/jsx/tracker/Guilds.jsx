@@ -113,10 +113,8 @@ function render() {
 
 				return (
 					<Guild
+						{...props}
 						key={key}
-						dateNow={dateNow}
-						timeOffset={timeOffset}
-						lang={lang}
 
 						animateEntry={state.animateEntry}
 						guild={guild}

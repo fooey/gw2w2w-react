@@ -64,15 +64,15 @@ function render() {
 	var component = this;
 	var props = component.props;
 
-	var lang = props.lang;
+	// var lang = props.lang;
 	var details = props.details;
-	var guilds = props.guilds;
-	var matchWorlds = props.matchWorlds;
-	var mapsMeta = props.mapsMeta;
+	// var guilds = props.guilds;
+	// var matchWorlds = props.matchWorlds;
+	// var mapsMeta = props.mapsMeta;
 	var mapKey = props.mapKey;
 
-	var owners = details.objectives.owners;
-	var claimers = details.objectives.claimers;
+	// var owners = details.objectives.owners;
+	// var claimers = details.objectives.claimers;
 
 
 	var mapMeta = _.find(mapsStatic, {key: mapKey});
@@ -107,13 +107,8 @@ function render() {
 					return (
 						<div className={sectionClass} key={ixSection}>
 							<MapSection
-								lang={lang}
-
+								{...props}
 								mapSection={mapSection}
-								owners={owners}
-								claimers={claimers}
-								guilds={guilds}
-								mapMeta={mapMeta}
 							/>
 						</div>
 					);

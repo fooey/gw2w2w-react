@@ -77,12 +77,8 @@ function render() {
 	function getMapDetails(mapKey) {
 		return (
 			<MapDetails
+				{...component.props}
 				mapKey={mapKey}
-				lang={lang}
-
-				details={details}
-				guilds={guilds}
-				matchWorlds={matchWorlds}
 			/>);
 	}
 
