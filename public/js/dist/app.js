@@ -5363,7 +5363,7 @@ function onTitleClick(e) {
 *
 */
 
-var colorMap = ['red', 'green', 'blue'];
+var colorMap = ['red', 'blue', 'green'];
 function getScoreClass(ixScore) {
 	return ['team', colorMap[ixScore]].join(' ');
 }
