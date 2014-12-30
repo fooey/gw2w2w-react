@@ -8,7 +8,7 @@
 var React = require('React');	// browserify shim
 var _ = require('lodash');
 
-var PureRenderMixin = React.addons.PureRenderMixin;
+// var PureRenderMixin = React.addons.PureRenderMixin;
 
 
 
@@ -71,15 +71,8 @@ function render() {
 	var matchId = match.id;
 	var scores = match.scores;
 
-	var redWorld = worldsStatic[match.redId][lang.slug];
-	var blueWorld = worldsStatic[match.blueId][lang.slug];
-	var greenWorld = worldsStatic[match.greenId][lang.slug];
 
-	var matchWorlds = {
-		"red": {"world": redWorld, "score": scores[0]},
-		"blue": {"world": blueWorld, "score": scores[1]},
-		"green": {"world": greenWorld, "score": scores[2]},
-	};
+	var matchWorlds = getMatchWorlds(match, scores, lang);
 
 	return (
 		<div className="matchContainer" key={matchId}>
@@ -98,15 +91,16 @@ function render() {
 							</td>
 							<td className={"team score " + color}>
 								<Score
-									key={matchId}
 									matchId={matchId}
 									team={color}
 									score={score}
 								/>
 							</td>
-							{(color === 'red') ?
-								<td rowSpan="3" className="pie"><Pie scores={scores} size="60" matchId={matchId} /></td> :
-								null
+							{(color === 'red')
+								? <td rowSpan="3" className="pie">
+									<Pie scores={scores} size="60" matchId={matchId} />
+								</td>
+								: null
 							}
 						</tr>
 					);
@@ -126,4 +120,25 @@ function shouldComponentUpdate(nextProps) {
 	var newMatch = (props.match.startTime !== nextProps.match.startTime);
 
 	return (newScore || newMatch);
+}
+
+
+
+
+
+/*
+*
+*	Private Methods
+*
+*/
+function getMatchWorlds(match, scores, lang) {
+	var redWorld = worldsStatic[match.redId][lang.slug];
+	var blueWorld = worldsStatic[match.blueId][lang.slug];
+	var greenWorld = worldsStatic[match.greenId][lang.slug];
+
+	return  {
+		"red": {"world": redWorld, "score": scores[0]},
+		"blue": {"world": blueWorld, "score": scores[1]},
+		"green": {"world": greenWorld, "score": scores[2]},
+	};
 }
