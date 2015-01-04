@@ -3835,7 +3835,7 @@ function render() {
 
 	var scores = props.scores;
 
-	return React.createElement("img", {width: "60", height: "60", src: getImageSource(scores)});
+	return React.createElement("img", {src: getImageSource(scores)});
 }
 
 

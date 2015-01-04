@@ -1256,7 +1256,7 @@ dt {
 dd {
   margin-left: 0;
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .dl-horizontal dt {
     float: left;
     width: 160px;
@@ -3909,7 +3909,7 @@ tbody.collapse.in {
   bottom: 100%;
   margin-bottom: 1px;
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar-right .dropdown-menu {
     left: auto;
     right: 0;
@@ -4443,12 +4443,12 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin-bottom: 20px;
   border: 1px solid transparent;
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar {
     border-radius: 4px;
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar-header {
     float: left;
   }
@@ -4464,7 +4464,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-collapse.in {
   overflow-y: auto;
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar-collapse {
     width: auto;
     border-top: 0;
@@ -4504,7 +4504,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin-right: 0;
   margin-left: 0;
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .container > .navbar-header,
   .container-fluid > .navbar-header,
   .container > .navbar-collapse,
@@ -4517,7 +4517,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   z-index: 1000;
   border-width: 0 0 1px;
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar-static-top {
     border-radius: 0;
   }
@@ -4529,7 +4529,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   left: 0;
   z-index: 1030;
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar-fixed-top,
   .navbar-fixed-bottom {
     border-radius: 0;
@@ -4558,7 +4558,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-brand > img {
   display: block;
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar > .container .navbar-brand,
   .navbar > .container-fluid .navbar-brand {
     margin-left: 0;
@@ -4588,7 +4588,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-toggle .icon-bar + .icon-bar {
   margin-top: 4px;
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar-toggle {
     display: none;
   }
@@ -4601,7 +4601,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   padding-bottom: 10px;
   line-height: 20px;
 }
-@media (max-width: 767px) {
+@media (max-width: -1) {
   .navbar-nav .open .dropdown-menu {
     position: static;
     float: none;
@@ -4623,7 +4623,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     background-image: none;
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar-nav {
     float: left;
     margin: 0;
@@ -4698,7 +4698,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     top: 0;
   }
 }
-@media (max-width: 767px) {
+@media (max-width: -1) {
   .navbar-form .form-group {
     margin-bottom: 5px;
   }
@@ -4706,7 +4706,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     margin-bottom: 0;
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar-form {
     width: auto;
     border: 0;
@@ -4746,14 +4746,14 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin-top: 15px;
   margin-bottom: 15px;
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar-text {
     float: left;
     margin-left: 0;
     margin-right: 0;
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 0) {
   .navbar-left {
     float: left !important;
   }
@@ -4820,7 +4820,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   background-color: #e7e7e7;
   color: #555555;
 }
-@media (max-width: 767px) {
+@media (max-width: -1) {
   .navbar-default .navbar-nav .open .dropdown-menu > li > a {
     color: #777777;
   }
@@ -4916,7 +4916,7 @@ fieldset[disabled] .navbar-default .btn-link:focus {
   background-color: #080808;
   color: #ffffff;
 }
-@media (max-width: 767px) {
+@media (max-width: -1) {
   .navbar-inverse .navbar-nav .open .dropdown-menu > .dropdown-header {
     border-color: #080808;
   }
@@ -6967,10 +6967,37 @@ button.close {
 body {
   padding-bottom: 60px;
 }
-.navbar-brand {
+.navbar-header {
+  display: table;
+}
+.navbar-header .navbar-brand {
   margin: 0;
   padding: 0;
+  height: 50px;
+  display: table-cell;
+  vertical-align: middle;
+}
+.navbar-header .navbar-brand img {
+  margin-top: 7px;
+  max-width: 35vw;
+}
+.navbar-nav {
+  font-size: 8pt;
+}
+@media (min-width: 480px) {
+  .navbar-nav {
+    font-size: 10pt;
+  }
+}
+.navbar-nav li > a {
   line-height: 50px;
+  margin: 0;
+  padding: 0 3vw;
+}
+@media (min-width: 480px) {
+  .navbar-nav li > a {
+    padding: 0 1.5em;
+  }
 }
 .team.red,
 .team.red a {
@@ -7040,16 +7067,26 @@ body {
 }
 #overview .match {
   width: 100%;
+  table-layout: fixed;
 }
 #overview .match tr:hover td {
   font-weight: 700;
 }
 #overview .match td {
   line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 9pt;
+}
+@media (min-width: 480px) {
+  #overview .match td {
+    font-size: 10pt;
+  }
 }
 #overview .match td.score {
-  font-size: 10pt;
   text-align: right;
+  width: 70px;
 }
 #overview .match td.score .diff {
   display: inline-block;
@@ -7059,9 +7096,12 @@ body {
   display: inline-block;
 }
 #overview .match td.pie {
-  line-height: 60px;
   width: 70px;
   text-align: right;
+}
+#overview .match td.pie img {
+  width: 60px;
+  height: 60px;
 }
 #tracker .sprite {
   background-image: url(/img/sprite16.png);

@@ -20,6 +20,7 @@
 	}
 	.match {
 		width: 100%;
+		table-layout: fixed;
 
 		tr:hover {
 			td {
@@ -29,10 +30,19 @@
 
 		td {
 			line-height: 20px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+
+			font-size: 9pt;
+			@media(min-width: @screen-xs-min) { font-size: 10pt; }
+
+			&.name {
+			}
 
 			&.score {
-				font-size: 10pt;
 				text-align: right;
+				width: 70px;
 
 				.diff {
 					display: inline-block;
@@ -43,9 +53,13 @@
 				}
 			}
 			&.pie {
-				line-height: 60px;
 				width: 70px;
 				text-align: right;
+
+				img {
+					width: 60px;
+					height: 60px;
+				}
 			}
 		}
 	}

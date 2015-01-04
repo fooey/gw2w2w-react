@@ -43,7 +43,7 @@ function render() {
 
 	var scores = props.scores;
 
-	return <img width='60' height='60' src={getImageSource(scores)} />;
+	return <img src={getImageSource(scores)} />;
 }
 
 
