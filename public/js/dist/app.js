@@ -3762,8 +3762,9 @@ function shouldComponentUpdate(nextProps) {
 
 	var newScore = !_.isEqual(props.match.scores, nextProps.match.scores);
 	var newMatch = (props.match.startTime !== nextProps.match.startTime);
+	var newLang = (props.lang.slug !== nextProps.lang.slug)
 
-	return (newScore || newMatch);
+	return (newScore || newMatch || newLang);
 }
 
 
