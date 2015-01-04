@@ -6967,6 +6967,17 @@ button.close {
 body {
   padding-bottom: 60px;
 }
+.navbar.navbar-default {
+  -webkit-border-radius: 0;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 0;
+  -moz-background-clip: padding;
+  border-radius: 0;
+  background-clip: padding-box;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+}
 .navbar-header {
   display: table;
 }
@@ -6980,6 +6991,11 @@ body {
 .navbar-header .navbar-brand img {
   margin-top: 7px;
   max-width: 35vw;
+}
+@media (max-width: 767px) {
+  .navbar-header .navbar-brand img {
+    margin-left: 2vw;
+  }
 }
 .navbar-nav {
   font-size: 8pt;
@@ -7086,7 +7102,7 @@ body {
 }
 #overview .match td.score {
   text-align: right;
-  width: 70px;
+  width: 30%;
 }
 #overview .match td.score .diff {
   display: inline-block;

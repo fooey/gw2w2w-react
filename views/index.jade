@@ -7,7 +7,11 @@ head
 	title gw2w2w
 
 	link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css")
-	link(rel="stylesheet", href="/css/dist/app.min.css")
+
+	if (process.env.NODE_ENV === 'development')
+		link(rel="stylesheet", href="/css/dist/app.css")
+	else
+		link(rel="stylesheet", href="/css/dist/app.min.css")
 
 
 	script(src="//cdn.polyfill.io/v1/polyfill.min.js")
