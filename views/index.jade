@@ -7,17 +7,14 @@ head
 	title gw2w2w
 
 	link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css")
-
-	if (process.env.NODE_ENV === 'development')
-		link(rel="stylesheet", href="/css/dist/app.css")
-	else
-		link(rel="stylesheet", href="/css/dist/app.min.css")
+	link(rel="stylesheet", href="/css/dist/app.min.css")
 
 
-	script(src="//cdn.polyfill.io/v1/polyfill.min.js")
+	//- script(src="//cdn.polyfill.io/v1/polyfill.min.js")
 	script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js")
-	script(src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js")
+	script(src="/nm/6to5/browser-polyfill.js")
 	script(src="//cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js")
+	//- script(src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js")
 
 	script(src="//cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.min.js")
 	script(src="//cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.ui.min.js")
@@ -26,11 +23,14 @@ head
 	script(src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js")
 
 	if (process.env.NODE_ENV === 'development')
-		script(src="//cdnjs.cloudflare.com/ajax/libs/react/0.12.1/react-with-addons.js")
-		script(src="/js/dist/app.js")
+		script(src="/nm/react/dist/react-with-addons.js")
+		//- script(src="/js/dist/app.js")
 	else
-		script(src="//cdnjs.cloudflare.com/ajax/libs/react/0.12.1/react-with-addons.min.js")
-		script(src="/js/dist/app.min.js")
+		script(src="/nm/react/dist/react-with-addons.min.js")
+
+	script(src="/js/dist/app.js")
+
+
 
 body
 	nav.navbar.navbar-default
@@ -51,15 +51,15 @@ body
 			footer.small.muted.text-center
 				hr
 
-				p
-					| © 2013 ArenaNet, Inc. All rights reserved.
-					| NCsoft, the interlocking NC logo, ArenaNet, Guild Wars, Guild Wars Factions, Guild Wars Nightfall, Guild Wars:Eye of the North, Guild Wars 2, and all associated logos and designs are trademarks or registered trademarks of NCsoft Corporation.
-					| All other trademarks are the property of their respective owners.
+				p.
+					© 2013 ArenaNet, Inc. All rights reserved.
+					NCsoft, the interlocking NC logo, ArenaNet, Guild Wars, Guild Wars Factions, Guild Wars Nightfall, Guild Wars:Eye of the North, Guild Wars 2, and all associated logos and designs are trademarks or registered trademarks of NCsoft Corporation.
+					All other trademarks are the property of their respective owners.
 
-				p
-					| Send comments, bugs, and sweet, sweet donations to <a href="https://forum-en.guildwars2.com/members/fooey-5824" rel="nofollow">fooey.5824</a> or <span class="nospam-prz"></span><br>
-					| Source available at <a href="https://github.com/fooey/gw2w2w-react">https://github.com/fooey/gw2w2w-react</a><br>
-					//- | <!-- Application design and development by <a href="http://jasonrushton.com">Jason Rushton</a><br> -->
+				p.
+					Send comments, bugs, and sweet, sweet donations to <a href="https://forum-en.guildwars2.com/members/fooey-5824" rel="nofollow">fooey.5824</a> or <span class="nospam-prz"></span><br>
+					Source available at <a href="https://github.com/fooey/gw2w2w-react">https://github.com/fooey/gw2w2w-react</a><br>
+				//- | <!-- Application design and development by <a href="http://jasonrushton.com">Jason Rushton</a><br> -->
 
 	script.
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

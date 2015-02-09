@@ -1,10 +1,14 @@
 'use strict';
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
+import React from 'React'; // browserify shim
+
+import STATIC from 'gw2w2w-static';
 
 
 
@@ -14,18 +18,8 @@ var React = require('React');	// browserify shim
 *	React Components
 */
 
-var Overview = require('./jsx/Overview.jsx');
-var Langs = require('./jsx/Langs.jsx');
-
-
-
-
-
-/*
-*	Component Globals
-*/
-
-var langs = require('gw2w2w-static').langs;
+import Overview from './jsx/Overview.jsx';
+import Langs from './jsx/Langs.jsx';
 
 
 
@@ -35,10 +29,10 @@ var langs = require('gw2w2w-static').langs;
 *	Export
 */
 
-module.exports = function overview(ctx) {
-	var langSlug = ctx.params.langSlug || 'en';
-	var lang = langs[langSlug];
+export default function overview(ctx) {
+	const langSlug = ctx.params.langSlug || 'en';
+	const lang = STATIC.langs[langSlug];
 
 	React.render(<Langs lang={lang} />, document.getElementById('nav-langs'));
 	React.render(<Overview lang={lang} />, document.getElementById('content'));
-};
+}

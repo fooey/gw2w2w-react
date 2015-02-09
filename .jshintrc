@@ -1,0 +1,11 @@
+{
+	"curly": true,
+	"eqeqeq": true,
+	"maxparams": 3,
+	"noempty": true,
+	"unused": true,
+	"esnext": true,
+	"strict": true,
+	"browserify": true,
+	"jquery": true
+}

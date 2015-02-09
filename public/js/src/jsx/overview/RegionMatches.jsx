@@ -2,13 +2,13 @@
 
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-var _ = require('lodash');		// browserify shim
-
-
+import React from 'React'; // browserify shim
+import _ from 'lodash';
 
 
 
@@ -16,56 +16,58 @@ var _ = require('lodash');		// browserify shim
 *	React Components
 */
 
-var Match = require('./Match.jsx');
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	render: render,
-});
-
+import Match from './Match.jsx';
 
 
 
 
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class RegionMatches extends React.Component {
+	render() {
+		var props = this.props;
 
-/*
-*	Component Lifecyle Methods
-*/
+		var matches = _.sortBy(props.region.matches, 'id');
 
-function render() {
-	var component = this;
-	var props = component.props;
+		return (
+			<div className="RegionMatches">
+				<h2>{props.region.label}</h2>
 
-	var region = props.region;
-	var lang = props.lang;
-
-	var matches = _.sortBy(region.matches, 'id');
-
-	return (
-		<div className="RegionMatches">
-			<h2>{region.label}</h2>
-			{_.map(matches, function(match){
-				return (
+				{_.map(matches, match =>
 					<Match
+						className='match'
 						key={match.id}
-						className="match"
 						match={match}
-						lang={lang}
+						lang={props.lang}
 					/>
-				);
-			})}
-		</div>
-	);
+				)}
+			</div>
+		);
+	}
 }
+
+
+
+/*
+*	Class Properties
+*/
+
+RegionMatches.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	region: React.PropTypes.object.isRequired,
+};
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default RegionMatches;

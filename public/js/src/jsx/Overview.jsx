@@ -2,15 +2,16 @@
 
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-var _ = require('lodash');		// browserify shim
+import React from 'React'; // browserify shim
+import Immutable from 'immutable';
+import _ from 'lodash';
 
-var api = require('../api');
-
-
+import api from '../api';
 
 
 
@@ -18,36 +19,8 @@ var api = require('../api');
 *	React Components
 */
 
-var RegionMatches = require('./overview/RegionMatches.jsx');
-var RegionWorlds = require('./overview/RegionWorlds.jsx');
-
-
-
-
-
-/*
-*	Component Globals
-*/
-
-var worldsStatic = require('gw2w2w-static').worlds;
-
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	getInitialState: getInitialState,
-	// componentWillMount: componentWillMount,
-	componentDidMount: componentDidMount,
-	componentWillUnmount: componentWillUnmount,
-	render: render,
-
-	getMatches: getMatches,
-});
+import RegionMatches from './overview/RegionMatches.jsx';
+import RegionWorlds from './overview/RegionWorlds.jsx';
 
 
 
@@ -55,119 +28,117 @@ module.exports = React.createClass({
 
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class Overview extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			matches: {},
+			regions: [],
+		};
 
-/*
-*	Component Lifecyle Methods
-*/
+		this.updateTimer = null;
 
-function getInitialState() {
-	return {matches: {}};
-}
-
-
-
-function render() {
-	var component = this;
-	var props = component.props;
-	var state = component.state;
-
-	var lang = props.lang;
-
-	var worlds = _.mapValues(worldsStatic, function(world) {
-		world[lang.slug].id = world.id;
-		world[lang.slug].region = world.region;
-		world[lang.slug].link = '/' + lang.slug + '/' + world.slug;
-		return world[lang.slug];
-	});
-
-	var matches = state.matches;
-
-	var regions = [
-		{
-			"label": "NA",
-			"id": "1",
-			"matches": _.filter(matches, function(m) {return m.region == 1;}),
-		}, {
-			"label": "EU",
-			"id": "2",
-			"matches": _.filter(matches, function(m) {return m.region == 2;}),
-		},
-	];
+		this.getMatches();
+	}
 
 
-	setPageTitle(lang);
+
+	shouldComponentUpdate(nextProps, nextState) {
+		var shouldUpdate = !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState);
+		console.log('Overview::shouldComponentUpdate()', shouldUpdate);
+		return shouldUpdate;
+	}
 
 
-	return (
-		<div id="overview">
-			<div className="row">
-				{_.map(regions, function(region){
-					return (
+
+	componentWillUnmount() {
+		clearTimeout(this.updateTimer);
+	}
+
+
+
+	componentDidUpdate() {
+		setPageTitle(this.props.lang);
+	}
+
+
+
+	render() {
+		var state = this.state;
+		var props = this.props;
+
+		console.log('Overview::render()');
+
+		return (
+			<div id="overview">
+				<div className="row">
+					{state.regions.map(region => {
+						return <div className="col-sm-12" key={region.label}>
+							<RegionMatches region={region} {...props} />
+						</div>;
+					})}
+				</div>
+
+				<hr />
+
+				<div className="row">
+					{state.regions.map(region =>
 						<div className="col-sm-12" key={region.label}>
-							<RegionMatches region={region} lang={lang} />
+							<RegionWorlds region={region} {...props} />
 						</div>
-					);
-				})}
+					)}
+				</div>
 			</div>
-
-			<hr />
-
-			<div className="row">
-				{_.map(regions, function(region){
-					return (
-						<div className="col-sm-12" key={region.label}>
-							<RegionWorlds region={region} lang={lang} />
-						</div>
-					);
-				})}
-			</div>
-		</div>
-	);
-}
+		);
+	}
 
 
 
-function componentDidMount() {
-	var component = this;
+	getMatches() {
+		var component = this;
 
-	component.updateTimer = null;
-	component.getMatches();
-}
+		api.getMatches((err, data) => {
+			if (!err && data && !_.isEmpty(data)) {
 
+				component.setState({
+					matches: data,
+					regions: getRegions(data),
+				});
 
-
-function componentWillUnmount() {
-	var component = this;
-
-	clearTimeout(component.updateTimer);
-}
-
-
-
-
-/*
-*	Component Helper Methods
-*/
-
-function getMatches() {
-	var component = this;
-
-	api.getMatches(function(err, data) {
-		if(component.isMounted()) {
-			if (!err && data && Object.keys(data).length) {
-				component.setState({matches: data});
 			}
 
-			var interval = _.random(2000, 4000);
-			component.updateTimer = window.setTimeout(component.getMatches, interval);
-		}
-	});
+			component.updateTimer = setTimeout(
+				component.getMatches.bind(component),
+				_.random(2000, 4000)
+			);
+		});
+	}
 }
 
+
+
+/*
+*	Class Properties
+*/
+
+Overview.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+};
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default Overview;
 
 
 
@@ -178,14 +149,28 @@ function getMatches() {
 *
 */
 
+function getRegions(matches) {
+	return [
+		{
+			'label': 'NA',
+			'id': '1',
+			'matches': _.filter(matches, match => _.parseInt(match.region) === 1),
+		}, {
+			'label': 'EU',
+			'id': '2',
+			"matches": _.filter(matches, match => _.parseInt(match.region) === 2),
+		},
+	];
+}
+
+
+
 function setPageTitle(lang) {
 	var title = ['gw2w2w'];
 
-	if (lang) {
-		if (lang.slug !== 'en') {
-			title.push(lang.name);
-		}
+	if (lang && lang.slug !== 'en') {
+		title.push(lang.name);
 	}
 
-	document.getElementsByTagName('title')[0].innerHTML = title.join(' - ');
+	$('title').text(title.join(' - '));
 }

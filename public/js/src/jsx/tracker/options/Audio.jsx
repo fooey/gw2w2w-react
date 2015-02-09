@@ -2,153 +2,90 @@
 
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');		// browserify shim
-var _ = require('lodash');			// browserify shim
+var React = require('React'); // browserify shim
+var _ = require('lodash');
 
 
 
 
 
 /*
-*	React Components
+*
+*	Component Definition
+*
 */
 
+class AudioOptions extends React.Component {
+	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
 
+	render() {
+		var props = this.props;
 
-
-
-/*
-*	Component Globals
-*/
-
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	render: render,
-	// componentDidUpdate: componentDidUpdate,
-
-	toggleEnabled: toggleEnabled,
-	// toggleMapEnabled: toggleMapEnabled,
-	// getMapOption: getMapOption,
-
-	statics: {
-		getDefaultOptions: getDefaultOptions,
+		return (
+			<section id="options-audio">
+				<h3>Audio Options {getAudioIcon(props.options.enabled)}</h3>
+				<div className="checkbox">
+					<label htmlFor="audio-enabled">
+						<input
+							type="checkbox"
+							checked={props.options.enabled}
+							id="audio-enabled"
+							name="audio-enabled"
+							value="1"
+							onChange={this.toggleEnabled.bind(this)}
+						/>
+						{' '} Audio Alerts
+					</label>
+				</div>
+			</section>
+		);
 	}
-});
 
 
 
+	toggleEnabled(e) {
+		var component = this;
+		var props = component.props;
+
+		console.log(e);
+
+		var toOptions = _.assign({}, props.options);
+		toOptions.enabled = !toOptions.enabled;
+		// console.log('AudioOptions::toggleEnabled()', toOptions);
 
 
-/*
-*
-*	Component Methods
-*
-*/
-
-
-/*
-*	Component Lifecyle Methods
-*/
-
-function render() {
-	var component = this;
-	var props = component.props;
-
-	var lang = props.lang;
-	var options = props.options;
-
-	// console.log('options::Audio::render()');
-
-	return (
-		<section id="options-audio">
-			<h3>Audio Options {getAudioIcon(options.enabled)}</h3>
-			<div className="checkbox">
-				<label htmlFor="audio-enabled">
-					<input
-						type="checkbox"
-						checked={options && options.enabled}
-						id="audio-enabled"
-						name="audio-enabled"
-						value="1"
-						onChange={component.toggleEnabled}
-					/>
-					{' '} Audio Alerts
-				</label>
-			</div>
-		</section>
-	);
-			// <div className={(options.enabled ? 'enabled' : 'disabled') + ' sub-options'}>
-			// 	{_.map(['EBG', 'RedHome', 'BlueHome', 'GreenHome'], function(mapName, mapIndex){
-			// 		return (
-			// 			component.getMapOption(
-			// 				mapIndex,
-			// 				mapName
-			// 			)
-			// 		);
-			// 	})}
-			// </div>
+		props.setOptions(toOptions);
+	}
 }
 
 
 
-
-// function componentDidUpdate() {
-// 	console.log('options::Audio::componentDidUpdate()');
-// }
-
-
-
 /*
-*	Component Helper Methods
+*	Class Properties
 */
 
-function toggleEnabled() {
-	var component = this;
-	var props = component.props;
+AudioOptions.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	options: React.PropTypes.object.isRequired,
+	setOptions: React.PropTypes.func.isRequired,
+};
 
-	var toOptions = _.cloneDeep(props.options);
-	toOptions.enabled = !(toOptions.enabled);
-
-	props.setOptions(toOptions);
-}
-
-// function toggleMapEnabled(mapIndex) {
-// 	var component = this;
-// 	var props = component.props;
-// 	console.log('toggleMapEnabled', mapIndex, props.options.maps[mapIndex]);
-
-// 	var toOptions = _.cloneDeep(props.options);
-// 	toOptions.maps[mapIndex] = !(toOptions.maps[mapIndex]);
-
-// 	props.setOptions(toOptions);
-// }
 
 
 
 /*
 *
-*	Component Static Methods
+*	Export Module
 *
 */
 
-function getDefaultOptions() {
-	return {
-		enabled: false,
-		// maps: [true, true, true, true],
-		// events: 'all',
-		// color: 'all',
-	};
-}
+export default AudioOptions;
+
 
 
 

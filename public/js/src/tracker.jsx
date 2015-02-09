@@ -1,11 +1,14 @@
 'use strict';
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-var _ = require('lodash');		// browserify shim
+const React = require('React'); // browserify shim
+const _ = require('lodash');
+import STATIC from 'gw2w2w-static';
 
 
 
@@ -15,19 +18,8 @@ var _ = require('lodash');		// browserify shim
 *	React Components
 */
 
-var Tracker = require('./jsx/Tracker.jsx');
-var Langs = require('./jsx/Langs.jsx');
-
-
-
-
-
-/*
-*	Component Globals
-*/
-
-var langs = require('gw2w2w-static').langs;
-var worlds = require('gw2w2w-static').worlds;
+const Tracker = require('./jsx/Tracker.jsx');
+const Langs = require('./jsx/Langs.jsx');
 
 
 
@@ -37,16 +29,16 @@ var worlds = require('gw2w2w-static').worlds;
 *	Export
 */
 
-module.exports = function overview(ctx) {
-	var langSlug = ctx.params.langSlug;
-	var lang = langs[langSlug];
+export default function overview(ctx) {
+	const langSlug = ctx.params.langSlug;
+	const worldSlug = ctx.params.worldSlug;
 
-	var worldSlug = ctx.params.worldSlug;
-	var world = _.find(worlds, function(world) {
+	const lang = STATIC.langs[langSlug];
+	const world = _.find(STATIC.worlds, function(world) {
 		return world[lang.slug].slug === worldSlug;
 	});
 
 
 	React.render(<Langs lang={lang} world={world} />, document.getElementById('nav-langs'));
 	React.render(<Tracker lang={lang} world={world} />, document.getElementById('content'));
-};
+}

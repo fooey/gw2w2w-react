@@ -1,6 +1,6 @@
 'use strict';
 
-var gw2api = require('gw2api');
+const gw2api = require('gw2api');
 
 
 module.exports = {

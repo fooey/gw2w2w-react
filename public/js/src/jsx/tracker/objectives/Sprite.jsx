@@ -1,26 +1,14 @@
 'use strict';
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
+import React from 'React'; 		// browserify shim
 
-var PureRenderMixin = React.addons.PureRenderMixin;
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	mixins: [PureRenderMixin],
-
-	render: render,
-});
-
+import _ from 'lodash';
 
 
 
@@ -28,25 +16,38 @@ module.exports = React.createClass({
 
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class Sprite extends React.Component {
+	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
 
-/*
-*	Component Lifecyle Methods
-*/
+	render() {
+		var props = this.props;
 
-function render() {
-	var component = this;
-	var props = component.props;
-
-	var type = props.type;
-	var color = props.color;
-
-	var className = ['sprite', type, color].join(' ');
-
-	return (
-		<span className={className} />
-	);
+		return <span className={`sprite ${props.type} ${props.color}`} />;
+	}
 }
+
+
+
+/*
+*	Class Properties
+*/
+
+Sprite.propTypes = {
+	type: React.PropTypes.string.isRequired,
+	color: React.PropTypes.string.isRequired,
+};
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default Sprite;

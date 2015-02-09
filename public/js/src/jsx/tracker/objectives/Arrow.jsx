@@ -1,25 +1,14 @@
 'use strict';
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
+import React from 'React'; 		// browserify shim
 
-var PureRenderMixin = React.addons.PureRenderMixin;
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	mixins: [PureRenderMixin],
-
-	render: render,
-});
-
+import _ from 'lodash';
 
 
 
@@ -27,37 +16,57 @@ module.exports = React.createClass({
 
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class Arrow extends React.Component {
+	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
 
-/*
-*	Component Lifecyle Methods
-*/
+	render() {
+		var props = this.props;
 
-function render() {
-	var component = this;
-	var props = component.props;
-
-	var src = getArrowSrc(props.oMeta);
+		var imgSrc = getArrowSrc(props.oMeta);
 
 
-	return (
-		<span className="direction">
-			{src ? <img src={src} /> : null}
-		</span>
-	);
+		return (
+			<span className="direction">
+				{imgSrc ? <img src={imgSrc} /> : null}
+			</span>
+		);
+	}
 }
 
 
 
+/*
+*	Class Properties
+*/
+
+Arrow.propTypes = {
+	oMeta: React.PropTypes.object.isRequired,
+};
+
 
 
 
 /*
 *
-*	Static Methods
+*	Export Module
+*
+*/
+
+export default Arrow;
+
+
+
+
+
+
+
+/*
+*
+*	Private Methods
 *
 */
 

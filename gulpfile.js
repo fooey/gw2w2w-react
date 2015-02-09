@@ -1,18 +1,24 @@
 var gulp = require('gulp');
+var gutil = require('gulp-util');
+
 var _ = require('lodash');
+var path = require('path');
 
 var livereload = require('gulp-livereload');
 var nodemon = require('gulp-nodemon');
-var browserify = require('browserify');
-var reactify = require('reactify');
+var watchify = require('watchify');
 
-
-var filter = require('gulp-filter');
+var notify = require('gulp-notify');
 var rename = require('gulp-rename');
-var del = require('del');
 var sourcemaps = require('gulp-sourcemaps');
-var source = require('vinyl-source-stream');
 
+var vinylBuffer = require('vinyl-buffer');
+var vinylSource = require('vinyl-source-stream');
+
+
+var browserify = require('browserify');
+var to5ify = require('6to5ify').configure({experimental: true});
+var uglify = require('gulp-uglify');
 
 
 /*
@@ -34,12 +40,13 @@ paths.js.base = paths.public + '/js';
 paths.js.src = paths.js.base + '/src';
 paths.js.dist = paths.js.base + '/dist';
 
-// paths.jsx = {};
-// paths.jsx.base = paths.public + '/jsx'
-// paths.jsx.src = paths.jsx.base + '/src'
-// paths.jsx.dist = paths.jsx.base + '/dist'
 
-
+function handleError(task) {
+	return function(err) {
+		gutil.log(gutil.colors.red(err));
+		notify.onError(task + ' failed, check the logs..')(err);
+	};
+}
 
 
 
@@ -50,59 +57,37 @@ paths.js.dist = paths.js.base + '/dist';
 *
 */
 
-gulp.task('clean-css', function(cb) {
-	console.log('clean-css', paths.css.dist);
-
-	del(paths.css.dist, cb);
-});
-
-
-
-gulp.task('less', [/*'clean-css'*/], function() {
+gulp.task('compile-css', [], function() {
 	var less = require('gulp-less');
+	var LessPluginCleanCSS = require("less-plugin-clean-css"),
+		cleancss = new LessPluginCleanCSS({
+			advanced: true,
+			aggressiveMerging: true,
+			keepBreaks: false,
+			shorthandCompacting: true,
+		});
+
+	var LessPluginAutoPrefix = require('less-plugin-autoprefix'),
+		autoprefix = new LessPluginAutoPrefix({
+			// browsers: ["last 2 versions, > 1%"] // use default
+		});
+
 
 	var src = paths.css.src + '/app.less';
 	var dest = paths.css.dist;
-	console.log('less', src, dest);
+	// console.log('less', src, dest);
 
 	var stream = gulp
+		.on('error', gutil.log.bind(gutil, 'Less Error'))
 		.src(src)
 		.pipe(sourcemaps.init())
-		.pipe(less())
-		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest(dest));
-
-
-	stream.on('error', function(err) {
-		console.log(err.toString());
-		this.emit("end");
-	});
-	return stream;
-});
-
-
-
-gulp.task('cssmin', ['less'], function() {
-	var cssmin = require('gulp-minify-css');
-
-	var src = paths.css.dist + '/app.css';
-	var dest = paths.css.dist;
-	console.log('cssmin', src, dest);
-
-	var stream = gulp
-		.src(src)
-		.pipe(sourcemaps.init({loadMaps: true}))
-		.pipe(cssmin({noAdvanced: true}))
+		.pipe(less({
+			plugins: [autoprefix, cleancss]
+		}))
 		.pipe(rename({suffix: '.min'}))
 		.pipe(sourcemaps.write('./'))
 		.pipe(gulp.dest(dest));
-		// .pipe(livereload.changed)
 
-
-	stream.on('error', function(err) {
-		console.log(err.toString());
-		this.emit("end");
-	});
 	return stream;
 });
 
@@ -116,78 +101,61 @@ gulp.task('cssmin', ['less'], function() {
 *	JS
 *
 */
-
-gulp.task('clean-js', function(cb) {
-	console.log('clean-js', paths.js.dist);
-
-	del(paths.js.dist, cb);
+var browserifyConfig = _.defaults(watchify.args, {
+	entries: [paths.js.src + '/app.js'],
+	debug: true,
+	bundleExternal: true,
+	ignore: ['request', 'zlib', 'assert', 'buffer', 'util', '_process'],
 });
 
+var browserifyBundler = browserify(browserifyConfig);
+
+var watchifyBundler = watchify(browserifyBundler)
+	.transform(to5ify)
+	.on('error', gutil.log.bind(gutil, 'Watchify Error'))
+	.on('log', function (msg) { console.log('Watchify', 'log', msg); });
 
 
-gulp.task('browserify', [/*'clean-js', */], function() {
-	var src = paths.js.src + '/app.js';
-	var dest = paths.js.dist;
-	console.log('browserify', src, dest);
 
-	var stream = browserify({
-			entries: [src],
-			debug: false,
-			// insertGlobals: false,
-			// detectGlobals: true,
-			bundleExternal: true,
-			ignore: ['request', 'zlib', 'assert', 'buffer', 'util', '_process'],
-		})
-        .transform(reactify)
+
+
+var uglifier = function() {
+	return uglify({
+	// report: 'min',
+		stripBanners: true,
+		mangle: true,
+		compress: true,
+		output: {
+			comments: false,
+			beautify: false,
+		},
+	}).on('error', gutil.log.bind(gutil, 'Uglify Error'));
+};
+
+var compileJS = function() {
+	return watchifyBundler
 		.bundle()
-		// Use vinyl-source-stream to make the
-		// stream gulp compatible. Specifiy the
-		// desired output filename here.
-		.pipe(source('app.js'))
-		// Specify the output destination
-		.pipe(gulp.dest(dest));
+		.on('error', gutil.log.bind(gutil, 'Browserify Error'))
 
+		.pipe(vinylSource('app.js'))
+		.pipe(vinylBuffer())
 
-	stream.on('error', function(err) {
-		console.log(err.toString());
-		this.emit("end");
-	});
+		.pipe(sourcemaps.write('./'))
+		.pipe(gulp.dest(paths.js.dist)) // non-minified app.js
 
-	return stream;
-});
+		.pipe(sourcemaps.init({loadMaps: true}))
 
+		.pipe(uglifier())
 
+		.pipe(rename({suffix: '.min'}))
+		.pipe(sourcemaps.write('./'))
+		.pipe(gulp.dest(paths.js.dist)) // minified app.min.js
 
-gulp.task('jsmin', ['browserify'], function() {
-	var uglify = require('gulp-uglifyjs');
+		.pipe(livereload())
+};
 
-	var src = paths.js.dist + '/app.js';
-	var dest = paths.js.dist;
-
-	console.log('jsmin', src, dest);
-
-	var stream = gulp
-		.src(src)
-		.pipe(uglify('app.min.js', {
-			report: 'min',
-			stripBanners: true,
-			mangle: true,
-			compress: true,
-			output: {
-				comments: false,
-				beautify: false,
-			},
-		}))
-		.pipe(gulp.dest(dest));
-		// .pipe(livereload.changed)
-
-
-	stream.on('error', function(err) {
-		console.log(err.toString());
-		this.emit("end");
-	});
-	return stream;
-});
+watchifyBundler.on('update', compileJS);
+gulp.task('compile-js', [], compileJS);
 
 
 
@@ -198,18 +166,21 @@ gulp.task('jsmin', ['browserify'], function() {
 *
 */
 
-gulp.task('watch', ['nodemon', 'cssmin', 'jsmin'], function() {
+gulp.task('watch', ['compile', 'nodemon'], function(cb) {
 	livereload.listen();
-	gulp.watch(paths.css.src + '/**/*.less', ['cssmin']);
-	gulp.watch(paths.js.src + '/**/*.*', ['jsmin']);
+	gulp.watch(paths.css.src + '/**/*.less', ['compile-css']);
+	// gulp.watch(paths.js.src + '/**/*.*', ['compile-js']);
 
 	gulp.watch(paths.css.dist + '/app.min.css', livereload.changed);
-	gulp.watch(paths.js.dist + '/app.min.js', livereload.changed);
+	// gulp.watch(paths.js.dist + '/app.min.js', livereload.changed);
 	gulp.watch('./views/**/*.jade', livereload.changed);
+
+	cb();
 });
 
 
-gulp.task('nodemon', function(cb) {
+
+gulp.task('nodemon', ['compile'], function(cb) {
 	var called = false;
 	var options = {
 		script: './server.js',
@@ -253,6 +224,11 @@ gulp.task('nodemon', function(cb) {
 *	Tasks Wrappers
 *
 */
+
+
+gulp.task('compile', ['compile-js', 'compile-css'], function(cb) {
+	cb();
+});
 
 
 gulp.task('default', ['watch'], function(cb) {

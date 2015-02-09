@@ -2,15 +2,15 @@
 
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-var _ = require('lodash');
+import React from 'React'; // browserify shim
+import _ from 'lodash';
 
-// var PureRenderMixin = React.addons.PureRenderMixin;
-
-
+import STATIC from 'gw2w2w-static';
 
 
 
@@ -18,112 +18,98 @@ var _ = require('lodash');
 *	React Components
 */
 
-var Score = require('./Score.jsx');
-var Pie = require('./Pie.jsx');
+import Score from './Score.jsx';
+import Pie from './Pie.jsx';
 
 
 
 
 
 /*
-*	Component Globals
-*/
-
-var worldsStatic = require('gw2w2w-static').worlds;
-
-
-
-
-
-/*
+*
 *	Component Export
-*/
-
-module.exports = React.createClass({
-	// mixins: [PureRenderMixin],
-
-	render: render,
-	shouldComponentUpdate: shouldComponentUpdate,
-});
-
-
-
-
-
-/*
-*
-*	Component Methods
 *
 */
 
+class Match extends React.Component {
+	shouldComponentUpdate(nextProps) {
+		var props = this.props;
 
-/*
-*	Component Lifecyle Methods
-*/
+		var newScore = !_.isEqual(props.match.scores, nextProps.match.scores);
+		var newMatch = (props.match.startTime !== nextProps.match.startTime);
+		var newLang = (props.lang.slug !== nextProps.lang.slug);
 
-function render() {
-	var component = this;
-	var props = component.props;
-
-	var match = props.match;
-	var lang = props.lang;
-
-	var matchId = match.id;
-	var scores = match.scores;
+		return (newScore || newMatch || newLang);
+	}
 
 
-	var matchWorlds = getMatchWorlds(match, scores, lang);
 
-	return (
-		<div className="matchContainer" key={matchId}>
-			<table className="match">
-				{_.map(matchWorlds, function(mw, color) {
-					var world = mw.world;
-					var score = mw.score;
+	render() {
+		var props = this.props;
 
-					var href = ['', lang.slug, world.slug].join('/');
-					var label = world.name;
+		var matchWorlds = getMatchWorlds(props.match, props.lang);
 
-					return (
-						<tr key={color}>
-							<td className={"team name " + color}>
-								<a href={href}>{label}</a>
-							</td>
-							<td className={"team score " + color}>
-								<Score
-									matchId={matchId}
-									team={color}
-									score={score}
-								/>
-							</td>
-							{(color === 'red')
-								? <td rowSpan="3" className="pie">
-									<Pie scores={scores} size="60" matchId={matchId} />
+		return (
+			<div className="matchContainer" key={props.match.matchId}>
+				<table className="match">
+					{_.map(matchWorlds, (mw, color) => {
+						let world = mw.world;
+						let score = mw.score;
+
+						let href = ['', props.lang.slug, world.slug].join('/');
+						let label = world.name;
+
+						return (
+							<tr key={color}>
+								<td className={"team name " + color}>
+									<a href={href}>{label}</a>
 								</td>
-								: null
-							}
-						</tr>
-					);
-				})}
-			</table>
-		</div>
-	);
+								<td className={"team score " + color}>
+									<Score
+										matchId={props.match.matchId}
+										team={color}
+										score={score}
+									/>
+								</td>
+								{(color === 'red')
+									? <td rowSpan="3" className="pie">
+										<Pie
+											scores={props.match.scores}
+											size="60"
+										/>
+									</td>
+									: null
+								}
+							</tr>
+						);
+					})}
+				</table>
+			</div>
+		);
+	}
 }
 
 
 
-function shouldComponentUpdate(nextProps) {
-	var component = this;
-	var props = component.props;
+/*
+*	Class Properties
+*/
 
-	var newScore = !_.isEqual(props.match.scores, nextProps.match.scores);
-	var newMatch = (props.match.startTime !== nextProps.match.startTime);
-	var newLang = (props.lang.slug !== nextProps.lang.slug)
-
-	return (newScore || newMatch || newLang);
-}
+Match.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	match: React.PropTypes.object.isRequired,
+};
 
 
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default Match;
 
 
 
@@ -132,14 +118,15 @@ function shouldComponentUpdate(nextProps) {
 *	Private Methods
 *
 */
-function getMatchWorlds(match, scores, lang) {
-	var redWorld = worldsStatic[match.redId][lang.slug];
-	var blueWorld = worldsStatic[match.blueId][lang.slug];
-	var greenWorld = worldsStatic[match.greenId][lang.slug];
+
+function getMatchWorlds(match, lang) {
+	var redWorld = STATIC.worlds[match.redId][lang.slug];
+	var blueWorld = STATIC.worlds[match.blueId][lang.slug];
+	var greenWorld = STATIC.worlds[match.greenId][lang.slug];
 
 	return  {
-		"red": {"world": redWorld, "score": scores[0]},
-		"blue": {"world": blueWorld, "score": scores[1]},
-		"green": {"world": greenWorld, "score": scores[2]},
+		"red": {"world": redWorld, "score": match.scores[0]},
+		"blue": {"world": blueWorld, "score": match.scores[1]},
+		"green": {"world": greenWorld, "score": match.scores[2]},
 	};
 }

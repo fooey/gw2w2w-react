@@ -2,49 +2,71 @@
 
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');		// browserify shim
-
-var PureRenderMixin = React.addons.PureRenderMixin;
-
+import React from 'React'; // browserify shim
+import _ from 'lodash';
 
 
 
 
 /*
-*	Component Export
+*	Component Globals
 */
 
-module.exports = React.createClass({
-	mixins: [PureRenderMixin],
-	render: render,
-});
-
+var INSTANCE = {
+	size: 60,
+	stroke: 2,
+};
 
 
 
 
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class Pie extends React.Component {
+	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
 
-/*
-*	Component Lifecyle Methods
-*/
+	render() {
+		var props = this.props;
 
-function render() {
-	var component = this;
-	var props = component.props;
-
-	var scores = props.scores;
-
-	return <img src={getImageSource(scores)} />;
+		return (
+			<img
+				width={INSTANCE.size}
+				height={INSTANCE.size}
+				src={getImageSource(props.scores)}
+			/>
+		);
+	}
 }
+
+
+
+/*
+*	Class Properties
+*/
+
+Pie.propTypes = {
+	scores: React.PropTypes.array.isRequired,
+};
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default Pie;
 
 
 
@@ -56,8 +78,5 @@ function render() {
 */
 
 function getImageSource(scores) {
-	var pieSize = 60;
-	var pieStroke = 2;
-
-	return 'http://www.piely.net/' + pieSize + '/' + scores.join(',') + '?strokeWidth=' + pieStroke;
+	return `http:\/\/www.piely.net\/${INSTANCE.size}\/${scores.join(',')}?strokeWidth=${INSTANCE.stroke}`;
 }

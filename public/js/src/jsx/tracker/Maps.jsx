@@ -2,13 +2,15 @@
 
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-var _ = require('lodash');		// browserify shim
 
-
+import React from 'React'; // browserify shim
+import _ from 'lodash';
+// import STATIC from 'gw2w2w-static';
 
 
 
@@ -16,103 +18,81 @@ var _ = require('lodash');		// browserify shim
 *	React Components
 */
 
-var MapDetails = require('./maps/MapDetails.jsx');
-var Log = require('./log/Log.jsx');
-
-
-
-
-
-/*
-*	Component Globals
-*/
-
-var staticData = require('gw2w2w-static');
-var mapsConfig = staticData.objective_map;
-
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	render: render,
-});
-
+import MapDetails from './maps/MapDetails.jsx';
+import Log from './log/Log.jsx';
 
 
 
 
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
-
-/*
-*	Component Lifecyle Methods
-*/
-
-function render() {
-	var component = this;
-	var props = component.props;
-
-	if (!props.details.initialized) {
-		return null;
+class Maps extends React.Component {
+	shouldComponentUpdate(nextProps) {
+		return !_.isEqual(this.props, nextProps);
 	}
 
-	var lang = props.lang;
-	var details = props.details;
-	var matchWorlds = props.matchWorlds;
-	var guilds = props.guilds;
+	render() {
+		var props = this.props;
 
-	var eventHistory = details.history;
+		if (!props.details.initialized) {
+			return null;
+		}
 
 
-
-	function getMapDetails(mapKey) {
 		return (
-			<MapDetails
-				{...component.props}
-				mapKey={mapKey}
-			/>);
-	}
+			<section id="maps">
+				<div className="row">
 
+					<div className="col-md-6"><MapDetails mapKey="Center" {...props} /></div>
 
+					<div className="col-md-18">
 
-	return (
-		<section id="maps">
-			<h1>Maps</h1>
-			<div className="row">
-
-				<div className="col-md-6">{getMapDetails('Center')}</div>
-
-				<div className="col-md-18">
-
-					<div className="row">
-						<div className="col-md-8">{getMapDetails('RedHome')}</div>
-						<div className="col-md-8">{getMapDetails('BlueHome')}</div>
-						<div className="col-md-8">{getMapDetails('GreenHome')}</div>
-					</div>
-
-					<div className="row">
-						<div className="col-md-24">
-							<Log
-								lang={lang}
-
-								eventHistory={eventHistory}
-								guilds={guilds}
-								matchWorlds={matchWorlds}
-							/>
+						<div className="row">
+							<div className="col-md-8"><MapDetails mapKey="RedHome" {...props} /></div>
+							<div className="col-md-8"><MapDetails mapKey="BlueHome" {...props} /></div>
+							<div className="col-md-8"><MapDetails mapKey="GreenHome" {...props} /></div>
 						</div>
-					</div>
 
-				</div>
-			 </div>
-		</section>
-	);
+						<div className="row">
+							<div className="col-md-24">
+								<Log {...props} />
+							</div>
+						</div>
+
+					</div>
+				 </div>
+			</section>
+		);
+	}
 }
+
+
+
+/*
+*	Class Properties
+*/
+
+Maps.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	libAudio: React.PropTypes.object.isRequired,
+	details: React.PropTypes.object.isRequired,
+
+	options: React.PropTypes.object,
+	matchWorlds: React.PropTypes.object,
+	guilds: React.PropTypes.object,
+};
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default Maps;

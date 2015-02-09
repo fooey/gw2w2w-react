@@ -2,38 +2,23 @@
 
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-var _ = require('lodash');		// browserify shim
+import React from 'React'; // browserify shim
+import _ from 'lodash';
 
-var PureRenderMixin = React.addons.PureRenderMixin;
-
-
+import STATIC from 'gw2w2w-static';
 
 
 
 /*
-*	Component Globals
+*	React Components
 */
 
-var langs = require('gw2w2w-static').langs;
-var worlds = require('gw2w2w-static').worlds;
-
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	mixins: [PureRenderMixin],
-
-	render: render,
-});
+import LangLink from './LangLink.jsx';
 
 
 
@@ -41,42 +26,20 @@ module.exports = React.createClass({
 
 /*
 *
-*	Component Methods
+*	Exported Component
 *
 */
 
+export default class Langs extends React.Component {
+	render() {
+		var props = this.props;
 
-/*
-*	Component Lifecyle Methods
-*/
-
-function render() {
-	var component = this;
-	var props = component.props;
-
-	var lang = props.lang;
-	var world = props.world;
-
-	langs = _.map(langs, function(lang){
-		lang.link = '/' + lang.slug;
-
-		if (world) {
-			lang.link = lang.link + '/' + world[lang.slug].slug;
-		}
-
-		return lang;
-	});
-
-
-	return (
-		<ul className="nav navbar-nav">
-			{_.map(langs, function(l) {
-				return (
-					<li key={l.slug} className={(l.slug === lang.slug) ? 'active' : ''} title={l.name}>
-						<a data-slug={l.slug} href={l.link}>{l.label}</a>
-					</li>
-				);
-			})}
-		</ul>
-	);
+		return (
+			<ul className='nav navbar-nav'>
+				{_.map(STATIC.langs, lang =>
+					<LangLink {...props} key={lang.slug} linkLang={lang} />
+				)}
+			</ul>
+		);
+	}
 }

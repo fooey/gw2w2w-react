@@ -1,14 +1,16 @@
 'use strict';
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-var _ = require('lodash');		// browserify shim
-var $ = require('jquery');		// browserify shim
+import React from 'React'; // browserify shim
 
+import _ from 'lodash';
 
+import STATIC from 'gw2w2w-static';
 
 
 
@@ -16,190 +18,152 @@ var $ = require('jquery');		// browserify shim
 *	React Components
 */
 
-var Entry = require('./Entry.jsx');
-
-
-
-
-
-/*
-*	Component Globals
-*/
-
-var staticData = require('gw2w2w-static');
-var mapsStatic = staticData.objective_map;
-var objectivesMeta = staticData.objective_meta;
-
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	getInitialState: getInitialState,
-	render: render,
-	componentDidMount: componentDidMount,
-	componentDidUpdate: componentDidUpdate,
-
-	setWorld: setWorld,
-	setEvent: setEvent,
-});
-
-
+import MapFilters from './MapFilters.jsx';
+import EventFilters from './EventFilters.jsx';
+import LogEntries from './LogEntries.jsx';
 
 
 
 
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class Log extends React.Component {
+	constructor(props) {
+		super(props);
 
-/*
-*	Component Lifecyle Methods
-*/
-
-function getInitialState() {
-	return {
-		mapFilter: 'all',
-		eventFilter: 'all',
-		animateEntry: false,
-	};
-}
+		this.state = {
+			mapFilter: 'all',
+			eventFilter: 'all',
+			triggerNotification: false,
+		};
+	}
 
 
 
-function render() {
-	var component = this;
-	var props = component.props;
-	var state = component.state;
-
-	var dateNow = props.dateNow;
-	var timeOffset = props.timeOffset;
-	var lang = props.lang;
-	var guilds = props.guilds;
-	var matchWorlds = props.matchWorlds;
-
-	var eventFilter = state.eventFilter;
-	var mapFilter = state.mapFilter;
+	shouldComponentUpdate(nextProps, nextState) {
+		return !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState);
+	}
 
 
-	var eventHistory = _.chain(props.eventHistory)
-		.filter(function(entry) {
-			return (eventFilter == 'all' || entry.type == eventFilter);
-		})
-		.filter(function(entry) {
-			var oMeta = objectivesMeta[entry.objectiveId];
-			return (mapFilter == 'all' || oMeta.map == mapFilter);
-		})
-		.sortBy('timestamp')
-		.reverse()
-		.map(function(entry, ixEntry) {
-			var guildId, guild;
 
-			if (entry.type === 'claim') {
-				guildId = entry.guild;
-				guild = (guilds && guildId && guilds[guildId]) ? guilds[guildId] : null;
-			}
+	componentDidMount() {
+		var component = this;
 
-			return (
-				<Entry
-					key={entry.id}
-					lang={lang}
-
-					animateEntry={state.animateEntry}
-					entryId={entry.id}
-					objectiveId={entry.objectiveId}
-					worldColor={entry.world}
-					timestamp={entry.timestamp}
-					eventType={entry.type}
-					guildId={guildId}
-					guild={guild}
-				/>
-			);
-		})
-		.value();
+		component.setState({triggerNotification: true});
+	}
 
 
-	return (
-		<div id="log-container">
 
-			<div className="log-tabs">
-				<div className="row">
-					<div className="col-sm-16">
-						<ul id="log-map-filters" className="nav nav-pills">
+	componentDidUpdate() {
+		var component = this;
+		var state = component.state;
 
-							<li className={(mapFilter == 'all') ? 'active': 'null'}>
-								<a onClick={component.setWorld} data-filter="all">All</a>
-							</li>
+		if (!state.triggerNotification) {
+			component.setState({triggerNotification: true});
+		}
+	}
 
-							{_.map(mapsStatic, function(mapMeta, ixMap) {
-								return (
-									<li key={mapMeta.mapIndex} className={(mapFilter === mapMeta.mapIndex) ? 'active': 'null'}>
-										<a onClick={component.setWorld} data-filter={mapMeta.mapIndex}>{mapMeta.abbr}</a>
-									</li>
-								);
-							})}
 
-						</ul>
-					</div>
-					<div className="col-sm-8">
-						<ul id="log-event-filters" className="nav nav-pills">
-							<li className={(eventFilter === 'claim') ? 'active': 'null'}>
-								<a onClick={component.setEvent} data-filter="claim">Claims</a>
-							</li>
-							<li className={(eventFilter === 'capture') ? 'active': 'null'}>
-								<a onClick={component.setEvent} data-filter="capture">Captures</a>
-							</li>
-							<li className={(eventFilter === 'all') ? 'active': 'null'}>
-								<a onClick={component.setEvent} data-filter="all">All</a>
-							</li>
-						</ul>
+
+	render() {
+		var component = this;
+		var props = this.props;
+		var state = this.state;
+
+		var eventHistory = _.chain(_.assign({}, props.details.history))
+			.filter(entry => (state.eventFilter === 'all' || entry.type === state.eventFilter))
+			.filter(entry => {
+				let oMeta = STATIC.objective_meta[entry.objectiveId];
+				let mapFilter = (state.mapFilter === 'all')
+					? state.mapFilter
+					: _.parseInt(state.mapFilter);
+
+				return (mapFilter === 'all' || oMeta.map === mapFilter);
+			})
+			.sortBy('timestamp')
+			.reverse()
+			.value();
+
+
+		return (
+			<div id="log-container">
+
+				<div className="log-tabs">
+					<div className="row">
+						<div className="col-sm-16">
+							<MapFilters
+								mapFilter={state.mapFilter}
+								setWorld={setWorld.bind(component)}
+							/>
+						</div>
+						<div className="col-sm-8">
+							<EventFilters
+								eventFilter={state.eventFilter}
+								setEvent={setEvent.bind(component)}
+							/>
+						</div>
 					</div>
 				</div>
+
+				{(eventHistory && eventHistory.length)
+					? <LogEntries
+						triggerNotification={state.triggerNotification}
+
+						lang={props.lang}
+						guilds={props.guilds}
+						libAudio={props.libAudio}
+						options={props.options}
+
+						eventHistory={eventHistory}
+					/>
+					: null
+				}
+
 			</div>
-
-			<ul className="list-unstyled" id="log">
-				{eventHistory}
-			</ul>
-
-		</div>
-	);
-}
-
-
-
-
-function componentDidMount() {
-	var component = this;
-
-	component.setState({animateEntry: true});
-}
-
-
-
-
-function componentDidUpdate() {
-	var component = this;
-	var state = component.state;
-
-	if (!state.animateEntry) {
-		component.setState({animateEntry: true});
+		);
 	}
 }
 
 
 
+/*
+*	Class Properties
+*/
+
+Log.defaultProps = {
+	guilds: {},
+};
+
+Log.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	details: React.PropTypes.object.isRequired,
+	libAudio: React.PropTypes.object.isRequired,
+	options: React.PropTypes.object.isRequired,
+};
+
 
 
 
 /*
-*	Component Helper Methods
+*
+*	Export Module
+*
+*/
+
+export default Log;
+
+
+
+
+
+/*
+*
+*	Private Methods
+*
 */
 
 function setWorld(e) {
@@ -207,7 +171,11 @@ function setWorld(e) {
 
 	var filter = e.target.getAttribute('data-filter');
 
-	component.setState({mapFilter: filter, animateEntry: false});
+	filter = (filter === 'all')
+			? filter
+			: _.parseInt(filter)
+
+	component.setState({mapFilter: filter, triggerNotification: false});
 }
 
 
@@ -217,5 +185,5 @@ function setEvent(e) {
 
 	var filter = e.target.getAttribute('data-filter');
 
-	component.setState({eventFilter: filter, animateEntry: false});
+	component.setState({eventFilter: filter, triggerNotification: false});
 }

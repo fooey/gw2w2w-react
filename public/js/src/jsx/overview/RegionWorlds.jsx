@@ -2,86 +2,82 @@
 
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-var _ = require('lodash');		// browserify shim
-
-var PureRenderMixin = React.addons.PureRenderMixin;
+import React from 'React'; // browserify shim
+import _ from 'lodash';
 
 
+import STATIC from 'gw2w2w-static';
 
 
 
 /*
-*	Component Globals
+*	React Components
 */
 
-var worldsStatic = require('gw2w2w-static').worlds;
-
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	mixins: [PureRenderMixin],
-
-	render: render,
-});
-
+import RegionWorldsWorld from './RegionWorldsWorld.jsx';
 
 
 
 
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class RegionWorlds extends React.Component {
+	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
 
-/*
-*	Component Lifecyle Methods
-*/
+	render() {
+		var props = this.props;
 
+		var label = props.region.label + ' Worlds';
 
-function render() {
-	var component = this;
-	var props = component.props;
+		var worlds = _.chain(STATIC.worlds)
+			.filter(world => world.region === props.region.id)
+			.sortBy(world => world[props.lang.slug].name)
+			.value();
 
-	var lang = props.lang;
-	var region = props.region;
-
-	var label = region.label + ' Worlds';
-	var regionId = region.id;
-
-
-	var worlds = _.chain(worldsStatic)
-		.filter(function(w){return w.region == regionId;})
-		.sortBy(function(w){return w[lang.slug].name;})
-		.value();
-
-
-	return (
-		<div className="RegionWorlds">
-			<h2>{label}</h2>
-			<ul className="list-unstyled">
-				{_.map(worlds, function(world){
-					var href = ['', lang.slug, world[lang.slug].slug].join('/');
-					var label = world[lang.slug].name;
-
-					return (
-						<li key={world.id}>
-							<a href={href}>{label}</a>
-						</li>
-					);
-				})}
-			</ul>
-		</div>
-	);
+		return (
+			<div className="RegionWorlds">
+				<h2>{label}</h2>
+				<ul className="list-unstyled">
+					{_.map(worlds, (world, index) =>
+						<RegionWorldsWorld
+							key={index}
+							lang={props.lang}
+							world={world[props.lang.slug]}
+						/>
+					)}
+				</ul>
+			</div>
+		);
+	}
 }
+
+
+
+/*
+*	Class Properties
+*/
+
+RegionWorlds.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	region: React.PropTypes.object.isRequired,
+};
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default RegionWorlds;

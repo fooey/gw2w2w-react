@@ -2,11 +2,13 @@
 
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');		// browserify shim
-var _ = require('lodash');			// browserify shim
+var React = require('React'); // browserify shim
+var _ = require('lodash');
 
 
 
@@ -23,115 +25,71 @@ var Audio = require('./options/Audio.jsx');
 
 
 /*
-*	Component Globals
+*
+*	Component Definition
+*
 */
 
+class Options extends React.Component {
+	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
 
+	render() {
+		var component = this;
+		var props = component.props;
 
+		// console.log('Options::render()');
+		// console.log('Options::render', 'options.audio.enabled', options.audio.enabled);
 
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	render: render,
-	shouldComponentUpdate: shouldComponentUpdate,
-
-	setOptions: setOptions,
-	setAudioOptions: setAudioOptions,
-
-	statics: {
-		getDefaultOptions: getDefaultOptions,
+		return (
+			<section id="options">
+				<h2 className="section-header">Options</h2>
+				<Audio
+					lang={props.lang}
+					options={props.options.audio}
+					setOptions={this.setAudioOptions.bind(this)}
+				/>
+			</section>
+		);
 	}
-});
 
+
+
+	pushOptions(category, categoryOptions) {
+		var component = this;
+		var props = component.props;
+		// console.log('Options::setOptions()', category, categoryOptions);
+
+		var options = _.assign({}, props.options);
+		options[category] = categoryOptions;
+
+		props.setOptions(options);
+	}
+
+
+	setAudioOptions(newOptions) {
+		this.pushOptions('audio', newOptions);
+	}
+}
+
+
+
+/*
+*	Class Properties
+*/
+
+Options.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	options: React.PropTypes.object.isRequired,
+	setOptions: React.PropTypes.func.isRequired,
+};
 
 
 
 
 /*
 *
-*	Component Methods
+*	Export Module
 *
 */
 
-
-/*
-*	Component Lifecyle Methods
-*/
-
-function render() {
-	var component = this;
-	var props = component.props;
-
-	var lang = props.lang;
-	var options = props.options;
-
-	// console.log('Options::render()');
-	// console.log('Options::render', 'options.audio.enabled', options.audio.enabled);
-
-	return (
-		<section id="options">
-			<h2 className="section-header">Options</h2>
-			<Audio
-				lang={lang}
-				options={options.audio}
-				setOptions={component.setAudioOptions}
-			/>
-		</section>
-	);
-}
-
-
-
-function shouldComponentUpdate(nextProps) {
-	var component = this;
-	var props = component.props;
-
-	var optionsChanged = !(_.isEqual(props.options, nextProps.options));
-
-	// console.log('Options::shouldComponentUpdate()', optionsChanged, props.options.audio.enabled, nextProps.options.audio.enabled);
-
-	return !!(optionsChanged);
-}
-
-
-
-/*
-*	Component Helper Methods
-*/
-
-function setOptions(category, categoryOptions) {
-	var component = this;
-	var props = component.props;
-	// console.log('Options::setOptions()', category, categoryOptions);
-
-	var options = _.cloneDeep(props.options);
-	options[category] = categoryOptions;
-
-	props.setOptions(options);
-}
-
-
-
-function setAudioOptions(newOptions) {
-	var component = this;
-	// console.log('Options::setAudioOptions()', newOptions);
-
-	component.setOptions('audio', newOptions);
-}
-
-
-
-
-/*
-*	Component Static Methods
-*/
-
-function getDefaultOptions() {
-	// console.log('Options:getDefaultOptions()', this);
-	return {
-		audio: Audio.getDefaultOptions(),
-	};
-}
+export default Options;

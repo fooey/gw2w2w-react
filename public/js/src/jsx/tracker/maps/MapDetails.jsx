@@ -1,14 +1,17 @@
 'use strict';
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');		// browserify shim
-var _ = require('lodash');			// browserify shim
-var $ = require('jquery');			// browserify shim
-var numeral = require('numeral');	// browserify shim
+import React from 'React';		// browserify shim
+import $ from 'jquery';			// browserify shim
 
+import _ from 'lodash';
+
+import STATIC from 'gw2w2w-static';
 
 
 
@@ -17,33 +20,8 @@ var numeral = require('numeral');	// browserify shim
 *	React Components
 */
 
-var MapSection = require('./MapSection.jsx');
-
-
-
-
-
-/*
-*	Component Globals
-*/
-
-var staticData = require('gw2w2w-static');
-var mapsStatic = staticData.objective_map;
-
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	render: render,
-
-	onTitleClick: onTitleClick,
-});
-
+import MapScores from './MapScores.jsx';
+import MapSection from './MapSection.jsx';
 
 
 
@@ -51,86 +29,87 @@ module.exports = React.createClass({
 
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class MapDetails extends React.Component {
+	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
 
-/*
-*	Component Lifecyle Methods
-*/
+	render() {
+		var props = this.props;
 
-function render() {
-	var component = this;
-	var props = component.props;
+		var mapMeta = _.find(STATIC.objective_map, {key: props.mapKey});
 
-	// var lang = props.lang;
-	var details = props.details;
-	// var guilds = props.guilds;
-	// var matchWorlds = props.matchWorlds;
-	// var mapsMeta = props.mapsMeta;
-	var mapKey = props.mapKey;
+		return (
+			<div className="map">
 
-	// var owners = details.objectives.owners;
-	// var claimers = details.objectives.claimers;
+				<div className="mapScores">
+					<h2 className={'team ' + mapMeta.colo} onClick={onTitleClick}>
+						{mapMeta.name}
+					</h2>
+					<MapScores scores={props.details.maps.scores[mapMeta.mapIndex]} />
+				</div>
 
+				<div className="row">
+					{_.map(mapMeta.sections, (mapSection, ixSection) => {
 
-	var mapMeta = _.find(mapsStatic, {key: mapKey});
-	var scores = _.map(details.maps.scores[mapMeta.mapIndex], function(score) {return numeral(score).format('0,0');});
-	// var ticks = details.maps.ticks[mapMeta.mapIndex];
-	// var holdings = details.maps.holdings[mapMeta.mapIndex];
+						let sectionClass = getSectionClass(mapMeta.key, mapSection.label);
 
-
-	return (
-		<div className="map">
-
-			<div className="mapScores">
-				<h2 className={'team ' + mapMeta.colo} onClick={component.onTitleClick}>
-					{mapMeta.name}
-				</h2>
-				<ul className="list-inline">{
-					_.map(scores, function(score, ixScore) {
 						return (
-							<li key={ixScore} className={getScoreClass(ixScore)}>
-								{score}
-							</li>
-						);
-					})
-				}</ul>
-			</div>
-
-			<div className="row">
-				{_.map(mapMeta.sections, function(mapSection, ixSection) {
-
-					var sectionClass = getSectionClass(mapMeta.key, mapSection.label);
-
-					return (
-						<div className={sectionClass} key={ixSection}>
 							<MapSection
-								{...props}
+								key={ixSection}
+								className={sectionClass}
 								mapSection={mapSection}
+								{...props}
 							/>
-						</div>
-					);
-				})}
+						);
+					})}
+				</div>
+
+
 			</div>
-
-
-		</div>
-	);
+		);
+	}
 }
 
 
 
+/*
+*	Class Properties
+*/
+
+MapDetails.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	libAudio: React.PropTypes.object.isRequired,
+	options: React.PropTypes.object.isRequired,
+	details: React.PropTypes.object.isRequired,
+	matchWorlds: React.PropTypes.object.isRequired,
+	guilds: React.PropTypes.object.isRequired,
+};
+
+
 
 
 /*
-*	Component Helper Methods
+*
+*	Export Module
+*
+*/
+
+export default MapDetails;
+
+
+
+
+
+/*
+*
+*	Private Methods
+*
 */
 
 function onTitleClick(e) {
-	var component = this;
-
 	var $maps = $('.map');
 	var $map = $(e.target).closest('.map', $maps);
 
@@ -152,21 +131,6 @@ function onTitleClick(e) {
 			.removeClass('map-blur');
 
 	}
-}
-
-
-
-
-
-/*
-*
-*	Private Methods
-*
-*/
-
-var colorMap = ['red', 'blue', 'green'];
-function getScoreClass(ixScore) {
-	return ['team', colorMap[ixScore]].join(' ');
 }
 
 

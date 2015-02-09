@@ -1,19 +1,19 @@
 .transition {
 	&-fade-in-enter {
-		.opacity(0);
+		opacity: 0;
 
 		&-active {
-			.opacity(1);
-			.transition(all 400ms ease-in);
+			opacity: 1;
+			transition: all 400ms ease-in;
 		}
 
 	}
 	&-fade-out-leave {
-		.opacity(1);
+		opacity: 1;
 
 		&-active {
-			.opacity(0);
-			.transition(all 400ms ease-in);
+			opacity: 0;
+			transition: all 400ms ease-in;
 		}
 
 	}

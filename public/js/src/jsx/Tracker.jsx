@@ -2,291 +2,217 @@
 
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-var _ = require('lodash');		// browserify shim
-var $ = require('jquery');		// browserify shim
-var async = require('async');	// browserify shim
-var moment = require('moment');	// browserify shim
+import React from 'React'; // browserify shim
+import async from 'async';	// browserify shim
 
-var api = require('../api');
-var libDate = require('../lib/date.js');
-var trackerTimers = require('../lib/trackerTimers');
+import _ from 'lodash';
 
 
+import api from '../api';
+import libDate from '../lib/date.js';
+import libAudio from '../lib/audio.js';
+import trackerTimers from '../lib/trackerTimers';
 
+import STATIC from 'gw2w2w-static';
 
 
 /*
 *	React Components
 */
 
-var Scoreboard = require('./tracker/Scoreboard.jsx');
-var Maps = require('./tracker/Maps.jsx');
-var Options = require('./tracker/Options.jsx');
-var Guilds = require('./tracker/Guilds.jsx');
+import Scoreboard from './tracker/Scoreboard.jsx';
+import Maps from './tracker/Maps.jsx';
+import Options from './tracker/Options.jsx';
+import Guilds from './tracker/Guilds.jsx';
 
 
-
-
-
-/*
-*	Component Globals
-*/
-
-var staticData = require('gw2w2w-static');
-var worldsStatic = staticData.worlds;
-
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	getInitialState: getInitialState,
-	// componentWillMount: componentWillMount,
-	componentDidMount: componentDidMount,
-	// shouldComponentUpdate: shouldComponentUpdate,
-	// componentDidUpdate: componentDidUpdate,
-	componentWillUnmount: componentWillUnmount,
-	render: render,
-
-
-	updateTimers: updateTimers,
-
-	getMatchDetails: getMatchDetails,
-	onMatchDetails: onMatchDetails,
-
-	queueGuildLookups: queueGuildLookups,
-	getGuildDetails: getGuildDetails,
-
-	setOptions: setOptions,
-});
-
-
-
-
-
-/*
-*
-*	Component Methods
-*
-*/
-
-
-/*
-*	Component Lifecyle Methods
-*/
-
-function getInitialState() {
-	var component = this;
-
-	return {
-		hasData: false,
-
-		// dateNow: libDate.dateNow(),
-		lastmod: 0,
-		timeOffset: 0,
-
-		match: [],
-		details: [],
-		guilds: {},
-		options: Options.getDefaultOptions(),
-	};
-}
-
-
-
-// function componentWillMount() {
-// 	// var component = this;
-// }
-
-
-
-function componentDidMount() {
-	var component = this;
-	// window.console.log('Tracker::componentDidMount');
-
-	component.intervals = {
-		timers: null,
-	};
-	component.timeouts = {
-		data: null,
-	};
-
-	component.intervals.timers = window.setInterval(component.updateTimers, 1000);
-	process.nextTick(component.updateTimers);
-
-	process.nextTick(component.getMatchDetails);
-}
-
-
-
-// function shouldComponentUpdate(nextProps, nextState) {
-// 	// var component = this;
-// 	// var props = component.props;
-// 	// var state = component.state;
-
-// 	// var langChanged = (props.lang !== nextProps.lang);
-// 	// var isModified = (state.lastmod !== nextState.lastmod);
-// 	// var newGuildData = !_.isEqual(state.guilds, nextState.guilds);
-// 	// // console.log('newGuildData', newGuildData,_.isEqual(state.guilds, nextState.guilds));
-// 	// var shouldUpdate = (isModified || langChanged || newGuildData);
-
-// 	// console.log(Date.now(), shouldUpdate);
-
-// 	return true;
-// }
-
-
-
-function componentWillUnmount() {
-	var component = this;
-
-	_.each(component.intervals, function(windowInterval) {
-		window.clearInterval(windowInterval);
-	});
-	_.each(component.timeouts, function(windowTimeout) {
-		window.clearInterval(windowTimeout);
-	});
-}
-
-
-
-// function componentDidUpdate() {
-// 	console.log('Tracker::componentDidUpdate()');
-// }
-
-
-
-function render() {
-	var component = this;
-	var props = component.props;
-	var state = component.state;
-
-	var lang = props.lang;
-	var world = props.world;
-
-	var details = state.details;
-
-
-	if (false && !state.hasData) {
-		return null;
+var defaultOptions = {
+	audio: {
+		enabled: false,
 	}
-	else {
-		setPageTitle(lang, world);
+};
 
 
-		// var dateNow = state.dateNow;
-		var timeOffset = state.timeOffset;
-		var match = state.match;
-		var guilds = state.guilds;
 
-		var eventHistory = details.history;
-		var scores = match.scores || [0,0,0];
-		var ticks = match.ticks || [0,0,0];
-		var holdings = match.holdings || [0,0,0];
 
-		var matchWorlds = {
-			"red": {
-				"world": worldsStatic[match.redId],
-				"score": scores[0],
-				"tick": ticks[0],
-				"holding": holdings[0],
-			},
-			"blue": {
-				"world": worldsStatic[match.blueId],
-				"score": scores[1],
-				"tick": ticks[1],
-				"holding": holdings[1],
-			},
-			"green": {
-				"world": worldsStatic[match.greenId],
-				"score": scores[2],
-				"tick": ticks[2],
-				"holding": holdings[2],
-			},
+/*
+*
+*	Component Export
+*
+*/
+
+class Tracker extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			hasData: false,
+
+			dateNow: libDate.dateNow(),
+			lastmod: 0,
+			timeOffset: 0,
+
+			match: [],
+			matchWorlds: [],
+			details: [],
+			claimEvents: [],
+			guilds: {},
+			options: _.defaults(defaultOptions, {})
 		};
 
+		console.log(this.state.options);
+
+		this.mounted = true;
+
+		this.intervals = {
+			timers: null
+		};
+		this.timeouts = {
+			data: null
+		};
+
+		var numQueueConcurrent = 4;
+		this.getGuildDetails = getGuildDetails.bind(this);
+		this.asyncGuildQueue = async.queue(this.getGuildDetails, numQueueConcurrent);
+	}
 
 
+	shouldComponentUpdate(nextProps, nextState) {
 		return (
-			<div id="tracker">
-
-				<Scoreboard
-					lang={lang}
-
-					matchWorlds={matchWorlds}
-				/>
-
-				<Maps
-					lang={lang}
-
-					details={details}
-					matchWorlds={matchWorlds}
-					guilds={guilds}
-				/>
-
-				<div className="row">
-					<div className="col-md-6">
-						<Options
-							lang={lang}
-							options={state.options}
-							setOptions={component.setOptions}
-						/>
-					</div>
-					<div className="col-md-18">
-						<Guilds
-							lang={lang}
-
-							guilds={guilds}
-							eventHistory={eventHistory}
-						/>
-					</div>
-				</div>
-
-
-				<audio
-					ref="audio"
-					src='/audio/beep-27.mp3'
-					preload="auto"
-					volume="0.1"
-				/>
-
-			</div>
+			!_.isEqual(this.props, nextProps)
+			|| !_.isEqual(this.state, nextState)
 		);
 	}
 
-	/*
-	*/
+
+
+	componentDidMount() {
+		this.intervals.timers = setInterval(updateTimers.bind(this), 1000);
+		setTimeout(updateTimers.bind(this), 0);
+
+		setTimeout(getMatchDetails.bind(this), 0);
+	}
+
+
+
+	componentWillUnmount() {
+		this.mounted = false;
+
+		_.each(this.intervals, windowInterval => clearInterval(windowInterval));
+		_.each(this.timeouts, windowTimeout => clearInterval(windowTimeout));
+	}
+
+
+
+	render() {
+		var component = this;
+		var props = this.props;
+		var state = this.state;
+
+
+		if (!state.hasData) {
+			return null;
+		}
+		else {
+			setPageTitle(props.lang, props.world);
+
+			// console.log('Tracker::render()');
+
+
+			return (
+				<div id="tracker">
+
+					<Scoreboard
+						lang={props.lang}
+						matchWorlds={state.matchWorlds}
+					/>
+
+					<Maps
+						lang={props.lang}
+						libAudio={libAudio}
+						options={state.options}
+
+						details={state.details}
+						matchWorlds={state.matchWorlds}
+						guilds={state.guilds}
+					/>
+
+					<div className="row">
+						<div className="col-md-6">
+							<Options
+								lang={props.lang}
+								options={state.options}
+								setOptions={setOptions.bind(component)}
+							/>
+						</div>
+						<div className="col-md-18">
+							{(!_.isEmpty(state.guilds))
+								? <Guilds
+									lang={props.lang}
+
+									guilds={state.guilds}
+									claimEvents={state.claimEvents}
+								/>
+								: null
+							}
+						</div>
+					</div>
+
+				</div>
+			);
+		}
+
+	}
 
 }
 
 
 
-
 /*
-*	Component Helper Methods
+*	Class Properties
 */
 
-// function tick() {
-// 	var component = this;
+Tracker.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	world: React.PropTypes.object.isRequired,
+};
 
-// 	if(component.isMounted()) {
-// 		component.setState({dateNow: libDate.dateNow()});
-// 	}
-// }
 
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default Tracker;
+
+
+
+
+
+/*
+*
+*	Private Methods
+*
+*/
+
+
+
+/*
+*	Timers
+*/
 
 function updateTimers() {
 	var component = this;
 
-	if(component.isMounted()) {
+	if (component.mounted) {
 		var state = component.state;
 		var timeOffset = state.timeOffset;
 		var now = libDate.dateNow() - timeOffset;
@@ -296,6 +222,10 @@ function updateTimers() {
 }
 
 
+
+/*
+*	Match Data
+*/
 
 function getMatchDetails() {
 	var component = this;
@@ -307,7 +237,7 @@ function getMatchDetails() {
 
 	api.getMatchDetailsByWorld(
 		worldSlug,
-		component.onMatchDetails
+		onMatchDetails.bind(component)
 	);
 }
 
@@ -315,11 +245,11 @@ function getMatchDetails() {
 
 function onMatchDetails(err, data) {
 	var component = this;
-	var props = component.props;
+	// var props = component.props;
 	var state = component.state;
 
 
-	if(component.isMounted()) {
+	if (component.mounted) {
 		if (!err && data && data.match && data.details) {
 
 			var isModified = (data.match.lastmod !== state.match.lastmod);
@@ -328,31 +258,35 @@ function onMatchDetails(err, data) {
 				var msOffset = Date.now() - data.now;
 				var secOffset = Math.floor(msOffset / 1000);
 
-				component.setState({
-					hasData: true,
-					lastmod: data.now,
-					timeOffset: secOffset,
-					match: data.match,
-					details: data.details,
-				});
+
+				var claimEvents = _.chain(data.details.history)
+					.filter({type: 'claim'})
+					.sortBy('timestamp')
+					.reverse()
+					.value();
 
 				var claimCurrent = _.pluck(data.details.objectives.claimers, 'guild');
-				var claimHistory = _.chain(data.details.history)
-					.filter({type: 'claim'})
-					.pluck('guild')
-					.value();
+				var claimHistory = _.pluck(claimEvents, 'guild');
 
 				var guilds = claimCurrent.concat(claimHistory);
 
-				if(guilds.length) {
-					process.nextTick(component.queueGuildLookups.bind(null, guilds));
+
+				component.setState({
+					hasData: true,
+					dateNow: libDate.dateNow(),
+					lastmod: data.now,
+					timeOffset: secOffset,
+					match: data.match,
+					matchWorlds: getMatchWorlds(data.match),
+					details: data.details,
+					claimEvents,
+				});
+
+
+				if (guilds.length) {
+					component.asyncGuildQueue.push(guilds);
 				}
 
-
-
-				if(state.options.audio.enabled && !_.isEqual(data.details.objectives, state.details.objectives)) {
-					component.refs.audio.getDOMNode().play()
-				}
 			}
 
 		}
@@ -364,54 +298,89 @@ function onMatchDetails(err, data) {
 	}
 
 	var refreshTime = _.random(1000*2, 1000*4);
-	component.timeouts.data = window.setTimeout(component.getMatchDetails, refreshTime);
+	this.timeouts.data = setTimeout(getMatchDetails.bind(component), refreshTime);
 
 }
 
 
 
 
-function queueGuildLookups(guilds){
+/*
+*	Guild Data
+*/
+
+function getGuildDetails(guildId, onComplete) {
+	// var guildId = queueData.guildId;
 	var component = this;
 	var state = component.state;
 
-	var knownGuilds = _.keys(state.guilds);
-
-	var newGuilds = _
-		.chain(guilds)
-		.uniq()
-		.without(undefined, null)
-		.difference(knownGuilds)
-		.value();
-
-
-	if(component.isMounted()) {
-		async.eachLimit(
-			newGuilds,
-			4,
-			component.getGuildDetails
+	if (_.has(state.guilds, guildId)) {
+		onComplete(null);
+	}
+	else {
+		api.getGuildDetails(
+			guildId,
+			onGuildData.bind(component, onComplete)
 		);
 	}
 }
 
 
 
-function getGuildDetails(guildId, onComplete) {
+function onGuildData(onComplete, err, data) {
 	var component = this;
 	var state = component.state;
 
-	api.getGuildDetails(
-		guildId,
-		function(err, data) {
-			if(!err) {
-				if(component.isMounted()) {
-					state.guilds[guildId] = data;
-					component.setState({guilds: state.guilds});
-				}
-			}
-			onComplete();
+	if (component.mounted) {
+		if (!err && data) {
+			delete data.emblem;
+
+			var guild = _.indexBy([data], 'guild_id');
+
+			var mergedGuilds = React.addons.update(
+				state.guilds,
+				{$merge: guild}
+			);
+
+			component.setState({guilds: mergedGuilds});
 		}
-	);
+
+	}
+	onComplete(null);
+
+}
+
+
+
+/*
+*	Misc
+*/
+
+function getMatchWorlds(match) {
+	var scores = match.scores || [0,0,0];
+	var ticks = match.ticks || [0,0,0];
+	var holdings = match.holdings || [0,0,0];
+
+	return {
+		"red": {
+			"world": STATIC.worlds[match.redId],
+			"score": scores[0],
+			"tick": ticks[0],
+			"holding": holdings[0],
+		},
+		"blue": {
+			"world": STATIC.worlds[match.blueId],
+			"score": scores[1],
+			"tick": ticks[1],
+			"holding": holdings[1],
+		},
+		"green": {
+			"world": STATIC.worlds[match.greenId],
+			"score": scores[2],
+			"tick": ticks[2],
+			"holding": holdings[2],
+		}
+	};
 }
 
 
@@ -427,12 +396,6 @@ function setOptions(newOptions) {
 
 
 
-
-/*
-*
-*	Private Methods
-*
-*/
 
 function setPageTitle(lang, world) {
 	var title = [world[lang.slug].name, 'gw2w2w'];

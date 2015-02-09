@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('lodash');
+
 module.exports = {
 	dateNow: dateNow,
 	add5: add5,

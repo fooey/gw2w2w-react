@@ -1,57 +1,62 @@
 'use strict';
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-
-var PureRenderMixin = React.addons.PureRenderMixin;
-
-
-
-
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	mixins: [PureRenderMixin],
-
-	render: render,
-});
-
+import React from 'React'; // browserify shim
 
 
 
 
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class Emblem extends React.Component {
+	render() {
+		var props = this.props;
 
-/*
-*	Component Lifecyle Methods
-*/
+		var emblemSrc = getEmblemSrc(props.guildName);
 
-function render() {
-	var component = this;
-	var props = component.props;
-
-	var guildName = slugify(props.guildName);
-	var size = props.size;
-
-	var src = 'http://guilds.gw2w2w.com/guilds/' + guildName + '/256.svg';
-
-
-	return (
-		<img className="emblem" src={src} width={size} height={size} />
-	);
+		return <img
+			className="emblem"
+			src={emblemSrc}
+			width={props.size}
+			height={props.size}
+		/>;
+	}
 }
 
+
+
+/*
+*	Class Properties
+*/
+
+Emblem.defaultProps = {
+	size: 256,
+};
+
+Emblem.propTypes = {
+	guildName: React.PropTypes.string.isRequired,
+	size: React.PropTypes.number.isRequired,
+};
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default Emblem;
 
 
 
@@ -62,6 +67,12 @@ function render() {
 *	Private Methods
 *
 */
+
+function getEmblemSrc(guildName) {
+	return `http:\/\/guilds.gw2w2w.com\/guilds\/${slugify(guildName)}\/256.svg`;
+}
+
+
 
 function slugify(str) {
 	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();

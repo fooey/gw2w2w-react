@@ -1,13 +1,13 @@
 'use strict';
 
 /*
+*
 *	Dependencies
+*
 */
 
 var React = require('React');	// browserify shim
-var _ = require('lodash');		// browserify shim
-
-
+var _ = require('lodash');
 
 
 
@@ -22,20 +22,24 @@ var Objective = require('../objectives/Objective.jsx');
 
 
 /*
-*	Component Globals
+*
+*	Module Globals
+*
 */
 
-var objectiveCols = {
-	elapsed: false,
-	timestamp: false,
-	mapAbbrev: false,
-	arrow: true,
-	sprite: true,
-	name: true,
-	eventType: false,
-	guildName: false,
-	guildTag: true,
-	timer: true,
+var INSTANCE = {
+	objectiveCols: {
+		elapsed: false,
+		timestamp: false,
+		mapAbbrev: false,
+		arrow: true,
+		sprite: true,
+		name: true,
+		eventType: false,
+		guildName: false,
+		guildTag: true,
+		timer: true,
+	}
 };
 
 
@@ -43,67 +47,70 @@ var objectiveCols = {
 
 
 /*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	render: render,
-});
-
-
-
-
-
-
-/*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class MapSection extends React.Component {
+	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
 
-/*
-*	Component Lifecyle Methods
-*/
+	render() {
+		var props = this.props;
 
-function render() {
-	var component = this;
-	var props = component.props;
+		var owners = props.details.objectives.owners;
+		var claimers = props.details.objectives.claimers;
 
-	var lang = props.lang;
-	var mapSection = props.mapSection;
-	var guilds = props.guilds;
-	var details = props.details;
-	var mapMeta = props.mapMeta;
+		return (
+			<ul className='list-unstyled'>
+				{_.map(props.mapSection.objectives, objectiveId => {
 
-	var owners = details.objectives.owners;
-	var claimers = details.objectives.claimers;
+					var owner = owners[objectiveId];
+					var claimer = claimers[objectiveId];
+					var guildId = (claimer) ? claimer.guild : null;
+					var guild = (props.guilds && guildId && props.guilds[guildId]) ? props.guilds[guildId] : null;
 
-	return (
-		<ul className='list-unstyled'>
-			{_.map(mapSection.objectives, function(objectiveId) {
+					return (
+						<li key={objectiveId} id={'objective-' + objectiveId}>
+							<Objective
+								lang={props.lang}
+								cols={INSTANCE.objectiveCols}
 
-				var owner = owners[objectiveId];
-				var claimer = claimers[objectiveId];
-				var guildId = (claimer) ? claimer.guild : null;
-				var guild = (guilds && guildId && guilds[guildId]) ? guilds[guildId] : null;
+								objectiveId={objectiveId}
+								worldColor={owner.world}
+								timestamp={owner.timestamp}
+								guildId={guildId}
+								guild={guild}
+							/>
+						</li>
+					);
 
-				return (
-					<li key={objectiveId} id={'objective-' + objectiveId}>
-						<Objective
-							lang={lang}
-							cols={objectiveCols}
-
-							objectiveId={objectiveId}
-							worldColor={owner.world}
-							timestamp={owner.timestamp}
-							guildId={guildId}
-							guild={guild}
-						/>
-					</li>
-				);
-
-			})}
-		</ul>
-	);
+				})}
+			</ul>
+		);
+	}
 }
+
+
+
+/*
+*	Class Properties
+*/
+
+MapSection.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	mapSection: React.PropTypes.object.isRequired,
+	guilds: React.PropTypes.object.isRequired,
+	details: React.PropTypes.object.isRequired,
+};
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default MapSection;

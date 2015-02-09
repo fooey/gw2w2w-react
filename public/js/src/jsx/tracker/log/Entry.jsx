@@ -1,11 +1,14 @@
 'use strict';
 
 /*
+*
 *	Dependencies
+*
 */
 
-var React = require('React');	// browserify shim
-var _ = require('lodash');		// browserify shim
+var React = require('React'); // browserify shim
+// var _ = require('lodash');
+
 var $ = require('jquery');		// browserify shim
 
 
@@ -42,78 +45,84 @@ var objectiveCols = {
 
 
 
-
-/*
-*	Component Export
-*/
-
-module.exports = React.createClass({
-	render: render,
-	componentDidMount: componentDidMount,
-});
-
-
-
-
-
-
 /*
 *
-*	Component Methods
+*	Component Definition
 *
 */
 
+class Entry extends React.Component {
+	render() {
+		var props = this.props;
 
-/*
-*	Component Lifecyle Methods
-*/
+		return (
+			<li>
+				<Objective
+					{...props}
 
-function render() {
-	var component = this;
-	var props = component.props;
+					cols={objectiveCols}
 
-	var lang = props.lang;
-	var cols = props.objectiveCols;
-
-	// var animateEntry = props.animateEntry;
-	// var entryId = props.entryId;
-	var objectiveId = props.objectiveId;
-	var worldColor = props.worldColor;
-	var timestamp = props.timestamp;
-	var guildId = props.guildId;
-	var eventType = props.eventType;
-	var guild = props.guild;
-
-	return (
-		<li>
-			<Objective
-				lang={lang}
-				cols={objectiveCols}
-
-				objectiveId={objectiveId}
-				worldColor={worldColor}
-				timestamp={timestamp}
-				guildId={guildId}
-				eventType={eventType}
-				guild={guild}
-			/>
-		</li>
-	);
-}
+					entryId={props.entry.id}
+					objectiveId={props.entry.objectiveId}
+					worldColor={props.entry.world}
+					timestamp={props.entry.timestamp}
+					eventType={props.entry.type}
+					guildId={props.entry.guild}
+				/>
+			</li>
+		);
+	}
 
 
 
+	componentDidMount() {
+		var props = this.props;
 
-function componentDidMount() {
-	var component = this;
-	var props = component.props;
+		if (props.triggerNotification) {
+			props.libAudio.playAlert(
+				props.options.audio,
+				props.lang,
+				props.entry.objectiveId,
+				props.entry.type,
+				props.entry.world
+			);
 
-	if (props.animateEntry) {
-		var $node = $(component.getDOMNode());
+			var $node = $(React.findDOMNode(this));
 
-		$node
-			.velocity('slideUp', {duration: 0})
-			.velocity('slideDown', {duration: 800});
+			$node
+				.velocity('slideUp', {duration: 0})
+				.velocity('slideDown', {duration: 800});
+		}
 	}
 }
 
+
+
+/*
+*	Class Properties
+*/
+
+Entry.defaultProps = {
+	guilds: {},
+};
+
+Entry.propTypes = {
+	lang: React.PropTypes.object.isRequired,
+	triggerNotification: React.PropTypes.bool.isRequired,
+	libAudio: React.PropTypes.object.isRequired,
+	options: React.PropTypes.object.isRequired,
+	entry: React.PropTypes.object.isRequired,
+	guilds: React.PropTypes.object.isRequired,
+	// guild: React.PropTypes.object.isRequired,
+};
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+export default Entry;
