@@ -65,7 +65,7 @@ class Tracker extends React.Component {
 			options: _.defaults(defaultOptions, {})
 		};
 
-		console.log(this.state.options);
+		// console.log(this.state.options);
 
 		this.mounted = true;
 

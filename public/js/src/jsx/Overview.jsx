@@ -49,7 +49,7 @@ class Overview extends React.Component {
 
 	shouldComponentUpdate(nextProps, nextState) {
 		var shouldUpdate = !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState);
-		console.log('Overview::shouldComponentUpdate()', shouldUpdate);
+		// console.log('Overview::shouldComponentUpdate()', shouldUpdate);
 		return shouldUpdate;
 	}
 
@@ -71,7 +71,7 @@ class Overview extends React.Component {
 		var state = this.state;
 		var props = this.props;
 
-		console.log('Overview::render()');
+		// console.log('Overview::render()');
 
 		return (
 			<div id="overview">
