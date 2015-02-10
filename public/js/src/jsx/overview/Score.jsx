@@ -11,6 +11,8 @@ import React from 'React';		// browserify shim
 import $ from 'jquery';			// browserify shim
 import numeral from 'numeral';	// browserify shim
 
+import Immutable from 'Immutable'; // browserify shim
+
 
 
 
@@ -22,14 +24,14 @@ import numeral from 'numeral';	// browserify shim
 
 class Score extends React.Component {
 	constructor(props) {
+		super(props);
 		this.state = {diff: 0};
 	}
 
 
-	shouldComponentUpdate(nextProps) {
-		var props = this.props;
 
-		return (props.score !== nextProps.score);
+	shouldComponentUpdate(nextProps) {
+		return !Immutable.is(this.props.score, nextProps.score);
 	}
 
 
@@ -55,12 +57,10 @@ class Score extends React.Component {
 		var props = this.props;
 		var state = this.state;
 
-		return (
-			<div>
-				<span className="diff" ref="diff">{getDiffText(state.diff)}</span>
-				<span className="value">{getScoreText(props.score)}</span>
-			</div>
-		);
+		return <div>
+			<span className="diff" ref="diff">{getDiffText(state.diff)}</span>
+			<span className="value">{getScoreText(props.score)}</span>
+		</div>;
 	}
 }
 

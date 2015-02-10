@@ -9,6 +9,7 @@
 
 import React from 'React'; // browserify shim
 import _ from 'lodash';
+import Immutable from 'Immutable'; // browserify shim
 
 
 
@@ -32,18 +33,18 @@ var INSTANCE = {
 */
 
 class Pie extends React.Component {
-	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
+	shouldComponentUpdate(nextProps) {
+		return !Immutable.is(this.props.scores, nextProps.scores);
+	}
 
 	render() {
 		var props = this.props;
 
-		return (
-			<img
-				width={INSTANCE.size}
-				height={INSTANCE.size}
-				src={getImageSource(props.scores)}
-			/>
-		);
+		return <img
+			width={INSTANCE.size}
+			height={INSTANCE.size}
+			src={getImageSource(props.scores.toArray())}
+		/>;
 	}
 }
 
@@ -54,7 +55,7 @@ class Pie extends React.Component {
 */
 
 Pie.propTypes = {
-	scores: React.PropTypes.array.isRequired,
+	scores: React.PropTypes.object.isRequired,
 };
 
 

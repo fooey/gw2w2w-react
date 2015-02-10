@@ -9,9 +9,10 @@
 
 import React from 'React'; // browserify shim
 import _ from 'lodash';
+import Immutable from 'Immutable'; // browserify shim
 
 
-import STATIC from 'gw2w2w-static';
+import STATIC from '../../lib/static';
 
 
 
@@ -31,25 +32,39 @@ import RegionWorldsWorld from './RegionWorldsWorld.jsx';
 */
 
 class RegionWorlds extends React.Component {
-	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
+	shouldComponentUpdate(nextProps) {
+		var shouldUpdate = !Immutable.is(this.props.region, nextProps.region) || !Immutable.is(this.props.lang, nextProps.lang);
+		// console.log('RegionWorlds::shouldComponentUpdate', shouldUpdate);
+		return shouldUpdate;
+	}
+
+
 
 	render() {
 		var props = this.props;
 
-		var label = props.region.label + ' Worlds';
+		// console.log('RegionWorlds::render()', props.region.get('label'));
 
-		var worlds = _.chain(STATIC.worlds)
-			.filter(world => world.region === props.region.id)
-			.sortBy(world => world[props.lang.slug].name)
-			.value();
+		var label = props.region.get("label") + ' Worlds';
+
+		var regionWorlds = Immutable.Seq(STATIC.worlds)
+			.filter(world => _.parseInt(world.region) === _.parseInt(props.region.get("id")))
+			.sort((a, b) => {
+				var x = a[props.lang.slug].name;
+				var y = b[props.lang.slug].name;
+
+				return (x > y) ? 1
+					: (x < y) ? -1
+					: 0;
+			});
 
 		return (
 			<div className="RegionWorlds">
 				<h2>{label}</h2>
 				<ul className="list-unstyled">
-					{_.map(worlds, (world, index) =>
+					{regionWorlds.map(world =>
 						<RegionWorldsWorld
-							key={index}
+							key={world.id}
 							lang={props.lang}
 							world={world[props.lang.slug]}
 						/>

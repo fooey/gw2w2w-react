@@ -9,6 +9,7 @@
 
 import React from 'React'; // browserify shim
 import _ from 'lodash';
+import Immutable from 'Immutable'; // browserify shim
 
 
 
@@ -28,19 +29,34 @@ import Match from './Match.jsx';
 */
 
 class RegionMatches extends React.Component {
+	shouldComponentUpdate(nextProps) {
+		var props = this.props;
+
+		var newLang = !Immutable.is(props.lang, nextProps.lang);
+		var newRegion = !Immutable.is(props.region, nextProps.region);
+
+		var shouldUpdate = newLang || newRegion;
+
+		// console.log('RegionMatches::shouldComponentUpdate()', shouldUpdate);
+
+		return shouldUpdate;
+	}
+
+
+
 	render() {
 		var props = this.props;
 
-		var matches = _.sortBy(props.region.matches, 'id');
+		// console.log('RegionMatches::render()');
 
 		return (
 			<div className="RegionMatches">
-				<h2>{props.region.label}</h2>
+				<h2>{props.region.get("label")}</h2>
 
-				{_.map(matches, match =>
+				{props.region.get("matches").map(match =>
 					<Match
 						className='match'
-						key={match.id}
+						key={match.get("id")}
 						match={match}
 						lang={props.lang}
 					/>

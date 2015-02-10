@@ -8,7 +8,7 @@
 
 import React from 'React'; // browserify shim
 
-import STATIC from 'gw2w2w-static';
+import STATIC from './lib/static';
 
 
 
@@ -30,8 +30,8 @@ import Langs from './jsx/Langs.jsx';
 */
 
 export default function overview(ctx) {
-	const langSlug = ctx.params.langSlug || 'en';
-	const lang = STATIC.langs[langSlug];
+	var langSlug = ctx.params.langSlug || 'en';
+	var lang = STATIC.langs.get(langSlug);
 
 	React.render(<Langs lang={lang} />, document.getElementById('nav-langs'));
 	React.render(<Overview lang={lang} />, document.getElementById('content'));

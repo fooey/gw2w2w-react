@@ -9,6 +9,7 @@
 
 import React from 'React'; // browserify shim
 import _ from 'lodash';
+import Immutable from 'Immutable'; // browserify shim
 
 
 
@@ -20,15 +21,20 @@ import _ from 'lodash';
 */
 
 class RegionWorldsWorld extends React.Component {
-	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
+	shouldComponentUpdate(nextProps) {
+		var shouldUpdate = !Immutable.is(this.props.world, nextProps.world) || !Immutable.is(this.props.lang, nextProps.lang);
+		// console.log('RegionWorldsWorld::shouldComponentUpdate', shouldUpdate);
+		return shouldUpdate;
+	}
 
 	render() {
 		var props = this.props;
 
 		var href = getLink(props.lang.slug, props.world.slug);
-		var label = props.world.name;
 
-		return <li><a href={href}>{label}</a></li>;
+		// console.log('RegionWorldsWorld::render', props.world.name);
+
+		return <li><a href={href}>{props.world.name}</a></li>;
 	}
 
 }

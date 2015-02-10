@@ -8,7 +8,7 @@
 */
 
 import React from 'React'; // browserify shim
-import Immutable from 'immutable';
+import Immutable from 'Immutable'; // browserify shim
 import _ from 'lodash';
 
 import api from '../api';
@@ -23,6 +23,19 @@ import RegionMatches from './overview/RegionMatches.jsx';
 import RegionWorlds from './overview/RegionWorlds.jsx';
 
 
+var regionsDefault = {
+	"1": {
+		"label": 'NA',
+		"id": 1,
+		"matches": [],
+	},
+	"2": {
+		"label": 'EU',
+		"id": 2,
+		"matches": [],
+	}
+};
+
 
 
 
@@ -36,20 +49,28 @@ class Overview extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			matches: {},
-			regions: [],
+			matches: Immutable.Map(),
+			regions: Immutable.fromJS(regionsDefault),
 		};
 
 		this.updateTimer = null;
 
-		this.getMatches();
+		setTimeout(this.getMatches.bind(this), 0);
 	}
 
 
 
 	shouldComponentUpdate(nextProps, nextState) {
-		var shouldUpdate = !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState);
+		var props = this.props;
+		var state = this.state;
+
+		var newLang = !Immutable.is(props.lang, nextProps.lang);
+		var newMatchData = !Immutable.is(state.matches, nextState.matches);
+
+		var shouldUpdate = newLang || newMatchData;
+
 		// console.log('Overview::shouldComponentUpdate()', shouldUpdate);
+
 		return shouldUpdate;
 	}
 
@@ -75,23 +96,23 @@ class Overview extends React.Component {
 
 		return (
 			<div id="overview">
-				<div className="row">
-					{state.regions.map(region => {
-						return <div className="col-sm-12" key={region.label}>
-							<RegionMatches region={region} {...props} />
-						</div>;
-					})}
-				</div>
+				{<div className="row">
+					{state.regions.map(region =>
+						<div className="col-sm-12" key={region.get("label")}>
+							<RegionMatches region={region} lang={props.lang} />
+						</div>
+					)}
+				</div>}
 
 				<hr />
 
-				<div className="row">
+				{<div className="row">
 					{state.regions.map(region =>
-						<div className="col-sm-12" key={region.label}>
-							<RegionWorlds region={region} {...props} />
+						<div className="col-sm-12" key={region.get("label")}>
+							<RegionWorlds region={region} lang={props.lang} />
 						</div>
 					)}
-				</div>
+				</div>}
 			</div>
 		);
 	}
@@ -101,21 +122,42 @@ class Overview extends React.Component {
 	getMatches() {
 		var component = this;
 
-		api.getMatches((err, data) => {
-			if (!err && data && !_.isEmpty(data)) {
+		api.getMatches((err, matchData) => {
+			if (!err && matchData && !_.isEmpty(matchData)) {
+
+				var matches = component.state.matches
+					.mergeDeep(matchData)
+					.sort((a,b) => {return a.id - b.id;});
+
+
+				var regions = this.getRegions(matches);
+
 
 				component.setState({
-					matches: data,
-					regions: getRegions(data),
+					matches,
+					regions,
 				});
 
 			}
+
 
 			component.updateTimer = setTimeout(
 				component.getMatches.bind(component),
 				_.random(2000, 4000)
 			);
 		});
+	}
+
+
+
+	getRegions(matches) {
+		var state = this.state;
+
+		var regions = state.regions;
+		regions = regions.setIn(["1", "matches"], matches.filter(match => _.parseInt(match.get("region")) === 1));
+		regions = regions.setIn(["2", "matches"], matches.filter(match => _.parseInt(match.get("region")) === 2));
+
+		return regions;
 	}
 }
 
@@ -148,21 +190,6 @@ export default Overview;
 *	Private Methods
 *
 */
-
-function getRegions(matches) {
-	return [
-		{
-			'label': 'NA',
-			'id': '1',
-			'matches': _.filter(matches, match => _.parseInt(match.region) === 1),
-		}, {
-			'label': 'EU',
-			'id': '2',
-			"matches": _.filter(matches, match => _.parseInt(match.region) === 2),
-		},
-	];
-}
-
 
 
 function setPageTitle(lang) {
