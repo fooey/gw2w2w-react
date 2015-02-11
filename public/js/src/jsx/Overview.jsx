@@ -27,12 +27,12 @@ var regionsDefault = {
 	"1": {
 		"label": 'NA',
 		"id": 1,
-		"matches": [],
+		"matches": Immutable.Map(),
 	},
 	"2": {
 		"label": 'EU',
 		"id": 2,
-		"matches": [],
+		"matches": Immutable.Map(),
 	}
 };
 
@@ -93,6 +93,9 @@ class Overview extends React.Component {
 		var props = this.props;
 
 		// console.log('Overview::render()');
+		// state.regions.getIn(["1", "matches"]).map(match => {
+		// 	console.log("match", match);
+		// });
 
 		return (
 			<div id="overview">
@@ -154,8 +157,8 @@ class Overview extends React.Component {
 		var state = this.state;
 
 		var regions = state.regions;
-		regions = regions.setIn(["1", "matches"], matches.filter(match => _.parseInt(match.get("region")) === 1));
-		regions = regions.setIn(["2", "matches"], matches.filter(match => _.parseInt(match.get("region")) === 2));
+		regions = regions.mergeDeepIn(["1", "matches"], matches.filter(match => _.parseInt(match.get("region")) === 1));
+		regions = regions.mergeDeepIn(["2", "matches"], matches.filter(match => _.parseInt(match.get("region")) === 2));
 
 		return regions;
 	}
