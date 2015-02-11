@@ -149,6 +149,7 @@ var compileJS = function() {
 
 		.pipe(rename({suffix: '.min'}))
 		.pipe(sourcemaps.write('./'))
+
 		.pipe(gulp.dest(paths.js.dist)) // minified app.min.js
 
 		.pipe(livereload())

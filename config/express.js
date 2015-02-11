@@ -55,6 +55,17 @@ module.exports = function(express) {
 	*
 	*/
 
+	app.use(function(req, res, next) {
+		var assetCacheHash = /\/~[A-Za-z0-9_-]{7,14}~\//;
+		if (req.url.match(assetCacheHash)) {
+			var urlRewrite = req.url.replace(assetCacheHash, '/')
+			// console.log(req.url, urlRewrite);
+			req.url = urlRewrite;
+		}
+		next();
+	});
+
+
 	const favicon = require('serve-favicon');
 	app.use(favicon('./public/img/logo/gw2-dragon-32.png'));
 

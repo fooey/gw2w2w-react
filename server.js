@@ -8,6 +8,9 @@ const express = require('express');
 const app = require('./config/express')(express);
 const routes = require('./routes')(express);
 
+GLOBAL.timestamp = Date.now();
+GLOBAL.versionHash = "~" + require('shortid').generate() + "~";
+
 app.use(routes);
 
 

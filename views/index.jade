@@ -7,28 +7,28 @@ head
 	title gw2w2w
 
 	link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css")
-	link(rel="stylesheet", href="/css/dist/app.min.css")
+	link(rel="stylesheet", href="/" + GLOBAL.versionHash + "/css/dist/app.min.css" )
 
 
 	//- script(src="//cdn.polyfill.io/v1/polyfill.min.js")
 	script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js")
-	script(src="/nm/6to5/browser-polyfill.js")
+	script(src="/" + GLOBAL.versionHash + "/nm/6to5/browser-polyfill.js")
 	script(src="//cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js")
-	script(src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.min.js")
+	script(src="//cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.min.js")
 	//- script(src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js")
 
 	script(src="//cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.min.js")
 	script(src="//cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.ui.min.js")
 	script(src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js")
-	script(src="/nm/moment-twitter/moment-twitter.js")
+	script(src="/" + GLOBAL.versionHash + "/nm/moment-twitter/moment-twitter.js")
 	script(src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js")
 
 	if (process.env.NODE_ENV === 'development')
-		script(src="/nm/react/dist/react-with-addons.js")
-		script(src="/js/dist/app.js")
+		script(src="/" + GLOBAL.versionHash + "/nm/react/dist/react-with-addons.js")
+		script(src="/" + GLOBAL.versionHash + "/js/dist/app.js")
 	else
-		script(src="/nm/react/dist/react-with-addons.min.js")
-		script(src="/js/dist/app.min.js")
+		script(src="/" + GLOBAL.versionHash + "/nm/react/dist/react-with-addons.min.js")
+		script(src="/" + GLOBAL.versionHash + "/js/dist/app.min.js")
 
 
 
