@@ -1,7 +1,5 @@
 'use strict';
 
-// require("babel/polyfill");
-
 /*
 *
 *	Dependencies
@@ -45,22 +43,9 @@ $(function() {
 
 /*
 *
-*	Util
+*	Routes
 *
 */
-
-function eml() {
-	const chunks = ['gw2w2w', 'schtuph', 'com', '@', '.'];
-	const addr = [chunks[0], chunks[3], chunks[1], chunks[4], chunks[2]].join('');
-
-	$('.nospam-prz').each(() => {
-		$(this).replaceWith(
-			$('<a>', {href: ('mailto:' + addr), text: addr})
-		);
-	});
-}
-
-
 
 function attachRoutes() {
 	const domMounts = {
@@ -110,6 +95,13 @@ function attachRoutes() {
 
 
 
+
+
+/*
+*
+*	Util
+*
+*/
 function redirectPage(destination) {
 	page.redirect(destination);
 }
@@ -119,4 +111,17 @@ function redirectPage(destination) {
 function getWorldFromSlug(langSlug, worldSlug) {
 	return STATIC.worlds
 		.find(world => world.getIn([langSlug, 'slug']) === worldSlug);
+}
+
+
+
+function eml() {
+	const chunks = ['gw2w2w', 'schtuph', 'com', '@', '.'];
+	const addr = [chunks[0], chunks[3], chunks[1], chunks[4], chunks[2]].join('');
+
+	$('.nospam-prz').each((i, el) => {
+		$(el).replaceWith(
+			$('<a>', {href: `mailto:${addr}`, text: addr})
+		);
+	});
 }
