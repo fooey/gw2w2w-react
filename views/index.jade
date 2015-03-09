@@ -6,29 +6,38 @@ head
 	meta(name="viewport", content="width=device-width, initial-scale=1")
 	title gw2w2w
 
-	link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css")
-	link(rel="stylesheet", href="/" + GLOBAL.versionHash + "/css/dist/app.min.css" )
-
-
-	//- script(src="//cdn.polyfill.io/v1/polyfill.min.js")
-	script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js")
-	script(src="/" + GLOBAL.versionHash + "/nm/6to5/browser-polyfill.js")
-	script(src="//cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js")
-	script(src="//cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.min.js")
-	//- script(src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js")
-
-	script(src="//cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.min.js")
-	script(src="//cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.ui.min.js")
-	script(src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js")
-	script(src="/" + GLOBAL.versionHash + "/nm/moment-twitter/moment-twitter.js")
-	script(src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js")
+	link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css")
 
 	if (process.env.NODE_ENV === 'development')
-		script(src="/" + GLOBAL.versionHash + "/nm/react/dist/react-with-addons.js")
-		script(src="/" + GLOBAL.versionHash + "/js/dist/app.js")
+		link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.css") )
 	else
-		script(src="/" + GLOBAL.versionHash + "/nm/react/dist/react-with-addons.min.js")
-		script(src="/" + GLOBAL.versionHash + "/js/dist/app.min.js")
+		link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.min.css") )
+
+
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js")
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js")
+	script(src="https://cdn.rawgit.com/visionmedia/page.js/master/page.js")
+
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.min.js")
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.ui.min.js")
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js")
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js")
+
+	script(src=staticCacheBusted("/nm/babel/browser-polyfill.js"))
+	script(src=staticCacheBusted("/nm/moment-twitter/moment-twitter.js"))
+
+	if (process.env.NODE_ENV === 'development')
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.js")
+		script(src=staticCacheBusted("/nm/react/dist/react.js"))
+		script(src=staticCacheBusted("/js/dist/app.js"))
+
+
+	else
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.min.js")
+		script(src=staticCacheBusted("/nm/react/dist/react.min.js"))
+		script(src=staticCacheBusted("/js/dist/app.min.js"))
 
 
 
@@ -38,7 +47,7 @@ body
 		.container
 			.navbar-header
 				a.navbar-brand(href="/")
-					img(src="/img/logo/logo-96x36.png")
+					img(src=staticCacheBusted("/img/logo/logo-96x36.png"))
 			#nav-langs.pull-right
 
 

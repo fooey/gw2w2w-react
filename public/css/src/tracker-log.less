@@ -23,21 +23,38 @@
 	}
 
 
+	@logLineHeight: 20px;
 	#log {
 		margin: 0 .5em;
-		max-height: 13em;
+		height: (@logLineHeight * 12.5);
 		overflow-y: scroll;
+		background: #fff repeat url(/img/rows-bg.png);
 
-		li:nth-child(even){
-			background-color: @gray-lightest;
-		}
 
-		.objective {
-			font-size: 10pt;
+		li {
+			transition: all 200ms ease-in;
+			white-space: nowrap;
+			overflow: hidden;
+			display: block;
+			font-size: 9pt;
 
-			&:hover{
-				background-color: @gray-lighter;
+			line-height: @logLineHeight;
+
+			max-height: @logLineHeight;
+			opacity: 1;
+
+			&.hide-entry {
+				max-height: 0;
+				opacity: 0;
 			}
+			&:hover {
+				background-color: rgba(255,255,0,.1);
+			}
+
+			.objective {
+				font-size: 9pt;
+			}
+
 		}
 
 

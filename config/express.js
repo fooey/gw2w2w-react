@@ -1,14 +1,15 @@
 'use strict';
-const path = require('path');
+var path = require('path');
 
-module.exports = function(express) {
+module.exports = function(express, nodeEnv) {
 	var app = express();
 
-	var isDev = (process.env.NODE_ENV === 'development');
+	var isDev = (nodeEnv === 'development');
 	var isProd = !isDev;
 
-	app.set('env', isDev ? 'development' : 'production');
-	app.set('port', process.env.PORT || 3000);
+	app.set('env', nodeEnv);
+
+
 
 
 	/*
@@ -16,11 +17,14 @@ module.exports = function(express) {
 	*	Views
 	*
 	*/
+
 	app.set('views', path.normalize(path.join(process.cwd(), 'views')));
 	app.set('view engine', 'jade');
 	app.set('case sensitive', true);
 	app.set('strict routing', true);
 	app.engine('jade', require('jade').__express);
+
+
 
 
 
@@ -30,13 +34,12 @@ module.exports = function(express) {
 	*
 	*/
 
-	const morgan = require('morgan');
-	const compression = require('compression');
+	var morgan = require('morgan');
+	var compression = require('compression');
+	var errorhandler = require('errorhandler');
 
 
-	if (process.env.NODE_ENV === 'development') {
-		const errorhandler = require('errorhandler')
-
+	if (isDev) {
 		app.use(errorhandler());
 		app.use(morgan('dev'));
 		app.set('view cache', false);
@@ -45,52 +48,8 @@ module.exports = function(express) {
 		app.use(morgan('combined'));
 		app.set('view cache', true);
 	}
+
 	app.use(compression());
-
-
-
-	/*
-	*
-	*	Statics
-	*
-	*/
-
-	app.use(function(req, res, next) {
-		var assetCacheHash = /\/~[A-Za-z0-9_-]{7,14}~\//;
-		if (req.url.match(assetCacheHash)) {
-			var urlRewrite = req.url.replace(assetCacheHash, '/')
-			// console.log(req.url, urlRewrite);
-			req.url = urlRewrite;
-		}
-		next();
-	});
-
-
-	const favicon = require('serve-favicon');
-	app.use(favicon('./public/img/logo/gw2-dragon-32.png'));
-
-
-	const serveStatic = require('serve-static');
-
-	var staticOptions = {
-		dotfiles: 'deny',
-		etag: true,
-		// index: false,
-		maxAge: '1d',
-		// redirect: true,
-	};
-
-	app.use(serveStatic('public', staticOptions));
-	app.use('/nm', serveStatic(process.cwd() + '/node_modules', staticOptions));
-	app.use('/node_modules', serveStatic(process.cwd() + '/node_modules', staticOptions));
-	app.use('/routes', serveStatic(process.cwd() + '/routes', staticOptions));
-	app.use('/views', serveStatic(process.cwd() + '/views', staticOptions));
-
-	express.static.mime.define({
-		'text/plain': ['jade', 'map'],
-		'text/css': ['less'],
-		'text/jsx': ['jsx'],
-	});
 
 
 

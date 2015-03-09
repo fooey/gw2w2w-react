@@ -7,5 +7,7 @@
 	"esnext": true,
 	"strict": true,
 	"browserify": true,
-	"jquery": true
+	"browser": true,
+	"jquery": true,
+	"node": true
 }

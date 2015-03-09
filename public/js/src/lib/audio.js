@@ -7,9 +7,9 @@
 *
 */
 
-import _  from 'lodash';		// browserify shim
+const _  = require('lodash');
 
-import STATIC from 'gw2w2w-static';
+const STATIC = require('gw2w2w-static');
 
 
 
@@ -20,7 +20,7 @@ import STATIC from 'gw2w2w-static';
 *	Component Globals
 */
 
-var INSTANCE = {
+let INSTANCE = {
 	 $chimeNode: $('<audio />', {
 		ref: 'chime',
 		id: 'audioChime',
@@ -38,12 +38,12 @@ var INSTANCE = {
 *	Component Export
 */
 
-export default (function() {
+module.exports = (function() {
 
 	INSTANCE.$chimeNode.appendTo('body');
 
 	if (isSpeechCapable()) {
-		var junk = speechSynthesis.getVoices();
+		let junk = speechSynthesis.getVoices();
 		//setTimeout(speak.bind(null, 'us', 'Objective tracker audio alerts are enabled.'), 1000);
 	}
 
@@ -86,12 +86,12 @@ function playAlert(audioOptions, lang, objectiveId, eventType, worldColor) {
 function playChime() {
 	INSTANCE.$chimeNode[0].play();
 }
-var throttledChime = _.throttle(playChime, 1000, {trailing: false});
+let throttledChime = _.throttle(playChime, 1000, {trailing: false});
 
 
 
 function playText(lang, objectiveId, eventType, worldColor) {
-	var text = getTextMessage(...arguments);
+	let text = getTextMessage(...arguments);
 
 	speak(lang.slug, text);
 }
@@ -99,8 +99,8 @@ function playText(lang, objectiveId, eventType, worldColor) {
 
 
 function getTextMessage(lang, objectiveId, eventType, worldColor) {
-	var oLabel = STATIC.objective_labels[objectiveId];
-	var labelText = oLabel[lang.slug];
+	let oLabel = STATIC.objective_labels[objectiveId];
+	let labelText = oLabel[lang.slug];
 
 	return (eventType === 'capture')
 		? labelText + ', captured by ' + worldColor + '!'
@@ -110,7 +110,7 @@ function getTextMessage(lang, objectiveId, eventType, worldColor) {
 
 
 function speak(langSlug, text) {
-	var msg = new SpeechSynthesisUtterance(text);
+	let msg = new SpeechSynthesisUtterance(text);
 	msg.voice = getVoiceByLang(langSlug);
 	speechSynthesis.speak(msg);
 }

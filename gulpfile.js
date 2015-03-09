@@ -1,23 +1,27 @@
+'use strict';
+
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 
 var _ = require('lodash');
-var path = require('path');
+// var path = require('path');
 
 var livereload = require('gulp-livereload');
 var nodemon = require('gulp-nodemon');
 var watchify = require('watchify');
 
-var notify = require('gulp-notify');
+// var notify = require('gulp-notify');
 var rename = require('gulp-rename');
+var replace = require('gulp-replace');
 var sourcemaps = require('gulp-sourcemaps');
 
 var vinylBuffer = require('vinyl-buffer');
+var vinylMap = require('vinyl-map');
 var vinylSource = require('vinyl-source-stream');
 
 
 var browserify = require('browserify');
-var to5ify = require('6to5ify').configure({experimental: true});
+var babelify = require('babelify');//.configure({experimental: true});
 var uglify = require('gulp-uglify');
 
 
@@ -41,12 +45,12 @@ paths.js.src = paths.js.base + '/src';
 paths.js.dist = paths.js.base + '/dist';
 
 
-function handleError(task) {
-	return function(err) {
-		gutil.log(gutil.colors.red(err));
-		notify.onError(task + ' failed, check the logs..')(err);
-	};
-}
+// function handleError(task) {
+// 	return function(err) {
+// 		gutil.log(gutil.colors.red(err));
+// 		notify.onError(task + ' failed, check the logs..')(err);
+// 	};
+// }
 
 
 
@@ -58,34 +62,35 @@ function handleError(task) {
 */
 
 gulp.task('compile-css', [], function() {
+	var src = paths.css.src + '/app.less';
+	var dest = paths.css.dist;
+
+	var versionHash = "~" + require('shortid').generate() + "~";
+
 	var less = require('gulp-less');
-	var LessPluginCleanCSS = require("less-plugin-clean-css"),
-		cleancss = new LessPluginCleanCSS({
+    var autoprefixer = require('gulp-autoprefixer');
+	var cleanCSS = require("clean-css");
+
+	var minify = vinylMap(function (buff, filename) {
+		return new cleanCSS({
 			advanced: true,
 			aggressiveMerging: true,
 			keepBreaks: false,
 			shorthandCompacting: true,
-		});
-
-	var LessPluginAutoPrefix = require('less-plugin-autoprefix'),
-		autoprefix = new LessPluginAutoPrefix({
-			// browsers: ["last 2 versions, > 1%"] // use default
-		});
-
-
-	var src = paths.css.src + '/app.less';
-	var dest = paths.css.dist;
-	// console.log('less', src, dest);
+			rebase: false,
+			debug: false,
+		}).minify(buff.toString()).styles;
+	});
 
 	var stream = gulp
 		.on('error', gutil.log.bind(gutil, 'Less Error'))
 		.src(src)
-		.pipe(sourcemaps.init())
-		.pipe(less({
-			plugins: [autoprefix, cleancss]
-		}))
+		.pipe(less())
+		.pipe(replace('${VERSION}', versionHash))
+		.pipe(autoprefixer())
+		.pipe(gulp.dest(dest))
+		.pipe(minify)
 		.pipe(rename({suffix: '.min'}))
-		.pipe(sourcemaps.write('./'))
 		.pipe(gulp.dest(dest));
 
 	return stream;
@@ -111,7 +116,7 @@ var browserifyConfig = _.defaults(watchify.args, {
 var browserifyBundler = browserify(browserifyConfig);
 
 var watchifyBundler = watchify(browserifyBundler)
-	.transform(to5ify)
+	.transform(babelify)
 	.on('error', gutil.log.bind(gutil, 'Watchify Error'))
 	.on('log', function (msg) { console.log('Watchify', 'log', msg); });
 
