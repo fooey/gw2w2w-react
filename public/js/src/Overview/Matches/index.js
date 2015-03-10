@@ -20,6 +20,14 @@ const Match = require('./Match');
 
 
 
+/*
+*	Component Globals
+*/
+
+const loadingHtml = <span style={{paddingLeft: '.5em'}}><i className="fa fa-spinner fa-spin" /></span>;
+
+
+
 
 /*
 *
@@ -29,11 +37,9 @@ const Match = require('./Match');
 
 class Matches extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const props = this.props;
-
-		const newRegion = !Immutable.is(props.region, nextProps.region);
-		const newMatches = !Immutable.is(props.matches, nextProps.matches);
-		const newWorlds = !Immutable.is(props.worlds, nextProps.worlds);
+		const newRegion = !Immutable.is(this.props.region, nextProps.region);
+		const newMatches = !Immutable.is(this.props.matches, nextProps.matches);
+		const newWorlds = !Immutable.is(this.props.worlds, nextProps.worlds);
 		const shouldUpdate = (newRegion || newMatches || newWorlds);
 
 		// console.log('overview::Matches::shouldComponentUpdate()', {shouldUpdate, newRegion, newMatches, newWorlds});
@@ -53,11 +59,14 @@ class Matches extends React.Component {
 
 		return (
 			<div className='RegionMatches'>
-				<h2>{props.region.get('label')} Matches</h2>
+				<h2>
+					{props.region.get('label')} Matches
+					{!props.matches.size ? loadingHtml : null}
+				</h2>
 
-				{props.matches.map((match, matchId) =>
+				{props.matches.map(match =>
 					<Match
-						key={matchId}
+						key={match.get('id')}
 						className='match'
 
 						worlds={props.worlds}

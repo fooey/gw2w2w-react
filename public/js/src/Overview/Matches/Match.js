@@ -47,7 +47,7 @@ class Match extends React.Component {
 
 		const worldColors = ['red', 'blue', 'green'];
 
-		return <div className="matchContainer" key={props.match.get("id")}>
+		return <div className="matchContainer">
 			<table className="match">
 				{worldColors.map((color, ixColor) => {
 					const worldKey = color + 'Id';
