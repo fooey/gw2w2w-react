@@ -25,5 +25,17 @@ require('./routes')(app, express);
 
 
 app.listen(serverPort, function() {
-	console.log('Listening on port %d', serverPort);
+	console.log('');
+	console.log('**************************************************');
+	console.log('Express server started');
+	console.log('Time: %d', Date.now());
+	console.log('Port: %d', serverPort);
+	console.log('Mode: %s', nodeEnv);
+	console.log('PID: %s', process.pid);
+	console.log('Platform: %s', process.platform);
+	console.log('Arch: %s', process.arch);
+	console.log('Node: %s', process.versions.node);
+	console.log('V8: %s', process.versions.v8);
+	console.log('**************************************************');
+	console.log('');
 });

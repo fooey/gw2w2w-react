@@ -190,7 +190,10 @@ gulp.task('nodemon', ['compile'], function(cb) {
 	var called = false;
 	var options = {
 		script: './server.js',
-		nodeArgs: ['--harmony'],
+		"execMap": {
+			"js": "iojs --harmony",
+			// "js": "node --harmony",
+		},
 		ext: 'js,jade',
 		ignore: [
 			'.git/**',
