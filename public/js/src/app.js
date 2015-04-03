@@ -1,4 +1,5 @@
 'use strict';
+require("babel/polyfill");
 
 /*
 *
@@ -36,6 +37,7 @@ $(function() {
 	attachRoutes();
 	setImmediate(eml);
 });
+
 
 
 

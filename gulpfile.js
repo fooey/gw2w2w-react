@@ -116,7 +116,12 @@ var browserifyConfig = _.defaults(watchify.args, {
 var browserifyBundler = browserify(browserifyConfig);
 
 var watchifyBundler = watchify(browserifyBundler)
-	.transform(babelify)
+	.transform(babelify.configure({
+		"optional": [
+			"optimisation.react.constantElements",
+			// "optimisation.react.inlineElements",
+		],
+	}))
 	.on('error', gutil.log.bind(gutil, 'Watchify Error'))
 	.on('log', function (msg) { console.log('Watchify', 'log', msg); });
 
