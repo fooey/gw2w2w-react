@@ -1,91 +1,91 @@
 doctype html
 html(lang="en")
 head
-	meta(charset="utf-8")
-	meta(http-equiv="X-UA-Compatible", content="IE=edge")
-	meta(name="viewport", content="width=device-width, initial-scale=1")
-	title gw2w2w
+  meta(charset="utf-8")
+  meta(http-equiv="X-UA-Compatible", content="IE=edge")
+  meta(name="viewport", content="width=device-width, initial-scale=1")
+  title gw2w2w
 
-	link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css")
+  link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css")
 
-	if (process.env.NODE_ENV === 'development')
-		link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.css") )
-	else
-		link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.min.css") )
-
-
-	script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js")
-	script(src="https://cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js")
-	script(src="https://cdn.rawgit.com/visionmedia/page.js/master/page.js")
-
-	script(src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.min.js")
-	script(src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.ui.min.js")
-	script(src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js")
-	script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js")
-
-	script(src=staticCacheBusted("/nm/moment-twitter/moment-twitter.js"))
-
-	if (process.env.NODE_ENV === 'development')
-		script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.js")
-		script(src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.js")
-		script(src=staticCacheBusted("/nm/react/dist/react.js"))
-		script(src=staticCacheBusted("/js/dist/app.js"))
+  if (process.env.NODE_ENV === 'development')
+    link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.css") )
+  else
+    link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.min.css") )
 
 
-	else
-		script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.min.js")
-		script(src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.min.js")
-		script(src=staticCacheBusted("/nm/react/dist/react.min.js"))
-		script(src=staticCacheBusted("/js/dist/app.min.js"))
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js")
+  script(src="https://cdn.rawgit.com/visionmedia/page.js/master/page.js")
+
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.1.0/velocity.ui.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js")
+
+  script(src=staticCacheBusted("/nm/moment-twitter/moment-twitter.js"))
+
+  if (process.env.NODE_ENV === 'development')
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.js")
+    script(src=staticCacheBusted("/nm/react/dist/react.js"))
+    script(src=staticCacheBusted("/js/dist/app.js"))
+
+
+  else
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.min.js")
+    script(src=staticCacheBusted("/nm/react/dist/react.min.js"))
+    script(src=staticCacheBusted("/js/dist/app.min.js"))
 
 
 
 
 body
-	nav.navbar.navbar-default
-		.container
-			.navbar-header
-				a.navbar-brand(href="/")
-					img(src=staticCacheBusted("/img/logo/logo-96x36.png"))
-			#nav-langs.pull-right
+  nav.navbar.navbar-default
+    .container
+      .navbar-header
+        a.navbar-brand(href="/")
+          img(src=staticCacheBusted("/img/logo/logo-96x36.png"))
+      #nav-langs.pull-right
 
 
 
 
-	#content.container
+  #content.container
 
 
-	.container
-		.row: .col-xs-24
-			footer.small.muted.text-center
-				hr
+  .container
+    .row: .col-xs-24
+      footer.small.muted.text-center
+        hr
 
-				p.
-					© 2013 ArenaNet, Inc. All rights reserved.
-					NCsoft, the interlocking NC logo, ArenaNet, Guild Wars, Guild Wars Factions, Guild Wars Nightfall, Guild Wars:Eye of the North, Guild Wars 2, and all associated logos and designs are trademarks or registered trademarks of NCsoft Corporation.
-					All other trademarks are the property of their respective owners.
+        p.
+          © 2013 ArenaNet, Inc. All rights reserved.
+          NCsoft, the interlocking NC logo, ArenaNet, Guild Wars, Guild Wars Factions, Guild Wars Nightfall, Guild Wars:Eye of the North, Guild Wars 2, and all associated logos and designs are trademarks or registered trademarks of NCsoft Corporation.
+          All other trademarks are the property of their respective owners.
 
-				p.
-					Please send comments and bugs to <span class="nospam-prz">i sed prz</span><br>
+        p.
+          Please send comments and bugs to <span class="nospam-prz">i sed prz</span><br>
 
-				p.
-					Supporting microservices:
-					<a href="http://guilds.gw2w2w.com/">guilds.gw2w2w.com</a>
-					&nbsp;&ndash;&nbsp;
-					<a href="http://state.gw2w2w.com/">state.gw2w2w.com</a>
-					&nbsp;&ndash;&nbsp;
-					<a href="http://www.piely.net/">www.piely.net</a>
+        p.
+          Supporting microservices:
+          <a href="http://guilds.gw2w2w.com/">guilds.gw2w2w.com</a>
+          &nbsp;&ndash;&nbsp;
+          <a href="http://state.gw2w2w.com/">state.gw2w2w.com</a>
+          &nbsp;&ndash;&nbsp;
+          <a href="http://www.piely.net/">www.piely.net</a>
 
-				p.
-					Source available at <a href="https://github.com/fooey/gw2w2w-react">https://github.com/fooey/gw2w2w-react</a><br>
-				//- | <!-- Application design and development by <a href="http://jasonrushton.com">Jason Rushton</a><br> -->
+        p.
+          Source available at <a href="https://github.com/fooey/gw2w2w-react">https://github.com/fooey/gw2w2w-react</a><br>
+        //- | <!-- Application design and development by <a href="http://jasonrushton.com">Jason Rushton</a><br> -->
 
 
 
-	script.
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-		ga('create', 'UA-51384-37', 'auto');
-		ga('send', 'pageview');
+  script.
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-51384-37', 'auto');
+    ga('send', 'pageview');

@@ -4,7 +4,7 @@ var path = require('path');
 module.exports = function(express, nodeEnv) {
 	var app = express();
 
-	var isDev = (nodeEnv === 'development');
+	var isDev  = (nodeEnv === 'development');
 	var isProd = !isDev;
 
 	app.set('env', nodeEnv);
@@ -34,8 +34,8 @@ module.exports = function(express, nodeEnv) {
 	*
 	*/
 
-	var morgan = require('morgan');
-	var compression = require('compression');
+	var morgan       = require('morgan');
+	var compression  = require('compression');
 	var errorhandler = require('errorhandler');
 
 

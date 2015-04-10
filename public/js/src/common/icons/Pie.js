@@ -3,23 +3,23 @@
 
 /*
 *
-*	Dependencies
+* Dependencies
 *
 */
 
-const React		= require('react');
-const Immutable	= require('Immutable');
+const React     = require('react');
+const Immutable = require('Immutable');
 
 
 
 
 /*
-*	Component Globals
+* Component Globals
 */
 
 const INSTANCE = {
-	size	: 60,
-	stroke	: 2,
+  size  : 60,
+  stroke: 2,
 };
 
 
@@ -27,30 +27,30 @@ const INSTANCE = {
 
 /*
 *
-*	Component Definition
+* Component Definition
 *
 */
 
 const propTypes = {
-	scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
+  scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
 };
 
 class Pie extends React.Component {
-	shouldComponentUpdate(nextProps) {
-		return !Immutable.is(this.props.scores, nextProps.scores);
-	}
+  shouldComponentUpdate(nextProps) {
+    return !Immutable.is(this.props.scores, nextProps.scores);
+  }
 
-	render() {
-		const props = this.props;
+  render() {
+    const props = this.props;
 
-		// console.log('Pie::render', props.scores.toArray());
+    // console.log('Pie::render', props.scores.toArray());
 
-		return <img
-			width={INSTANCE.size}
-			height={INSTANCE.size}
-			src={getImageSource(props.scores.toArray())}
-		/>;
-	}
+    return <img
+      width  = {INSTANCE.size}
+      height = {INSTANCE.size}
+      src    = {getImageSource(props.scores.toArray())}
+    />;
+  }
 }
 
 
@@ -59,12 +59,12 @@ class Pie extends React.Component {
 
 /*
 *
-*	Private Methods
+* Private Methods
 *
 */
 
 function getImageSource(scores) {
-	return `http:\/\/www.piely.net\/${INSTANCE.size}\/${scores.join(',')}?strokeWidth=${INSTANCE.stroke}`;
+  return `http:\/\/www.piely.net\/${INSTANCE.size}\/${scores.join(',')}?strokeWidth=${INSTANCE.stroke}`;
 }
 
 
@@ -73,9 +73,9 @@ function getImageSource(scores) {
 
 /*
 *
-*	Export Module
+* Export Module
 *
 */
 
-Pie.propTypes	= propTypes;
-module.exports	= Pie;
+Pie.propTypes  = propTypes;
+module.exports = Pie;

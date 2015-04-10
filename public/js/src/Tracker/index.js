@@ -3,33 +3,33 @@
 
 /*
 *
-*	Dependencies
+* Dependencies
 *
 */
 
-const React			= require('react');
-const Immutable		= require('Immutable');
+const React         = require('react');
+const Immutable     = require('Immutable');
 
-const _				= require('lodash');
+const _             = require('lodash');
 
 
 
-const api			= require('lib/api.js');
-const libDate		= require('lib/date.js');
-const trackerTimers	= require('lib/trackerTimers');
+const api           = require('lib/api.js');
+const libDate       = require('lib/date.js');
+const trackerTimers = require('lib/trackerTimers');
 
-const GuildsLib		= require('lib/tracker/guilds.js');
+const GuildsLib     = require('lib/tracker/guilds.js');
 
-const STATIC		= require('lib/static');
+const STATIC        = require('lib/static');
 
 
 /*
-*	React Components
+* React Components
 */
 
-const Scoreboard	= require('./Scoreboard');
-const Maps			= require('./Maps');
-const Guilds		= require('./Guilds');
+const Scoreboard    = require('./Scoreboard');
+const Maps          = require('./Maps');
+const Guilds        = require('./Guilds');
 
 
 
@@ -37,143 +37,143 @@ const Guilds		= require('./Guilds');
 
 /*
 *
-*	Component Export
+* Component Export
 *
 */
 
 const propTypes = {
-	lang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	world: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+  lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+  world: React.PropTypes.instanceOf(Immutable.Map).isRequired,
 };
 
 class Tracker extends React.Component {
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.state = {
-			hasData		: false,
+    this.state = {
+      hasData    : false,
 
-			dateNow		: libDate.dateNow(),
-			lastmod		: 0,
-			timeOffset	: 0,
+      dateNow    : libDate.dateNow(),
+      lastmod    : 0,
+      timeOffset : 0,
 
-			match		: Immutable.Map({lastmod:0}),
-			matchWorlds	: Immutable.List(),
-			details		: Immutable.Map(),
-			claimEvents	: Immutable.List(),
-			guilds		: Immutable.Map(),
-		};
-
-
-		this.mounted = true;
-
-		this.intervals = {
-			timers: null
-		};
-		this.timeouts = {
-			data: null
-		};
+      match      : Immutable.Map({lastmod:0}),
+      matchWorlds: Immutable.List(),
+      details    : Immutable.Map(),
+      claimEvents: Immutable.List(),
+      guilds     : Immutable.Map(),
+    };
 
 
-		this.guildLib = new GuildsLib(this);
-	}
+    this.mounted = true;
+
+    this.intervals = {
+      timers: null
+    };
+    this.timeouts = {
+      data: null
+    };
 
 
-	shouldComponentUpdate(nextProps, nextState) {
-		const initialData	= !_.isEqual(this.state.hasData, nextState.hasData);
-		const newMatchData	= !_.isEqual(this.state.lastmod, nextState.lastmod);
-		const newGuildData	= !Immutable.is(this.state.guilds, nextState.guilds);
-		const newLang		= !Immutable.is(this.props.lang, nextProps.lang);
-		const shouldUpdate	= (initialData || newMatchData || newGuildData || newLang);
-
-		return shouldUpdate;
-	}
+    this.guildLib = new GuildsLib(this);
+  }
 
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const initialData  = !_.isEqual(this.state.hasData, nextState.hasData);
+    const newMatchData = !_.isEqual(this.state.lastmod, nextState.lastmod);
+    const newGuildData = !Immutable.is(this.state.guilds, nextState.guilds);
+    const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
+    const shouldUpdate = (initialData || newMatchData || newGuildData || newLang);
 
-	componentDidMount() {
-		// console.log('Tracker::componentDidMount()');
-
-		this.intervals.timers = setInterval(updateTimers.bind(this), 1000);
-		setImmediate(updateTimers.bind(this));
-
-		setImmediate(getMatchDetails.bind(this));
-	}
+    return shouldUpdate;
+  }
 
 
 
-	componentWillUnmount() {
-		// console.log('Tracker::componentWillUnmount()');
+  componentDidMount() {
+    // console.log('Tracker::componentDidMount()');
 
-		clearTimers.call(this);
+    this.intervals.timers = setInterval(updateTimers.bind(this), 1000);
+    setImmediate(updateTimers.bind(this));
 
-		this.mounted = false;
-	}
-
-
-
-	componentWillReceiveProps(nextProps) {
-		const newLang = !Immutable.is(this.props.lang, nextProps.lang);
-
-		// console.log('componentWillReceiveProps()', newLang);
-
-		if (newLang) {
-			setMatchWorlds.call(this, nextProps.lang);
-		}
-	}
+    setImmediate(getMatchDetails.bind(this));
+  }
 
 
 
-	// componentWillUpdate() {
-	// 	console.log('Tracker::componentWillUpdate()');
-	// }
+  componentWillUnmount() {
+    // console.log('Tracker::componentWillUnmount()');
+
+    clearTimers.call(this);
+
+    this.mounted = false;
+  }
 
 
 
-	render() {
-		// console.log('Tracker::render()');
-		setPageTitle(this.props.lang, this.props.world);
+  componentWillReceiveProps(nextProps) {
+    const newLang = !Immutable.is(this.props.lang, nextProps.lang);
+
+    // console.log('componentWillReceiveProps()', newLang);
+
+    if (newLang) {
+      setMatchWorlds.call(this, nextProps.lang);
+    }
+  }
 
 
-		if (!this.state.hasData) {
-			return null;
-		}
+
+  // componentWillUpdate() {
+  //  console.log('Tracker::componentWillUpdate()');
+  // }
 
 
 
-		return (
-			<div id="tracker">
+  render() {
+    // console.log('Tracker::render()');
+    setPageTitle(this.props.lang, this.props.world);
 
-				{<Scoreboard
-					matchWorlds	= {this.state.matchWorlds}
-					match		= {this.state.match}
-				/>}
 
-				{<Maps
-					lang		= {this.props.lang}
-					details		= {this.state.details}
-					matchWorlds	= {this.state.matchWorlds}
-					guilds		= {this.state.guilds}
-				/>}
+    if (!this.state.hasData) {
+      return null;
+    }
 
-				{<div className="row">
-					<div className="col-md-24">
-						{(!this.state.guilds.isEmpty())
-							? <Guilds
-								lang		= {this.props.lang}
 
-								guilds		= {this.state.guilds}
-								claimEvents	= {this.state.claimEvents}
-							/>
-							: null
-						}
-					</div>
-				</div>}
 
-			</div>
-		);
+    return (
+      <div id="tracker">
 
-	}
+        {<Scoreboard
+          matchWorlds = {this.state.matchWorlds}
+          match       = {this.state.match}
+        />}
+
+        {<Maps
+          lang        = {this.props.lang}
+          details     = {this.state.details}
+          matchWorlds = {this.state.matchWorlds}
+          guilds      = {this.state.guilds}
+        />}
+
+        {<div className="row">
+          <div className="col-md-24">
+            {(!this.state.guilds.isEmpty())
+              ? <Guilds
+                lang        = {this.props.lang}
+
+                guilds      = {this.state.guilds}
+                claimEvents = {this.state.claimEvents}
+              />
+              : null
+            }
+          </div>
+        </div>}
+
+      </div>
+    );
+
+  }
 
 }
 
@@ -183,153 +183,153 @@ class Tracker extends React.Component {
 
 /*
 *
-*	Private Methods
+* Private Methods
 *
 */
 
 
 
 /*
-*	Timers
+* Timers
 */
 
 function updateTimers() {
-	let component	= this;
-	const state		= component.state;
-	// console.log('updateTimers()');
+  let component = this;
+  const state   = component.state;
+  // console.log('updateTimers()');
 
-	const timeOffset	= state.timeOffset;
-	const now			= libDate.dateNow() - timeOffset;
+  const timeOffset = state.timeOffset;
+  const now        = libDate.dateNow() - timeOffset;
 
-	trackerTimers.update(now, timeOffset);
+  trackerTimers.update(now, timeOffset);
 }
 
 
 
 function clearTimers(){
-	// console.log('clearTimers()');
-	let component = this;
+  // console.log('clearTimers()');
+  let component = this;
 
-	_.forEach(component.intervals, clearInterval);
-	_.forEach(component.timeouts, clearTimeout);
+  _.forEach(component.intervals, clearInterval);
+  _.forEach(component.timeouts, clearTimeout);
 }
 
 
 
 /*
 *
-*	Match Details
+* Match Details
 *
 */
 
 function getMatchDetails() {
-	let component	= this;
-	const props		= component.props;
+  let component = this;
+  const props   = component.props;
 
-	const world		= props.world;
-	const langSlug	= props.lang.get('slug');
-	const worldSlug	= world.getIn([langSlug, 'slug']);
+  const world     = props.world;
+  const langSlug  = props.lang.get('slug');
+  const worldSlug = world.getIn([langSlug, 'slug']);
 
-	api.getMatchDetailsByWorld(
-		worldSlug,
-		onMatchDetails.bind(this)
-	);
+  api.getMatchDetailsByWorld(
+    worldSlug,
+    onMatchDetails.bind(this)
+  );
 }
 
 
 
 function onMatchDetails(err, data) {
-	let component	= this;
-	const props		= component.props;
-	const state		= component.state;
+  let component = this;
+  const props   = component.props;
+  const state   = component.state;
 
 
-	if (component.mounted) {
-		if (!err && data && data.match && data.details) {
-			const lastmod		= data.match.lastmod;
-			const isModified	= (lastmod !== state.match.get('lastmod'));
+  if (component.mounted) {
+    if (!err && data && data.match && data.details) {
+      const lastmod    = data.match.lastmod;
+      const isModified = (lastmod !== state.match.get('lastmod'));
 
-			// console.log('onMatchDetails', data.match.lastmod, isModified);
+      // console.log('onMatchDetails', data.match.lastmod, isModified);
 
-			if (isModified) {
-				const dateNow		= libDate.dateNow();
-				const timeOffset	= Math.floor(dateNow  - (data.now / 1000));
+      if (isModified) {
+        const dateNow     = libDate.dateNow();
+        const timeOffset  = Math.floor(dateNow  - (data.now / 1000));
 
-				const matchData		= Immutable.fromJS(data.match);
-				const detailsData	= Immutable.fromJS(data.details);
+        const matchData   = Immutable.fromJS(data.match);
+        const detailsData = Immutable.fromJS(data.details);
 
-				// use transactional setState
-				component.setState(state => ({
-					hasData: true,
-					dateNow,
-					timeOffset,
-					lastmod,
+        // use transactional setState
+        component.setState(state => ({
+          hasData: true,
+          dateNow,
+          timeOffset,
+          lastmod,
 
-					match	: state.match.mergeDeep(matchData),
-					details	: state.details.mergeDeep(detailsData),
-				}));
-
-
-				setImmediate(component.guildLib.onMatchData.bind(component.guildLib, detailsData));
-
-				if (state.matchWorlds.isEmpty()) {
-					setImmediate(setMatchWorlds.bind(component, props.lang));
-				}
-			}
-		}
+          match : state.match.mergeDeep(matchData),
+          details : state.details.mergeDeep(detailsData),
+        }));
 
 
-		rescheduleDataUpdate.call(component);
-	}
+        setImmediate(component.guildLib.onMatchData.bind(component.guildLib, detailsData));
+
+        if (state.matchWorlds.isEmpty()) {
+          setImmediate(setMatchWorlds.bind(component, props.lang));
+        }
+      }
+    }
+
+
+    rescheduleDataUpdate.call(component);
+  }
 }
 
 
 
 function rescheduleDataUpdate() {
-	let component		= this;
-	const refreshTime	= _.random(1000*2, 1000*4);
+  let component     = this;
+  const refreshTime = _.random(1000*2, 1000*4);
 
-	component.timeouts.data = setTimeout(getMatchDetails.bind(component), refreshTime);
+  component.timeouts.data = setTimeout(getMatchDetails.bind(component), refreshTime);
 }
 
 
 
 /*
 *
-*	MatchWorlds
+* MatchWorlds
 *
 */
 
 function setMatchWorlds(lang) {
-	let component = this;
+  let component = this;
 
-	const matchWorlds = Immutable
-		.List(['red', 'blue', 'green'])
-		.map(getMatchWorld.bind(component, lang))
+  const matchWorlds = Immutable
+    .List(['red', 'blue', 'green'])
+    .map(getMatchWorld.bind(component, lang));
 
-	component.setState({matchWorlds});
+  component.setState({matchWorlds});
 }
 
 
 
 function getMatchWorld(lang, color) {
-	let component	= this;
-	const state		= component.state;
+  let component = this;
+  const state   = component.state;
 
-	const langSlug		= lang.get('slug');
-	const worldKey		= color + 'Id';
-	const worldId		= state.match.getIn([worldKey]).toString();
-	const worldByLang	= STATIC.worlds.getIn([worldId, langSlug]);
+  const langSlug    = lang.get('slug');
+  const worldKey    = color + 'Id';
+  const worldId     = state.match.getIn([worldKey]).toString();
+  const worldByLang = STATIC.worlds.getIn([worldId, langSlug]);
 
-	return worldByLang
-		.set('color', color)
-		.set('link', getWorldLink(langSlug, worldByLang));
+  return worldByLang
+    .set('color', color)
+    .set('link', getWorldLink(langSlug, worldByLang));
 }
 
 
 
 function getWorldLink(langSlug, world) {
-	return ['', langSlug, world.get('slug')].join('/');
+  return ['', langSlug, world.get('slug')].join('/');
 }
 
 
@@ -338,21 +338,21 @@ function getWorldLink(langSlug, world) {
 
 /*
 *
-*	Match Details
+* Match Details
 *
 */
 
 function setPageTitle(lang, world) {
-	let langSlug	= lang.get('slug');
-	let worldName	= world.getIn([langSlug, 'name']);
+  let langSlug  = lang.get('slug');
+  let worldName = world.getIn([langSlug, 'name']);
 
-	let title		= [worldName, 'gw2w2w'];
+  let title     = [worldName, 'gw2w2w'];
 
-	if (langSlug !== 'en') {
-		title.push(lang.get('name'));
-	}
+  if (langSlug !== 'en') {
+    title.push(lang.get('name'));
+  }
 
-	$('title').text(title.join(' - '));
+  $('title').text(title.join(' - '));
 }
 
 
@@ -361,9 +361,9 @@ function setPageTitle(lang, world) {
 
 /*
 *
-*	Export Module
+* Export Module
 *
 */
 
-Tracker.propTypes	= propTypes;
-module.exports		= Tracker;
+Tracker.propTypes = propTypes;
+module.exports    = Tracker;

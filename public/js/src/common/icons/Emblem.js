@@ -2,7 +2,7 @@
 
 /*
 *
-*	Dependencies
+* Dependencies
 *
 */
 
@@ -13,7 +13,7 @@ const React = require('react');
 
 /*
 *
-*	Component Globals
+* Component Globals
 *
 */
 
@@ -23,40 +23,40 @@ const imgPlaceholder = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/20
 
 /*
 *
-*	Component Definition
+* Component Definition
 *
 */
 
 const propTypes = {
-	guildName	: React.PropTypes.string,
-	size		: React.PropTypes.number.isRequired,
+  guildName: React.PropTypes.string,
+  size     : React.PropTypes.number.isRequired,
 };
 
 const defaultProps = {
-	guildName	: undefined,
-	size		: 256,
+  guildName: undefined,
+  size     : 256,
 };
 
 class Emblem extends React.Component {
-	shouldComponentUpdate(nextProps) {
-		const newGuildName	= (this.props.guildName !== nextProps.guildName);
-		const newSize		= (this.props.size !== nextProps.size);
-		const shouldUpdate	= (newGuildName || newSize);
+  shouldComponentUpdate(nextProps) {
+    const newGuildName = (this.props.guildName !== nextProps.guildName);
+    const newSize      = (this.props.size !== nextProps.size);
+    const shouldUpdate = (newGuildName || newSize);
 
-		return shouldUpdate;
-	}
+    return shouldUpdate;
+  }
 
-	render() {
-		const emblemSrc = getEmblemSrc(this.props.guildName);
+  render() {
+    const emblemSrc = getEmblemSrc(this.props.guildName);
 
-		return <img
-			className	= "emblem"
-			src			= {emblemSrc}
-			width		= {this.props.size}
-			height		= {this.props.size}
-			onError		= {imgOnError}
-		/>;
-	}
+    return <img
+      className = "emblem"
+      src       = {emblemSrc}
+      width     = {this.props.size}
+      height    = {this.props.size}
+      onError   = {imgOnError}
+    />;
+  }
 }
 
 
@@ -64,30 +64,30 @@ class Emblem extends React.Component {
 
 /*
 *
-*	Private Methods
+* Private Methods
 *
 */
 
 function getEmblemSrc(guildName) {
-	return (guildName)
-		? `http:\/\/guilds.gw2w2w.com\/guilds\/${slugify(guildName)}\/256.svg`
-		: imgPlaceholder;
+  return (guildName)
+    ? `http:\/\/guilds.gw2w2w.com\/guilds\/${slugify(guildName)}\/256.svg`
+    : imgPlaceholder;
 }
 
 
 
 function slugify(str) {
-	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
+  return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
 }
 
 
 
 function imgOnError(e) {
-	const currentSrc = $(e.target).attr('src');
+  const currentSrc = $(e.target).attr('src');
 
-	if (currentSrc !== imgPlaceholder) {
-		$(e.target).attr('src', imgPlaceholder);
-	}
+  if (currentSrc !== imgPlaceholder) {
+    $(e.target).attr('src', imgPlaceholder);
+  }
 }
 
 
@@ -96,10 +96,10 @@ function imgOnError(e) {
 
 /*
 *
-*	Export Module
+* Export Module
 *
 */
 
-Emblem.propTypes	= propTypes;
-Emblem.defaultProps	= defaultProps;
-module.exports		= Emblem;
+Emblem.propTypes    = propTypes;
+Emblem.defaultProps = defaultProps;
+module.exports      = Emblem;

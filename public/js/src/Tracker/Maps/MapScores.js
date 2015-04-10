@@ -2,14 +2,14 @@
 
 /*
 *
-*	Dependencies
+* Dependencies
 *
 */
 
-const React		= require('react');
-const Immutable	= require('Immutable');
+const React     = require('react');
+const Immutable = require('Immutable');
 
-const numeral	= require('numeral');
+const numeral   = require('numeral');
 
 
 
@@ -17,38 +17,38 @@ const numeral	= require('numeral');
 
 /*
 *
-*	Component Definition
+* Component Definition
 *
 */
 
 const propTypes = {
-	scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
+  scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
 };
 
 class MapScores extends React.Component {
-	shouldComponentUpdate(nextProps) {
-		const newScores		= !Immutable.is(this.props.scores, nextProps.scores);
-		const shouldUpdate	= (newScores);
+  shouldComponentUpdate(nextProps) {
+    const newScores    = !Immutable.is(this.props.scores, nextProps.scores);
+    const shouldUpdate = (newScores);
 
-		return shouldUpdate;
-	}
+    return shouldUpdate;
+  }
 
 
 
-	render() {
-		return (
-			<ul className="list-inline">
-				{this.props.scores.map((score, ixScore) => {
-					const formatted	= numeral(score).format('0,0');
-					const team		= ['red', 'blue', 'green'][ixScore];
+  render() {
+    return (
+      <ul className="list-inline">
+        {this.props.scores.map((score, ixScore) => {
+          const formatted = numeral(score).format('0,0');
+          const team      = ['red', 'blue', 'green'][ixScore];
 
-					return <li key={team} className={`team ${team}`}>
-						{formatted}
-					</li>;
-				})}
-			</ul>
-		);
-	}
+          return <li key={team} className={`team ${team}`}>
+            {formatted}
+          </li>;
+        })}
+      </ul>
+    );
+  }
 }
 
 
@@ -57,9 +57,9 @@ class MapScores extends React.Component {
 
 /*
 *
-*	Export Module
+* Export Module
 *
 */
 
-MapScores.propTypes	= propTypes;
-module.exports		= MapScores;
+MapScores.propTypes = propTypes;
+module.exports      = MapScores;

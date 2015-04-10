@@ -3,14 +3,14 @@
 
 /*
 *
-*	Dependencies
+* Dependencies
 *
 */
 
-const React		= require('react');
+const React   = require('react');
 
-// const $		= require('jQuery');
-const numeral	= require('numeral');
+// const $    = require('jQuery');
+const numeral = require('numeral');
 
 
 
@@ -18,54 +18,54 @@ const numeral	= require('numeral');
 
 /*
 *
-*	Component Definition
+* Component Definition
 *
 */
 
 const propTypes ={
-	score	: React.PropTypes.number.isRequired,
+  score: React.PropTypes.number.isRequired,
 };
 
 class Score extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {diff: 0};
-	}
+  constructor(props) {
+    super(props);
+    this.state = {diff: 0};
+  }
 
 
 
-	shouldComponentUpdate(nextProps) {
-		return (this.props.score !== nextProps.score);
-	}
+  shouldComponentUpdate(nextProps) {
+    return (this.props.score !== nextProps.score);
+  }
 
 
 
-	componentWillReceiveProps(nextProps){
-		const props = this.props;
+  componentWillReceiveProps(nextProps){
+    const props = this.props;
 
-		this.setState({diff: nextProps.score - props.score});
-	}
-
-
-
-	componentDidUpdate() {
-		const state = this.state;
-
-		if(state.diff !== 0) {
-			animateScoreDiff(this.refs.diff.getDOMNode());
-		}
-	}
+    this.setState({diff: nextProps.score - props.score});
+  }
 
 
-	render() {
-		const props = this.props;
-		const state = this.state;
 
-		return <div>
-			<span className="diff" ref="diff">{getDiffText(state.diff)}</span>
-			<span className="value">{getScoreText(props.score)}</span>
-		</div>;
-	}
+  componentDidUpdate() {
+    const state = this.state;
+
+    if(state.diff !== 0) {
+      animateScoreDiff(this.refs.diff.getDOMNode());
+    }
+  }
+
+
+  render() {
+    const props = this.props;
+    const state = this.state;
+
+    return <div>
+      <span className="diff" ref="diff">{getDiffText(state.diff)}</span>
+      <span className="value">{getScoreText(props.score)}</span>
+    </div>;
+  }
 }
 
 
@@ -75,38 +75,38 @@ class Score extends React.Component {
 
 /*
 *
-*	Private Methods
+* Private Methods
 *
 */
 
 function animateScoreDiff(el) {
-	$(el)
-		.velocity('fadeOut', {duration: 0})
-		.velocity('fadeIn', {duration: 200})
-		.velocity('fadeOut', {duration: 1200, delay: 400});
+  $(el)
+    .velocity('fadeOut', {duration: 0})
+    .velocity('fadeIn', {duration: 200})
+    .velocity('fadeOut', {duration: 1200, delay: 400});
 }
 
 
 function getDiffText(diff) {
-	return (diff)
-		? numeral(diff).format('+0,0')
-		: null;
+  return (diff)
+    ? numeral(diff).format('+0,0')
+    : null;
 }
 
 
 function getScoreText(score) {
-	return (score)
-		? numeral(score).format('0,0')
-		: null;
+  return (score)
+    ? numeral(score).format('0,0')
+    : null;
 }
 
 
 
 /*
 *
-*	Export Module
+* Export Module
 *
 */
 
-Score.propTypes	= propTypes;
-module.exports	= Score;
+Score.propTypes = propTypes;
+module.exports  = Score;

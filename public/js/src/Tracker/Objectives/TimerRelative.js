@@ -2,14 +2,14 @@
 
 /*
 *
-*	Dependencies
+* Dependencies
 *
 */
 
-const React		= require('react');
-const Immutable	= require('Immutable');
+const React     = require('react');
+const Immutable = require('Immutable');
 
-const moment	= require('moment');
+const moment    = require('moment');
 
 
 
@@ -17,37 +17,37 @@ const moment	= require('moment');
 
 /*
 *
-*	Component Definition
+* Component Definition
 *
 */
 
 const propTypes = {
-	isEnabled	: React.PropTypes.bool.isRequired,
-	timestamp	: React.PropTypes.number.isRequired,
+  isEnabled: React.PropTypes.bool.isRequired,
+  timestamp: React.PropTypes.number.isRequired,
 };
 
 class TimerRelative extends React.Component {
-	shouldComponentUpdate(nextProps) {
-		const newTimestamp	= !Immutable.is(this.props.timestamp, nextProps.timestamp);
-		const shouldUpdate	= (newTimestamp);
+  shouldComponentUpdate(nextProps) {
+    const newTimestamp = !Immutable.is(this.props.timestamp, nextProps.timestamp);
+    const shouldUpdate = (newTimestamp);
 
-		return shouldUpdate;
-	}
+    return shouldUpdate;
+  }
 
 
 
-	render() {
-		if (!this.props.isEnabled) {
-			return null;
-		}
-		else {
-			return <div className="objective-relative">
-				<span className="timer relative" data-timestamp={this.props.timestamp}>
-					{moment(this.props.timestamp * 1000).twitterShort()}
-				</span>
-			</div>;
-		}
-	}
+  render() {
+    if (!this.props.isEnabled) {
+      return null;
+    }
+    else {
+      return <div className="objective-relative">
+        <span className="timer relative" data-timestamp={this.props.timestamp}>
+          {moment(this.props.timestamp * 1000).twitterShort()}
+        </span>
+      </div>;
+    }
+  }
 }
 
 
@@ -55,9 +55,9 @@ class TimerRelative extends React.Component {
 
 /*
 *
-*	Export Module
+* Export Module
 *
 */
 
-TimerRelative.propTypes	= propTypes;
-module.exports			= TimerRelative;
+TimerRelative.propTypes = propTypes;
+module.exports          = TimerRelative;
