@@ -69,10 +69,10 @@ gulp.task('compile-css', [], function() {
 
   var less         = require('gulp-less');
   var autoprefixer = require('gulp-autoprefixer');
-  var cleanCSS     = require("clean-css");
+  var CleanCSS     = require("clean-css");
 
   var minify = vinylMap(function (buff, filename) {
-    return new cleanCSS({
+    return new CleanCSS({
       advanced           : true,
       aggressiveMerging  : true,
       keepBreaks         : false,
