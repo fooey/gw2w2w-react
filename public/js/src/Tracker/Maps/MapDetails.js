@@ -6,11 +6,11 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
-const $ = require('jQuery');
+const React			= require('react');
+const Immutable		= require('Immutable');
+const $				= require('jQuery');
 
-const STATIC = require('lib/static');
+const STATIC		= require('lib/static');
 
 
 
@@ -19,8 +19,8 @@ const STATIC = require('lib/static');
 *	React Components
 */
 
-const MapScores = require('./MapScores');
-const MapSection = require('./MapSection');
+const MapScores		= require('./MapScores');
+const MapSection	= require('./MapSection');
 
 
 
@@ -32,14 +32,21 @@ const MapSection = require('./MapSection');
 *
 */
 
+const propTypes = {
+	lang		: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+	details		: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+	matchWorlds	: React.PropTypes.instanceOf(Immutable.List).isRequired,
+	guilds		: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+};
+
 class MapDetails extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const newLang = !Immutable.is(this.props.lang, nextProps.lang);
-		const newGuilds = !Immutable.is(this.props.guilds, nextProps.guilds);
-		const newDetails = !Immutable.is(this.props.details, nextProps.details);
-		const newWorlds = !Immutable.is(this.props.matchWorlds, nextProps.matchWorlds);
+		const newLang		= !Immutable.is(this.props.lang, nextProps.lang);
+		const newGuilds		= !Immutable.is(this.props.guilds, nextProps.guilds);
+		const newDetails	= !Immutable.is(this.props.details, nextProps.details);
+		const newWorlds		= !Immutable.is(this.props.matchWorlds, nextProps.matchWorlds);
 
-		const shouldUpdate = (newLang || newGuilds || newDetails || newWorlds);
+		const shouldUpdate	= (newLang || newGuilds || newDetails || newWorlds);
 
 		return shouldUpdate;
 	}
@@ -47,10 +54,9 @@ class MapDetails extends React.Component {
 
 
 	render() {
-		const mapMeta = STATIC.objective_map.find(mm => mm.get('key') === this.props.mapKey);
-		const mapIndex = mapMeta.get('mapIndex').toString();
-
-		const mapScores = this.props.details.getIn(['maps', 'scores', mapIndex]);
+		const mapMeta	= STATIC.objective_map.find(mm => mm.get('key') === this.props.mapKey);
+		const mapIndex	= mapMeta.get('mapIndex').toString();
+		const mapScores	= this.props.details.getIn(['maps', 'scores', mapIndex]);
 
 		// console.log('Tracker::Maps::MapDetails:render()', mapScores.toJS());
 
@@ -69,10 +75,11 @@ class MapDetails extends React.Component {
 
 						return (
 							<MapSection
-								component="ul"
-								key={ixSection}
-								mapSection={mapSection}
-								mapMeta={mapMeta}
+								component	= "ul"
+								key			= {ixSection}
+								mapSection	= {mapSection}
+								mapMeta		= {mapMeta}
+
 								{...this.props}
 							/>
 						);
@@ -87,30 +94,6 @@ class MapDetails extends React.Component {
 
 
 
-/*
-*	Class Properties
-*/
-
-MapDetails.propTypes = {
-	lang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	details: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	matchWorlds: React.PropTypes.instanceOf(Immutable.List).isRequired,
-	guilds: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
-
-
-
-
-/*
-*
-*	Export Module
-*
-*/
-
-module.exports = MapDetails;
-
-
-
 
 
 /*
@@ -120,10 +103,10 @@ module.exports = MapDetails;
 */
 
 function onTitleClick(e) {
-	let $maps = $('.map');
-	let $map = $(e.target).closest('.map', $maps);
+	let $maps		= $('.map');
+	let $map		= $(e.target).closest('.map', $maps);
 
-	let hasFocus = $map.hasClass('map-focus');
+	let hasFocus	= $map.hasClass('map-focus');
 
 
 	if(!hasFocus) {
@@ -142,3 +125,16 @@ function onTitleClick(e) {
 
 	}
 }
+
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+MapDetails.propTypes	= propTypes;
+module.exports			= MapDetails;

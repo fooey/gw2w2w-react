@@ -7,11 +7,11 @@ require("babel/polyfill");
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
-const page = require('page');
+const React		= require('react');
+const Immutable	= require('Immutable');
+const page		= require('page');
 
-const STATIC = require('lib/static');
+const STATIC	= require('lib/static');
 
 
 
@@ -19,9 +19,9 @@ const STATIC = require('lib/static');
 *	React Components
 */
 
-const Langs = require('common/Langs');
-const Overview = require('Overview');
-const Tracker = require('Tracker');
+const Langs		= require('common/Langs');
+const Overview	= require('Overview');
+const Tracker	= require('Tracker');
 
 
 
@@ -52,21 +52,20 @@ $(function() {
 function attachRoutes() {
 	const domMounts = {
 		navLangs: document.getElementById('nav-langs'),
-		content: document.getElementById('content'),
+		content	: document.getElementById('content'),
 	};
 
 
 	page('/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)?', function(ctx) {
-		const langSlug = ctx.params.langSlug;
-		const lang = STATIC.langs.get(langSlug);
+		const langSlug	= ctx.params.langSlug;
+		const lang		= STATIC.langs.get(langSlug);
+
+		const worldSlug	= ctx.params.worldSlug;
+		const world		= getWorldFromSlug(langSlug, worldSlug);
 
 
-		const worldSlug = ctx.params.worldSlug;
-		const world = getWorldFromSlug(langSlug, worldSlug);
-
-
-		let App = Overview;
-		let props = {lang};
+		let App		= Overview;
+		let props	= {lang};
 
 		if (world && Immutable.Map.isMap(world) && !world.isEmpty()) {
 			App = Tracker;
@@ -87,7 +86,7 @@ function attachRoutes() {
 
 
 	page.start({
-		click: true,
+		click	: true,
 		popstate: true,
 		dispatch: true,
 		hashbang: false,
@@ -104,6 +103,7 @@ function attachRoutes() {
 *	Util
 *
 */
+
 function redirectPage(destination) {
 	page.redirect(destination);
 }

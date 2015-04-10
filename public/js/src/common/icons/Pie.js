@@ -7,8 +7,8 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React		= require('react');
+const Immutable	= require('Immutable');
 
 
 
@@ -18,8 +18,8 @@ const Immutable = require('Immutable');
 */
 
 const INSTANCE = {
-	size: 60,
-	stroke: 2,
+	size	: 60,
+	stroke	: 2,
 };
 
 
@@ -30,6 +30,10 @@ const INSTANCE = {
 *	Component Definition
 *
 */
+
+const propTypes = {
+	scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
+};
 
 class Pie extends React.Component {
 	shouldComponentUpdate(nextProps) {
@@ -51,26 +55,6 @@ class Pie extends React.Component {
 
 
 
-/*
-*	Class Properties
-*/
-
-Pie.propTypes = {
-	scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
-};
-
-
-
-
-/*
-*
-*	Export Module
-*
-*/
-
-module.exports = Pie;
-
-
 
 
 /*
@@ -82,3 +66,16 @@ module.exports = Pie;
 function getImageSource(scores) {
 	return `http:\/\/www.piely.net\/${INSTANCE.size}\/${scores.join(',')}?strokeWidth=${INSTANCE.stroke}`;
 }
+
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+Pie.propTypes	= propTypes;
+module.exports	= Pie;

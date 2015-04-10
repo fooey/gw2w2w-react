@@ -6,17 +6,11 @@
 *
 */
 
-const React = require('react');
+const React		= require('react');
 
-const _ = require('lodash');
+const _			= require('lodash');
 
-const STATIC = require('gw2w2w-static');
-
-
-
-/*
-*	React Components
-*/
+const STATIC	= require('gw2w2w-static');
 
 
 
@@ -26,6 +20,11 @@ const STATIC = require('gw2w2w-static');
 *	Component Definition
 *
 */
+
+const propTypes ={
+	mapFilter	: React.PropTypes.string.isRequired,
+	setWorld	: React.PropTypes.func.isRequired,
+};
 
 class MapFilters extends React.Component {
 	shouldComponentUpdate(nextProps) {
@@ -57,17 +56,6 @@ class MapFilters extends React.Component {
 
 
 
-/*
-*	Class Properties
-*/
-
-MapFilters.propTypes = {
-	mapFilter: React.PropTypes.string.isRequired,
-	setWorld: React.PropTypes.func.isRequired,
-};
-
-
-
 
 /*
 *
@@ -75,4 +63,5 @@ MapFilters.propTypes = {
 *
 */
 
-module.exports = MapFilters;
+MapFilters.propTypes	= propTypes;
+module.exports			= MapFilters;

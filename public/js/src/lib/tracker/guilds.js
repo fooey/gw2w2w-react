@@ -8,10 +8,10 @@
 *
 */
 
-const Immutable = require('Immutable');
-const async = require('async');
+const Immutable	= require('Immutable');
+const async		= require('async');
 
-const api = require('lib/api.js');
+const api		= require('lib/api.js');
 
 
 
@@ -24,9 +24,9 @@ const api = require('lib/api.js');
 */
 
 const guildDefault = Immutable.Map({
-	'loaded': false,
-	'lastClaim': 0,
-	'claims': Immutable.Map(),
+	'loaded'	: false,
+	'lastClaim'	: 0,
+	'claims'	: Immutable.Map(),
 });
 
 
@@ -61,9 +61,9 @@ class LibGuilds {
 
 		// console.log('LibGuilds::onMatchData()');
 
-		const objectiveClaimers = matchDetails.getIn(['objectives', 'claimers']);
-		const claimEvents =  getEventsByType(matchDetails, 'claim');
-		const guildsToLookup = getUnknownGuilds(state.guilds, objectiveClaimers, claimEvents);
+		const objectiveClaimers	= matchDetails.getIn(['objectives', 'claimers']);
+		const claimEvents		=  getEventsByType(matchDetails, 'claim');
+		const guildsToLookup	= getUnknownGuilds(state.guilds, objectiveClaimers, claimEvents);
 
 		// send new guilds to async queue manager for data retrieval
 		if (!guildsToLookup.isEmpty()) {
@@ -71,13 +71,13 @@ class LibGuilds {
 		}
 
 
-		let newGuilds = state.guilds;
-		newGuilds = initializeGuilds(newGuilds, guildsToLookup);
-		newGuilds = guildsProcessClaims(newGuilds, claimEvents);
+		let newGuilds	= state.guilds;
+		newGuilds		= initializeGuilds(newGuilds, guildsToLookup);
+		newGuilds		= guildsProcessClaims(newGuilds, claimEvents);
 
 		// update state if necessary
 		if (!Immutable.is(state.guilds, newGuilds)) {
-			console.log('guilds::onMatchData()', 'has update');
+			// console.log('guilds::onMatchData()', 'has update');
 			this.component.setState({guilds: newGuilds});
 		}
 	}
@@ -85,10 +85,9 @@ class LibGuilds {
 
 
 	getGuildDetails(guildId, onComplete) {
-		let component = this.component;
-		const state = component.state;
-
-		const hasData = state.guilds.getIn([guildId, 'loaded']);
+		let component	= this.component;
+		const state		= component.state;
+		const hasData	= state.guilds.getIn([guildId, 'loaded']);
 
 		if (hasData) {
 			// console.log('Tracker::getGuildDetails()', 'skip', guildId);
@@ -103,18 +102,6 @@ class LibGuilds {
 		}
 	}
 }
-
-
-
-
-
-/*
-*
-*	Export Module
-*
-*/
-
-module.exports = LibGuilds;
 
 
 
@@ -135,10 +122,11 @@ function onGuildData(onComplete, err, data) {
 	if (component.mounted) {
 		if (!err && data) {
 			delete data.emblem;
+
 			data.loaded = true;
 
-			const guildId = data.guild_id;
-			const guildData = Immutable.fromJS(data);
+			const guildId	= data.guild_id;
+			const guildData	= Immutable.fromJS(data);
 
 			component.setState(state => ({
 				guilds: state.guilds.mergeIn([guildId], guildData)
@@ -163,25 +151,23 @@ function guildsProcessClaims(guilds, claimEvents) {
 
 
 function guildAttachClaims(claimEvents, guild, guildId) {
-	const hasClaims = !guild.get('claims').isEmpty();
-	const newestClaim = hasClaims ? guild.get('claims').first() : null;
-
 	const incClaims = claimEvents
 		.filter(entry => entry.get('guild') === guildId)
 		.toMap();
 
-	const incHasClaims = !incClaims.isEmpty();
-	const incNewestClaim = incHasClaims ? incClaims.first() : null;
+	const hasClaims			= !guild.get('claims').isEmpty();
+	const newestClaim		= hasClaims ? guild.get('claims').first() : null;
+	const incHasClaims		= !incClaims.isEmpty();
+	const incNewestClaim	= incHasClaims ? incClaims.first() : null;
 
-
-	const hasNewClaims = (!Immutable.is(newestClaim, incNewestClaim));
+	const hasNewClaims		= (!Immutable.is(newestClaim, incNewestClaim));
 
 
 	if (hasNewClaims) {
 		const lastClaim = incHasClaims ? incNewestClaim.get('timestamp') : 0;
 		// console.log('claims altered', guildId, hasNewClaims, lastClaim);
-		guild = guild.set('claims', incClaims);
-		guild = guild.set('lastClaim', lastClaim);
+		guild	= guild.set('claims', incClaims);
+		guild	= guild.set('lastClaim', lastClaim);
 	}
 
 	return guild;
@@ -241,3 +227,15 @@ function getUnknownGuilds(stateGuilds, objectiveClaimers, claimEvents) {
 
 	return unknownGuilds;
 }
+
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+module.exports = LibGuilds;

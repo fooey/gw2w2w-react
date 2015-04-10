@@ -27,12 +27,21 @@ const imgPlaceholder = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/20
 *
 */
 
+const propTypes = {
+	guildName	: React.PropTypes.string,
+	size		: React.PropTypes.number.isRequired,
+};
+
+const defaultProps = {
+	guildName	: undefined,
+	size		: 256,
+};
+
 class Emblem extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const newGuildName = (this.props.guildName !== nextProps.guildName);
-		const newSize = (this.props.size !== nextProps.size);
-
-		const shouldUpdate = (newGuildName || newSize);
+		const newGuildName	= (this.props.guildName !== nextProps.guildName);
+		const newSize		= (this.props.size !== nextProps.size);
+		const shouldUpdate	= (newGuildName || newSize);
 
 		return shouldUpdate;
 	}
@@ -41,42 +50,14 @@ class Emblem extends React.Component {
 		const emblemSrc = getEmblemSrc(this.props.guildName);
 
 		return <img
-			className="emblem"
-			src={emblemSrc}
-			width={this.props.size}
-			height={this.props.size}
-			onError={imgOnError}
+			className	= "emblem"
+			src			= {emblemSrc}
+			width		= {this.props.size}
+			height		= {this.props.size}
+			onError		= {imgOnError}
 		/>;
 	}
 }
-
-
-
-/*
-*	Class Properties
-*/
-
-Emblem.defaultProps = {
-	guildName: undefined,
-	size: 256,
-};
-
-Emblem.propTypes = {
-	guildName: React.PropTypes.string,
-	size: React.PropTypes.number.isRequired,
-};
-
-
-
-
-/*
-*
-*	Export Module
-*
-*/
-
-module.exports = Emblem;
-
 
 
 
@@ -108,3 +89,17 @@ function imgOnError(e) {
 		$(e.target).attr('src', imgPlaceholder);
 	}
 }
+
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+Emblem.propTypes	= propTypes;
+Emblem.defaultProps	= defaultProps;
+module.exports		= Emblem;

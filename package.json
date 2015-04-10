@@ -8,7 +8,7 @@
     "npm": "~2.x"
   },
   "dependencies": {
-    "babel": "^5.0.2",
+    "babel": "^5.0.12",
     "compression": "^1.4.3",
     "connect-slashes": "^1.3.0",
     "errorhandler": "^1.3.5",
@@ -46,6 +46,7 @@
     "gulp-util": "^3.0.4",
     "gw2api": "^1.2.0",
     "gw2w2w-static": "^0.1.2",
+    "jsxhint": "^0.14.0",
     "longjohn": "~0.2.4",
     "mkdirp": "~0.5.0",
     "setimmediate": "^1.0.2",

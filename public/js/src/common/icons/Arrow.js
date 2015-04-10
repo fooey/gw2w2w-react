@@ -6,10 +6,8 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
-
-const _ = require('lodash');
+const React		= require('react');
+const Immutable	= require('Immutable');
 
 
 
@@ -21,10 +19,14 @@ const _ = require('lodash');
 *
 */
 
+const propTypes = {
+	oMeta: React.PropTypes.object.isRequired,
+};
+
 class Arrow extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const newObjectiveMeta = !Immutable.is(this.props.oMeta, nextProps.oMeta);
-		const shouldUpdate = (newObjectiveMeta);
+		const newObjectiveMeta	= !Immutable.is(this.props.oMeta, nextProps.oMeta);
+		const shouldUpdate		= (newObjectiveMeta);
 
 		return shouldUpdate;
 	}
@@ -39,28 +41,6 @@ class Arrow extends React.Component {
 		);
 	}
 }
-
-
-
-/*
-*	Class Properties
-*/
-
-Arrow.propTypes = {
-	oMeta: React.PropTypes.object.isRequired,
-};
-
-
-
-
-/*
-*
-*	Export Module
-*
-*/
-
-module.exports = Arrow;
-
 
 
 
@@ -80,11 +60,23 @@ function getArrowSrc(meta) {
 
 	let src = ['/img/icons/dist/arrow'];
 
-	if (meta.get('n')) {src.push('north'); }
-	else if (meta.get('s')) {src.push('south'); }
+	if (meta.get('n')) 		{src.push('north'); }
+	else if (meta.get('s'))	{src.push('south'); }
 
-	if (meta.get('w')) {src.push('west'); }
-	else if (meta.get('e')) {src.push('east'); }
+	if (meta.get('w'))		{src.push('west'); }
+	else if (meta.get('e'))	{src.push('east'); }
 
 	return src.join('-') + '.svg';
 }
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+Arrow.propTypes	= propTypes;
+module.exports	= Arrow;

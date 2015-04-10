@@ -1,19 +1,18 @@
 'use strict';
 
-const _ = require('lodash');
-const async = require('async');
+const _		= require('lodash');
+const async	= require('async');
 
 
 
-module.exports = {update};
 
 
 
 
 function update(now, timeOffset) {
-	let $timers = $('.timer');
-	let $countdowns = $timers.filter('.countdown');
-	let $relatives = $timers.filter('.relative');
+	let $timers		= $('.timer');
+	let $countdowns	= $timers.filter('.countdown');
+	let $relatives	= $timers.filter('.relative');
 
 	async.parallel([
 		updateRelativeTimers.bind(null, $relatives, timeOffset),
@@ -46,10 +45,10 @@ function updateCountdownTimers(countdowns, now, cb) {
 function updateRelativeTimeNode(timeOffset, el, next) {
 	let $el = $(el);
 
-	const timestamp = _.parseInt($el.attr('data-timestamp'));
-	const offsetTimestamp = timestamp + timeOffset;
-	const timestampMoment = moment(offsetTimestamp * 1000);
-	const timestampRelative = timestampMoment.twitterShort();
+	const timestamp			= _.parseInt($el.attr('data-timestamp'));
+	const offsetTimestamp	= timestamp + timeOffset;
+	const timestampMoment	= moment(offsetTimestamp * 1000);
+	const timestampRelative	= timestampMoment.twitterShort();
 
 	$el.text(timestampRelative);
 
@@ -61,17 +60,17 @@ function updateRelativeTimeNode(timeOffset, el, next) {
 function updateCountdownTimerNode(now, el, next) {
 	let $el = $(el);
 
-	const dataExpires = $el.attr('data-expires');
-	const expires = _.parseInt(dataExpires);
-	const secRemaining = (expires - now);
-	const secElapsed = 300 - secRemaining;
+	const dataExpires	= $el.attr('data-expires');
+	const expires		= _.parseInt(dataExpires);
+	const secRemaining	= (expires - now);
+	const secElapsed	= 300 - secRemaining;
 
-	const highliteTime = 10;
-	const isVisible = expires + highliteTime >= now;
-	const isExpired = expires < now;
-	const isActive = !isExpired;
-	const isTimerHighlighted = (secRemaining <= Math.abs(highliteTime));
-	const isTimerFresh = (secElapsed <= highliteTime);
+	const highliteTime			= 10;
+	const isVisible				= expires + highliteTime >= now;
+	const isExpired				= expires < now;
+	const isActive				= !isExpired;
+	const isTimerHighlighted	= (secRemaining <= Math.abs(highliteTime));
+	const isTimerFresh			= (secElapsed <= highliteTime);
 
 
 	const timerText = (isActive)
@@ -80,9 +79,9 @@ function updateCountdownTimerNode(now, el, next) {
 
 
 	if (isVisible) {
-		let $objective = $el.closest('.objective');
-		let hasClassHighlight = $el.hasClass('highlight');
-		let hasClassFresh = $objective.hasClass('fresh');
+		let $objective			= $el.closest('.objective');
+		let hasClassHighlight	= $el.hasClass('highlight');
+		let hasClassFresh		= $objective.hasClass('fresh');
 
 		if (isTimerHighlighted && !hasClassHighlight) {
 			$el.addClass('highlight');
@@ -115,3 +114,8 @@ function updateCountdownTimerNode(now, el, next) {
 
 	next();
 }
+
+
+
+
+module.exports = {update};

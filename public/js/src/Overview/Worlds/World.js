@@ -7,8 +7,8 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React		= require('react');
+const Immutable	= require('Immutable');
 
 
 
@@ -19,11 +19,15 @@ const Immutable = require('Immutable');
 *
 */
 
-class RegionWorldsWorld extends React.Component {
+const propTypes = {
+	world	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+};
+
+class World extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const newLang = !Immutable.is(this.props.lang, nextProps.lang);
-		const newWorld = !Immutable.is(this.props.world, nextProps.world);
-		const shouldUpdate = (newLang || newWorld);
+		const newLang		= !Immutable.is(this.props.lang, nextProps.lang);
+		const newWorld		= !Immutable.is(this.props.world, nextProps.world);
+		const shouldUpdate	= (newLang || newWorld);
 
 		return shouldUpdate;
 	}
@@ -31,22 +35,17 @@ class RegionWorldsWorld extends React.Component {
 	render() {
 		const props = this.props;
 
-		// console.log('RegionWorldsWorld::render', props.world.toJS());
+		// console.log('World::render', props.world.toJS());
 
-		return <li><a href={props.world.get('link')}>{props.world.get('name')}</a></li>;
+		return <li>
+			<a href={props.world.get('link')}>
+				{props.world.get('name')}
+			</a>
+		</li>;
 	}
 
 }
 
-
-
-/*
-*	Class Properties
-*/
-
-RegionWorldsWorld.propTypes = {
-	world: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
 
 
 
@@ -57,4 +56,5 @@ RegionWorldsWorld.propTypes = {
 *
 */
 
-module.exports = RegionWorldsWorld;
+World.propTypes	= propTypes;
+module.exports	= World;

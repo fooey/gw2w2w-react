@@ -6,8 +6,8 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React		= require('react');
+const Immutable	= require('Immutable');
 
 
 
@@ -15,8 +15,8 @@ const Immutable = require('Immutable');
 *	React Components
 */
 
-const Emblem = require('common/Icons/Emblem');
-const Claims = require('./Claims');
+const Emblem	= require('common/Icons/Emblem');
+const Claims	= require('./Claims');
 
 
 
@@ -37,12 +37,17 @@ const loadingHtml = <h1 style={{whiteSpace: "nowrap", overflow: "hidden", textOv
 *
 */
 
+const propTypes = {
+	lang	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+	guild	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+};
+
 class Guild extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const newLang = !Immutable.is(this.props.lang, nextProps.lang);
-		const newGuildData = !Immutable.is(this.props.guild, nextProps.guild);
+		const newLang		= !Immutable.is(this.props.lang, nextProps.lang);
+		const newGuildData	= !Immutable.is(this.props.guild, nextProps.guild);
 
-		const shouldUpdate = (newLang || newGuildData);
+		const shouldUpdate	= (newLang || newGuildData);
 
 		return shouldUpdate;
 	}
@@ -50,12 +55,12 @@ class Guild extends React.Component {
 
 
 	render() {
-		const dataReady = this.props.guild.get('loaded');
+		const dataReady		= this.props.guild.get('loaded');
 
-		const guildId = this.props.guild.get('guild_id');
-		const guildName = this.props.guild.get('guild_name');
-		const guildTag = this.props.guild.get('tag');
-		const guildClaims = this.props.guild.get('claims');
+		const guildId		= this.props.guild.get('guild_id');
+		const guildName		= this.props.guild.get('guild_name');
+		const guildTag		= this.props.guild.get('tag');
+		const guildClaims	= this.props.guild.get('claims');
 
 		// console.log('Guild::render()', guildId, guildName);
 
@@ -95,14 +100,19 @@ class Guild extends React.Component {
 
 
 
+
+
 /*
-*	Class Properties
+*
+*	Private Methods
+*
 */
 
-Guild.propTypes = {
-	lang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	guild: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
+function slugify(str) {
+	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
+}
+
+
 
 
 
@@ -113,8 +123,5 @@ Guild.propTypes = {
 *
 */
 
+Guild.propTypes = propTypes;
 module.exports = Guild;
-
-function slugify(str) {
-	return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
-}

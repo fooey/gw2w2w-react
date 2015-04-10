@@ -7,8 +7,8 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React		= require('react');
+const Immutable	= require('Immutable');
 
 
 
@@ -16,7 +16,7 @@ const Immutable = require('Immutable');
 *	React Components
 */
 
-const Match = require('./Match');
+const Match		= require('./Match');
 
 
 
@@ -35,12 +35,18 @@ const loadingHtml = <span style={{paddingLeft: '.5em'}}><i className="fa fa-spin
 *
 */
 
+const propTypes = {
+	region	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+	matches	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+	worlds	: React.PropTypes.instanceOf(Immutable.Seq).isRequired,
+};
+
 class Matches extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const newRegion = !Immutable.is(this.props.region, nextProps.region);
-		const newMatches = !Immutable.is(this.props.matches, nextProps.matches);
-		const newWorlds = !Immutable.is(this.props.worlds, nextProps.worlds);
-		const shouldUpdate = (newRegion || newMatches || newWorlds);
+		const newRegion		= !Immutable.is(this.props.region, nextProps.region);
+		const newMatches	= !Immutable.is(this.props.matches, nextProps.matches);
+		const newWorlds		= !Immutable.is(this.props.worlds, nextProps.worlds);
+		const shouldUpdate	= (newRegion || newMatches || newWorlds);
 
 		// console.log('overview::Matches::shouldComponentUpdate()', {shouldUpdate, newRegion, newMatches, newWorlds});
 
@@ -66,11 +72,11 @@ class Matches extends React.Component {
 
 				{props.matches.map(match =>
 					<Match
-						key={match.get('id')}
-						className='match'
+						key			= {match.get('id')}
+						className	= 'match'
 
-						worlds={props.worlds}
-						match={match}
+						worlds		= {props.worlds}
+						match		= {match}
 					/>
 				)}
 			</div>
@@ -78,17 +84,6 @@ class Matches extends React.Component {
 	}
 }
 
-
-
-/*
-*	Class Properties
-*/
-
-Matches.propTypes = {
-	region: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	matches: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	worlds: React.PropTypes.instanceOf(Immutable.Seq).isRequired,
-};
 
 
 
@@ -99,4 +94,5 @@ Matches.propTypes = {
 *
 */
 
-module.exports = Matches;
+Matches.propTypes	= propTypes;
+module.exports		= Matches;

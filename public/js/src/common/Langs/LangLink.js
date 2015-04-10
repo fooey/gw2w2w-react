@@ -7,8 +7,8 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React		= require('react');
+const Immutable	= require('Immutable');
 
 
 
@@ -19,44 +19,24 @@ const Immutable = require('Immutable');
 *
 */
 
+const propTypes = {
+	lang	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+	world	: React.PropTypes.instanceOf(Immutable.Map),
+	linkLang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+};
+
 class LangLink extends React.Component {
 	render() {
-		const props = this.props;
-
-		const isActive = Immutable.is(props.lang, props.linkLang);
-		const title = props.linkLang.get('name');
-		const label = props.linkLang.get('label');
-		const link = getLink(props.linkLang, props.world);
+		const isActive	= Immutable.is(this.props.lang, this.props.linkLang);
+		const title		= this.props.linkLang.get('name');
+		const label		= this.props.linkLang.get('label');
+		const link		= getLink(this.props.linkLang, this.props.world);
 
 		return <li className={isActive ? 'active' : ''} title={title}>
 			<a href={link}>{label}</a>
 		</li>;
 	}
 }
-
-
-
-/*
-*	Class Properties
-*/
-
-LangLink.propTypes = {
-	lang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	world: React.PropTypes.instanceOf(Immutable.Map),
-	linkLang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
-
-
-
-
-/*
-*
-*	Export Module
-*
-*/
-
-module.exports = LangLink;
-
 
 
 
@@ -78,3 +58,15 @@ function getLink(lang, world) {
 
 	return link;
 }
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+LangLink.propTypes	= propTypes;
+module.exports		= LangLink;

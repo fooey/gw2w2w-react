@@ -7,20 +7,16 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React		= require('react');
 
-const STATIC = require('lib/static');
-
-
-
+const STATIC	= require('lib/static');
 
 
 /*
 *	React Components
 */
 
-const Sprite = require('common/Icons//Sprite');
+const Sprite	= require('common/Icons//Sprite');
 
 
 
@@ -30,6 +26,12 @@ const Sprite = require('common/Icons//Sprite');
 *	Component Definition
 *
 */
+
+const propTypes = {
+	color		: React.PropTypes.string.isRequired,
+	typeQuantity: React.PropTypes.number.isRequired,
+	typeId		: React.PropTypes.string.isRequired,
+};
 
 class HoldingsItem extends React.Component {
 	constructor(props) {
@@ -43,10 +45,10 @@ class HoldingsItem extends React.Component {
 
 
 	shouldComponentUpdate(nextProps) {
-		const newQuantity = (this.props.typeQuantity !== nextProps.typeQuantity);
-		const newType = (this.props.typeId !== nextProps.typeId);
-		const newColor = (this.props.color !== nextProps.color);
-		const shouldUpdate = (newQuantity || newType || newColor);
+		const newQuantity	= (this.props.typeQuantity !== nextProps.typeQuantity);
+		const newType		= (this.props.typeId !== nextProps.typeId);
+		const newColor		= (this.props.color !== nextProps.color);
+		const shouldUpdate	= (newQuantity || newType || newColor);
 
 		return shouldUpdate;
 	}
@@ -69,26 +71,15 @@ class HoldingsItem extends React.Component {
 		return (
 			<li>
 				<Sprite
-					type={this.state.oType.get('name')}
-					color={this.props.color}
+					type	= {this.state.oType.get('name')}
+					color	= {this.props.color}
 				/>
+
 				{` x${this.props.typeQuantity}`}
 			</li>
 		);
 	}
 }
-
-
-
-/*
-*	Class Properties
-*/
-
-HoldingsItem.propTypes = {
-	color: React.PropTypes.string.isRequired,
-	typeQuantity: React.PropTypes.number.isRequired,
-	typeId: React.PropTypes.string.isRequired,
-};
 
 
 
@@ -99,4 +90,5 @@ HoldingsItem.propTypes = {
 *
 */
 
-module.exports = HoldingsItem;
+HoldingsItem.propTypes	= propTypes;
+module.exports			= HoldingsItem;

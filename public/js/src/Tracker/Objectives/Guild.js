@@ -6,10 +6,10 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React		= require('react');
+const Immutable	= require('Immutable');
 
-const Emblem = require('common/Icons/Emblem');
+const Emblem	= require('common/Icons/Emblem');
 
 
 
@@ -21,37 +21,43 @@ const Emblem = require('common/Icons/Emblem');
 *
 */
 
+const propTypes = {
+	showName: React.PropTypes.bool.isRequired,
+	showTag	: React.PropTypes.bool.isRequired,
+	guildId	: React.PropTypes.string,
+	guild	: React.PropTypes.instanceOf(Immutable.Map),
+};
+
 class Guild extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const newGuild = !Immutable.is(this.props.guildId, nextProps.guildId);
-		const newGuildData = !Immutable.is(this.props.guild, nextProps.guild);
-		const shouldUpdate = (newGuild || newGuildData);
+		const newGuild		= !Immutable.is(this.props.guildId, nextProps.guildId);
+		const newGuildData	= !Immutable.is(this.props.guild, nextProps.guild);
+		const shouldUpdate	= (newGuild || newGuildData);
 
 		return shouldUpdate;
 	}
 
 	render() {
 		const props = this.props;
-		const hasGuild = !!this.props.guildId;
-		const isEnabled = hasGuild && (this.props.showName || this.props.showTag);
+
+		const hasGuild	= !!this.props.guildId;
+		const isEnabled	= (hasGuild && (this.props.showName || this.props.showTag));
 
 		if (!isEnabled) {
 			return null;
 		}
 		else {
-			const hasGuildData = props.guild && props.guild.get('loaded');
-			const id = props.guildId;
+			const hasGuildData = (props.guild && props.guild.get('loaded'));
 
-			// console.log('Guild:render()', id);
+			const id	= props.guildId;
+			const href	= `#${id}`;
 
-			const href = `#${id}`;
-
-			let content = <i className="fa fa-spinner fa-spin"></i>;
-			let title = null;
+			let content	= <i className="fa fa-spinner fa-spin"></i>;
+			let title	= null;
 
 			if (hasGuildData) {
-				const name = props.guild.get('guild_name');
-				const tag = props.guild.get('tag');
+				const name	= props.guild.get('guild_name');
+				const tag	= props.guild.get('tag');
 
 				if (props.showName && props.showTag) {
 					content = <span>
@@ -78,19 +84,6 @@ class Guild extends React.Component {
 
 
 
-/*
-*	Class Properties
-*/
-
-Guild.propTypes = {
-	showName: React.PropTypes.bool.isRequired,
-	showTag: React.PropTypes.bool.isRequired,
-	guildId: React.PropTypes.string,
-	guild: React.PropTypes.instanceOf(Immutable.Map),
-};
-
-
-
 
 /*
 *
@@ -98,4 +91,5 @@ Guild.propTypes = {
 *
 */
 
-module.exports = Guild;
+Guild.propTypes	= propTypes;
+module.exports	= Guild;

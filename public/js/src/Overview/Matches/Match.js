@@ -7,8 +7,8 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React			= require('react');
+const Immutable		= require('Immutable');
 
 
 
@@ -16,7 +16,7 @@ const Immutable = require('Immutable');
 *	React Components
 */
 
-const MatchWorld = require('./MatchWorld');
+const MatchWorld	= require('./MatchWorld');
 
 
 
@@ -28,12 +28,17 @@ const MatchWorld = require('./MatchWorld');
 *
 */
 
+const propTypes = {
+	match	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+	worlds	: React.PropTypes.instanceOf(Immutable.Seq).isRequired,
+};
+
 class Match extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const newScores = !Immutable.is(this.props.match.get("scores"), nextProps.match.get("scores"));
-		const newMatch = !Immutable.is(this.props.match.get("startTime"), nextProps.match.get("startTime"));
-		const newWorlds = !Immutable.is(this.props.worlds, nextProps.worlds);
-		const shouldUpdate = (newScores || newMatch || newWorlds);
+		const newScores		= !Immutable.is(this.props.match.get("scores"), nextProps.match.get("scores"));
+		const newMatch		= !Immutable.is(this.props.match.get("startTime"), nextProps.match.get("startTime"));
+		const newWorlds		= !Immutable.is(this.props.worlds, nextProps.worlds);
+		const shouldUpdate	= (newScores || newMatch || newWorlds);
 
 		return shouldUpdate;
 	}
@@ -50,21 +55,21 @@ class Match extends React.Component {
 		return <div className="matchContainer">
 			<table className="match">
 				{worldColors.map((color, ixColor) => {
-					const worldKey = color + 'Id';
-					const worldId = props.match.get(worldKey).toString();
-					const world = props.worlds.get(worldId);
-					const scores = props.match.get('scores');
+					const worldKey	= color + 'Id';
+					const worldId	= props.match.get(worldKey).toString();
+					const world		= props.worlds.get(worldId);
+					const scores	= props.match.get('scores');
 
 					return <MatchWorld
-						component='tr'
-						key={worldId}
+						component	= 'tr'
+						key			= {worldId}
 
-						world={world}
-						scores={scores}
+						world		= {world}
+						scores		= {scores}
 
-						color={color}
-						ixColor={ixColor}
-						showPie={ixColor === 0}
+						color		= {color}
+						ixColor		= {ixColor}
+						showPie		= {ixColor === 0}
 					/>;
 				})}
 			</table>
@@ -72,16 +77,6 @@ class Match extends React.Component {
 	}
 }
 
-
-
-/*
-*	Class Properties
-*/
-
-Match.propTypes = {
-	match: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	worlds: React.PropTypes.instanceOf(Immutable.Seq).isRequired,
-};
 
 
 
@@ -92,4 +87,5 @@ Match.propTypes = {
 *
 */
 
-module.exports = Match;
+Match.propTypes	= propTypes;
+module.exports	= Match;

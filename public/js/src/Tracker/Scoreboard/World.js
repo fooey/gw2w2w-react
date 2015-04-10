@@ -7,9 +7,16 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
-const numeral = require('numeral');
+const React		= require('react');
+const Immutable	= require('Immutable');
+const numeral	= require('numeral');
+
+
+/*
+*	React Components
+*/
+
+const Holdings	= require('./Holdings');
 
 
 
@@ -23,14 +30,6 @@ const loadingHtml = <h1 style={{height: '90px', fontSize: '32pt', lineHeight: '9
 
 
 
-/*
-*	React Components
-*/
-
-const Holdings = require('./Holdings');
-
-
-
 
 /*
 *
@@ -38,13 +37,20 @@ const Holdings = require('./Holdings');
 *
 */
 
+const propTypes = {
+	world	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+	score	: React.PropTypes.number.isRequired,
+	tick	: React.PropTypes.number.isRequired,
+	holdings: React.PropTypes.instanceOf(Immutable.List).isRequired,
+};
+
 class World extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const newWorld = !Immutable.is(this.props.world, nextProps.world);
-		const newScore = (this.props.score !== nextProps.score);
-		const newTick = (this.props.tick !== nextProps.tick);
-		const newHoldings = (this.props.holdings !== nextProps.holdings);
-		const shouldUpdate = (newWorld || newScore || newTick || newHoldings);
+		const newWorld		= !Immutable.is(this.props.world, nextProps.world);
+		const newScore		= (this.props.score !== nextProps.score);
+		const newTick		= (this.props.tick !== nextProps.tick);
+		const newHoldings	= (this.props.holdings !== nextProps.holdings);
+		const shouldUpdate	= (newWorld || newScore || newTick || newHoldings);
 
 		return shouldUpdate;
 	}
@@ -81,19 +87,6 @@ class World extends React.Component {
 
 
 
-/*
-*	Class Properties
-*/
-
-World.propTypes = {
-	world: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	score: React.PropTypes.number.isRequired,
-	tick: React.PropTypes.number.isRequired,
-	holdings: React.PropTypes.instanceOf(Immutable.List).isRequired,
-};
-
-
-
 
 /*
 *
@@ -101,4 +94,5 @@ World.propTypes = {
 *
 */
 
-module.exports = World;
+module.exports	= World;
+World.propTypes	= propTypes

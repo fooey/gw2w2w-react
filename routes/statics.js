@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(app, express) {
 
 	/*
@@ -7,20 +9,19 @@ module.exports = function(app, express) {
 	*/
 
 	app.use(function(req, res, next) {
-		// filename.~asdf~.ext
-		var cacheBustInFilename = /\.~[A-Za-z0-9_-]{7,14}~\./;
+		const cacheBustInFilename	= /\.~[A-Za-z0-9_-]{7,14}~\./;	// filename.~asdf~.ext
+		const cacheBustDirectory	= /\/~[A-Za-z0-9_-]{7,14}~\//;	// /~asdf~/*
 
-		// /~asdf~/*
-		var cacheBustDirectory = /\/~[A-Za-z0-9_-]{7,14}~\//;
+		let urlRewrite;
 
 
 		if (req.url.match(cacheBustDirectory)) {
-			var urlRewrite = req.url.replace(cacheBustDirectory, '/');
-			req.url = urlRewrite;
+			urlRewrite	= req.url.replace(cacheBustDirectory, '/');
+			req.url		= urlRewrite;
 		}
 		else if (req.url.match(cacheBustInFilename)) {
-			var urlRewrite = req.url.replace(cacheBustInFilename, '.');
-			req.url = urlRewrite;
+			urlRewrite	= req.url.replace(cacheBustInFilename, '.');
+			req.url		= urlRewrite;
 		}
 
 		next();
@@ -36,7 +37,7 @@ module.exports = function(app, express) {
 	*
 	*/
 
-	var favicon = require('serve-favicon');
+	const favicon = require('serve-favicon');
 	app.use(favicon('./public/img/logo/gw2-dragon-32.png'));
 
 
@@ -50,14 +51,14 @@ module.exports = function(app, express) {
 	*
 	*/
 
-	var serveStatic = require('serve-static');
+	const serveStatic = require('serve-static');
 
-	var staticOptions = {
-		dotfiles: 'deny',
-		etag: true,
-		// index: false,
-		maxAge: '1d',
-		// redirect: true,
+	const staticOptions = {
+		dotfiles	: 'deny',
+		etag		: true,
+		maxAge		: '1d',
+		// index	: false,
+		// redirect	: true,
 	};
 
 	app.use(serveStatic('public', staticOptions));
@@ -68,8 +69,8 @@ module.exports = function(app, express) {
 
 	express.static.mime.define({
 		'text/plain': ['jade', 'map'],
-		'text/css': ['less'],
-		'text/jsx': ['jsx'],
+		'text/css'	: ['less'],
+		'text/jsx'	: ['jsx'],
 	});
 
 };

@@ -7,10 +7,10 @@
 *
 */
 
-const React = require('react');
+const React		= require('react');
 
-const $ = require('jQuery');
-const numeral = require('numeral');
+// const $		= require('jQuery');
+const numeral	= require('numeral');
 
 
 
@@ -21,6 +21,10 @@ const numeral = require('numeral');
 *	Component Definition
 *
 */
+
+const propTypes ={
+	score	: React.PropTypes.number.isRequired,
+};
 
 class Score extends React.Component {
 	constructor(props) {
@@ -66,26 +70,6 @@ class Score extends React.Component {
 
 
 
-/*
-*	Class Properties
-*/
-
-Score.propTypes = {
-	score: React.PropTypes.number.isRequired,
-};
-
-
-
-
-/*
-*
-*	Export Module
-*
-*/
-
-module.exports = Score;
-
-
 
 
 
@@ -115,3 +99,14 @@ function getScoreText(score) {
 		? numeral(score).format('0,0')
 		: null;
 }
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+Score.propTypes	= propTypes;
+module.exports	= Score;

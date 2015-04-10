@@ -6,9 +6,7 @@
 *
 */
 
-const React = require('react');
-
-const _ = require('lodash');
+const React		= require('react');
 
 
 
@@ -20,26 +18,26 @@ const _ = require('lodash');
 *
 */
 
+const propTypes = {
+	type	: React.PropTypes.string.isRequired,
+	color	: React.PropTypes.string.isRequired,
+};
+
 class Sprite extends React.Component {
-	shouldComponentUpdate(nextProps) {return !_.isEqual(this.props, nextProps);}
+	shouldComponentUpdate(nextProps) {
+		const newType		= (this.props.type !== nextProps.type);
+		const newColor		= (this.props.color !== nextProps.color);
+		const shouldUpdate	= (newType || newColor);
+
+		return shouldUpdate;
+	}
+
+
 
 	render() {
-		const props = this.props;
-
-		return <span className={`sprite ${props.type} ${props.color}`} />;
+		return <span className={`sprite ${this.props.type} ${this.props.color}`} />;
 	}
 }
-
-
-
-/*
-*	Class Properties
-*/
-
-Sprite.propTypes = {
-	type: React.PropTypes.string.isRequired,
-	color: React.PropTypes.string.isRequired,
-};
 
 
 
@@ -50,4 +48,5 @@ Sprite.propTypes = {
 *
 */
 
-module.exports = Sprite;
+Sprite.propTypes	= propTypes;
+module.exports		= Sprite;

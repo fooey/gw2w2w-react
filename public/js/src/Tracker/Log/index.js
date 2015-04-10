@@ -6,10 +6,10 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React			= require('react');
+const Immutable		= require('Immutable');
 
-const STATIC = require('gw2w2w-static');
+const STATIC		= require('gw2w2w-static');
 
 
 
@@ -17,9 +17,9 @@ const STATIC = require('gw2w2w-static');
 *	React Components
 */
 
-const MapFilters = require('./MapFilters');
-const EventFilters = require('./EventFilters');
-const LogEntries = require('./LogEntries');
+const MapFilters	= require('./MapFilters');
+const EventFilters	= require('./EventFilters');
+const LogEntries	= require('./LogEntries');
 
 
 
@@ -30,34 +30,34 @@ const LogEntries = require('./LogEntries');
 *
 */
 
+const propTypes = {
+	lang	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+	details	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+	guilds	: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+};
+
 class Log extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			mapFilter: 'all',
-			eventFilter: 'all',
-			triggerNotification: false,
+			mapFilter			: 'all',
+			eventFilter			: 'all',
+			triggerNotification	: false,
 		};
 	}
 
 
 
 	shouldComponentUpdate(nextProps, nextState) {
-		const newLang = !Immutable.is(this.props.lang, nextProps.lang);
-		const newGuilds = !Immutable.is(this.props.guilds, nextProps.guilds);
-		const newHistory = !Immutable.is(this.props.details.get('history'), nextProps.details.get('history'));
+		const newLang			= !Immutable.is(this.props.lang, nextProps.lang);
+		const newGuilds			= !Immutable.is(this.props.guilds, nextProps.guilds);
+		const newHistory		= !Immutable.is(this.props.details.get('history'), nextProps.details.get('history'));
 
-		const newMapFilter = !Immutable.is(this.state.mapFilter, nextState.mapFilter);
-		const newEventFilter = !Immutable.is(this.state.eventFilter, nextState.eventFilter);
+		const newMapFilter		= !Immutable.is(this.state.mapFilter, nextState.mapFilter);
+		const newEventFilter	= !Immutable.is(this.state.eventFilter, nextState.eventFilter);
 
-		const shouldUpdate = (
-			newLang
-			|| newGuilds
-			|| newHistory
-			|| newMapFilter
-			|| newEventFilter
-		);
+		const shouldUpdate		= (newLang || newGuilds || newHistory || newMapFilter || newEventFilter);
 
 		return shouldUpdate;
 	}
@@ -79,13 +79,8 @@ class Log extends React.Component {
 
 
 	render() {
-		const component = this;
-		const props = this.props;
-		const state = this.state;
 
-		// console.log('Log::render()', state.mapFilter, state.eventFilter, state.triggerNotification);
-
-		const eventHistory = props.details.get('history');
+		const eventHistory = this.props.details.get('history');
 
 		return (
 			<div id="log-container">
@@ -94,14 +89,14 @@ class Log extends React.Component {
 					<div className="row">
 						<div className="col-sm-16">
 							<MapFilters
-								mapFilter={state.mapFilter}
-								setWorld={setWorld.bind(component)}
+								mapFilter	= {this.state.mapFilter}
+								setWorld	= {setWorld.bind(this)}
 							/>
 						</div>
 						<div className="col-sm-8">
 							<EventFilters
-								eventFilter={state.eventFilter}
-								setEvent={setEvent.bind(component)}
+								eventFilter	= {this.state.eventFilter}
+								setEvent	= {setEvent.bind(this)}
 							/>
 						</div>
 					</div>
@@ -109,14 +104,14 @@ class Log extends React.Component {
 
 				{!eventHistory.isEmpty()
 					? <LogEntries
-						triggerNotification={state.triggerNotification}
-						mapFilter={state.mapFilter}
-						eventFilter={state.eventFilter}
+						triggerNotification	= {this.state.triggerNotification}
+						mapFilter			= {this.state.mapFilter}
+						eventFilter			= {this.state.eventFilter}
 
-						lang={props.lang}
-						guilds={props.guilds}
+						lang				= {this.props.lang}
+						guilds				= {this.props.guilds}
 
-						eventHistory={eventHistory}
+						eventHistory		= {eventHistory}
 					/>
 					: null
 				}
@@ -125,29 +120,6 @@ class Log extends React.Component {
 		);
 	}
 }
-
-
-
-/*
-*	Class Properties
-*/
-
-Log.propTypes = {
-	lang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	details: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-	guilds: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
-
-
-
-
-/*
-*
-*	Export Module
-*
-*/
-
-module.exports = Log;
 
 
 
@@ -176,3 +148,16 @@ function setEvent(e) {
 
 	component.setState({eventFilter: filter, triggerNotification: true});
 }
+
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+Log.propTypes	= propTypes;
+module.exports	= Log;

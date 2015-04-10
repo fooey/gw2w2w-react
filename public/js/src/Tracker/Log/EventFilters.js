@@ -6,17 +6,7 @@
 *
 */
 
-const React = require('react');
-
-const _ = require('lodash');
-
-const STATIC = require('gw2w2w-static');
-
-
-
-/*
-*	React Components
-*/
+const React		= require('react');
 
 
 
@@ -27,6 +17,11 @@ const STATIC = require('gw2w2w-static');
 *
 */
 
+const propTypes = {
+	eventFilter	: React.PropTypes.oneOf(['all', 'capture', 'claim']).isRequired,
+	setEvent	: React.PropTypes.func.isRequired,
+};
+
 class MapFilters extends React.Component {
 	shouldComponentUpdate(nextProps) {
 		return (this.props.eventFilter !== nextProps.eventFilter);
@@ -35,38 +30,20 @@ class MapFilters extends React.Component {
 
 
 	render() {
-		const props = this.props;
+		const linkClaims	= <a onClick={this.props.setEvent} data-filter="claim">Claims</a>;
+		const linkCaptures	= <a onClick={this.props.setEvent} data-filter="capture">Captures</a>;
+		const linkAll		= <a onClick={this.props.setEvent} data-filter="all">All</a>;
 
 		return (
 			<ul id="log-event-filters" className="nav nav-pills">
-				<li className={(props.eventFilter === 'claim') ? 'active': null}>
-					<a onClick={props.setEvent} data-filter="claim">Claims</a>
-				</li>
-				<li className={(props.eventFilter === 'capture') ? 'active': null}>
-					<a onClick={props.setEvent} data-filter="capture">Captures</a>
-				</li>
-				<li className={(props.eventFilter === 'all') ? 'active': null}>
-					<a onClick={props.setEvent} data-filter="all">All</a>
-				</li>
+				<li className={(this.props.eventFilter === 'claim')		? 'active': null}>{linkClaims}</li>
+				<li className={(this.props.eventFilter === 'capture')	? 'active': null}>{linkCaptures}</li>
+				<li className={(this.props.eventFilter === 'all')		? 'active': null}>{linkAll}</li>
 			</ul>
 		);
 	}
 }
 
-
-
-/*
-*	Class Properties
-*/
-
-MapFilters.propTypes = {
-	eventFilter: React.PropTypes.oneOf([
-		'all',
-		'capture',
-		'claim',
-	]).isRequired,
-	setEvent: React.PropTypes.func.isRequired,
-};
 
 
 
@@ -77,4 +54,5 @@ MapFilters.propTypes = {
 *
 */
 
-module.exports = MapFilters;
+MapFilters.propTypes	= propTypes;
+module.exports			= MapFilters;

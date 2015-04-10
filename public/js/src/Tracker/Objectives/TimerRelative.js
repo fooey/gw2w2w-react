@@ -6,10 +6,10 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React		= require('react');
+const Immutable	= require('Immutable');
 
-const moment = require('moment');
+const moment	= require('moment');
 
 
 
@@ -21,10 +21,15 @@ const moment = require('moment');
 *
 */
 
+const propTypes = {
+	isEnabled	: React.PropTypes.bool.isRequired,
+	timestamp	: React.PropTypes.number.isRequired,
+};
+
 class TimerRelative extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		const newTimestamp = !Immutable.is(this.props.timestamp, nextProps.timestamp);
-		const shouldUpdate = (newTimestamp);
+		const newTimestamp	= !Immutable.is(this.props.timestamp, nextProps.timestamp);
+		const shouldUpdate	= (newTimestamp);
 
 		return shouldUpdate;
 	}
@@ -47,17 +52,6 @@ class TimerRelative extends React.Component {
 
 
 
-/*
-*	Class Properties
-*/
-
-TimerRelative.propTypes = {
-	isEnabled: React.PropTypes.bool.isRequired,
-	timestamp: React.PropTypes.number.isRequired,
-};
-
-
-
 
 /*
 *
@@ -65,4 +59,5 @@ TimerRelative.propTypes = {
 *
 */
 
-module.exports = TimerRelative;
+TimerRelative.propTypes	= propTypes;
+module.exports			= TimerRelative;

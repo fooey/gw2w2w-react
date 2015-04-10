@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /*
 *
@@ -6,14 +6,11 @@
 *
 */
 
-const React = require('react');
-const Immutable = require('Immutable');
+const React		= require('react');
+const Immutable	= require('Immutable');
 
-const async = require('async');
-const _ = require('lodash');
-
-const api = require('lib/api');
-const STATIC = require('lib/static');
+const api		= require('lib/api');
+const STATIC	= require('lib/static');
 
 
 
@@ -21,8 +18,8 @@ const STATIC = require('lib/static');
 *	React Components
 */
 
-const Matches = require('./Matches');
-const Worlds = require('./Worlds');
+const Matches	= require('./Matches');
+const Worlds	= require('./Worlds');
 
 
 
@@ -34,6 +31,10 @@ const Worlds = require('./Worlds');
 *
 */
 
+const propTypes = {
+	lang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+};
+
 class Overview extends React.Component {
 	constructor(props) {
 		super(props);
@@ -44,23 +45,20 @@ class Overview extends React.Component {
 		this.state = {
 			regions: Immutable.fromJS({
 				'1': {label: 'NA', id: '1'},
-				'2': {label: 'EU', id: '2'},
+				'2': {label: 'EU', id: '2'}
 			}),
 
-			matchesByRegion: Immutable.fromJS({'1':{}, '2':{}}),
-			worldsByRegion: Immutable.fromJS({'1':{}, '2':{}}),
+			matchesByRegion	: Immutable.fromJS({'1': {}, '2': {}}),
+			worldsByRegion	: Immutable.fromJS({'1': {}, '2': {}})
 		};
 	}
 
 
 
 	shouldComponentUpdate(nextProps, nextState) {
-		const props = this.props;
-		const state = this.state;
-
-		const newLang = !Immutable.is(props.lang, nextProps.lang);
-		const newMatchData = !Immutable.is(state.matchesByRegion, nextState.matchesByRegion);
-		const shouldUpdate = (newLang  || newMatchData);
+		const newLang		= !Immutable.is(this.props.lang, nextProps.lang);
+		const newMatchData	= !Immutable.is(this.state.matchesByRegion, nextState.matchesByRegion);
+		const shouldUpdate	= (newLang || newMatchData);
 
 		// console.log('overview::shouldComponentUpdate()', {shouldUpdate, newLang, newMatchData});
 
@@ -93,64 +91,34 @@ class Overview extends React.Component {
 
 
 	render() {
-		const props = this.props;
-		const state = this.state;
-
-		// console.log('overview::render()');
-		// console.log('overview::render()', 'lang', props.lang.toJS());
-		// console.log('overview::render()', 'regions', state.regions.toJS());
-		// console.log('overview::render()', 'matchesByRegion', state.matchesByRegion.toJS());
-		// console.log('overview::render()', 'worldsByRegion', state.worldsByRegion.toJS());
-
 		return <div id="overview">
-			{<div className="row">
-				{state.regions.map((region, regionId) =>
+			<div className="row">
+				{this.state.regions.map((region, regionId) =>
 					<div className="col-sm-12" key={regionId}>
 						<Matches
-							region={region}
-							matches={state.matchesByRegion.get(regionId)}
-							worlds={state.worldsByRegion.get(regionId)}
+							region	= {region}
+							matches	= {this.state.matchesByRegion.get(regionId)}
+							worlds	= {this.state.worldsByRegion.get(regionId)}
 						/>
 					</div>
 				)}
-			</div>}
+			</div>
 
 			<hr />
 
-			{<div className="row">
-				{state.regions.map((region, regionId) =>
+			<div className="row">
+				{this.state.regions.map((region, regionId) =>
 					<div className="col-sm-12" key={regionId}>
 						<Worlds
-							region={region}
-							worlds={state.worldsByRegion.get(regionId)}
+							region	= {region}
+							worlds	= {this.state.worldsByRegion.get(regionId)}
 						/>
 					</div>
 				)}
-			</div>}
+			</div>
 		</div>;
 	}
 }
-
-
-
-/*
-*	Class Properties
-*/
-
-Overview.propTypes = {
-	lang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
-
-
-
-
-/*
-*
-*	Export Module
-*
-*/
-
-module.exports = Overview;
 
 
 
@@ -274,5 +242,23 @@ function setDataTimeout() {
 
 
 function getInterval() {
-	return _.random(2000, 4000);
+	return randRange(2000, 4000);
 }
+
+
+function randRange(min, max) {
+	return Math.random() * ((max - min) + min);
+}
+
+
+
+
+
+/*
+*
+*	Export Module
+*
+*/
+
+Overview.propTypes	= propTypes;
+module.exports		= Overview;
