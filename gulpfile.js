@@ -7,7 +7,6 @@ var _           = require('lodash');
 // var path     = require('path');
 
 var livereload  = require('gulp-livereload');
-var nodemon     = require('gulp-nodemon');
 var watchify    = require('watchify');
 
 // var notify   = require('gulp-notify');
@@ -129,10 +128,9 @@ var uglifier = function() {
   // report: 'min',
     stripBanners: true,
     mangle      : true,
-    compress    : true,
-    output: {
-      comments: false,
-      beautify: false,
+    compress: {
+      unsafe: true,
+      drop_console: true,
     },
   }).on('error', gutil.log.bind(gutil, 'Uglify Error'));
 };
@@ -172,7 +170,7 @@ gulp.task('compile-js', [], compileJS);
 *
 */
 
-gulp.task('watch', ['compile', 'nodemon'], function(cb) {
+gulp.task('watch', ['compile'], function(cb) {
   livereload.listen();
   gulp.watch(paths.css.src + '/**/*.less', ['compile-css']);
   // gulp.watch(paths.js.src + '/**/*.*', ['compile-js']);
@@ -186,14 +184,13 @@ gulp.task('watch', ['compile', 'nodemon'], function(cb) {
 
 
 
-gulp.task('nodemon', ['compile'], function(cb) {
-  var called  = false;
-  var options = {
-    script: './server.js',
+
+function nodemon(cb, options) {
+  var config = _.merge({
     "execMap": {
-      "js": "iojs --harmony",
-      // "js": "node --harmony",
+      "js": "iojs",
     },
+    script: './server.js',
     ext: 'js,jade',
     ignore: [
       '.git/**',
@@ -201,17 +198,20 @@ gulp.task('nodemon', ['compile'], function(cb) {
 
       'node_modules/**',
       'public/**',
+      'gulp/**',
     ],
-
-    delay: 200,
     env: {
       PORT: '3000',
-      NODE_ENV: 'development',
+      NODE_PATH: './',
     },
-  };
+
+    delay: 200,
+  }, options);
+
+  var called = false;
 
 
-  return nodemon(options)
+  return require('gulp-nodemon')(config)
     .on('start', function() {
       if (!called) {
         called = true;
@@ -222,7 +222,30 @@ gulp.task('nodemon', ['compile'], function(cb) {
       console.log('restarted!');
       livereload();
     });
+}
+
+gulp.task('nodemon', ['compile'], function(cb) {
+  return nodemon(cb,
+    {env: {
+      NODE_ENV: 'development',
+    }}
+  );
 });
+
+gulp.task('nodemon-prod', ['compile'], function(cb) {
+  return nodemon(cb,
+    {env: {
+      NODE_ENV: 'production',
+      NEW_RELIC_NO_CONFIG_FILE: true,
+      NEW_RELIC_LICENSE_KEY: null,
+      NEW_RELIC_APP_NAME: ['jasonrushton.com'],
+      NEW_RELIC_LOG: 'stdout',
+      NEW_RELIC_LOG_LEVEL: 'info',
+    }}
+  );
+});
+
+
 
 
 
@@ -240,9 +263,12 @@ gulp.task('compile', ['compile-js', 'compile-css'], function(cb) {
 });
 
 
-gulp.task('default', ['watch'], function(cb) {
-
+gulp.task('default', ['compile', 'watch', 'nodemon'], function(cb) {
+  cb();
 });
 
 
+gulp.task('prod', ['compile', 'watch', 'nodemon-prod'], function(cb) {
+  cb();
+});
 
