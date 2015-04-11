@@ -29,7 +29,10 @@ const propTypes ={
 class Score extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {diff: 0};
+    this.state = {
+      diff: 0,
+      $diffNode: null,
+    };
   }
 
 
@@ -52,18 +55,25 @@ class Score extends React.Component {
     const state = this.state;
 
     if(state.diff !== 0) {
-      animateScoreDiff(this.refs.diff.getDOMNode());
+      animateScoreDiff(this.state.$diffNode);
     }
   }
 
 
-  render() {
-    const props = this.props;
-    const state = this.state;
 
+  componentDidMount() {
+    // cache jQuery object to state
+    this.setState({
+      $diffNode: $(this.refs.diff.getDOMNode())
+    });
+  }
+
+
+
+  render() {
     return <div>
-      <span className="diff" ref="diff">{getDiffText(state.diff)}</span>
-      <span className="value">{getScoreText(props.score)}</span>
+      <span className="diff" ref="diff">{getDiffText(this.state.diff)}</span>
+      <span className="value">{getScoreText(this.props.score)}</span>
     </div>;
   }
 }
@@ -79,11 +89,12 @@ class Score extends React.Component {
 *
 */
 
-function animateScoreDiff(el) {
-  $(el)
-    .velocity('fadeOut', {duration: 0})
-    .velocity('fadeIn', {duration: 200})
-    .velocity('fadeOut', {duration: 1200, delay: 400});
+function animateScoreDiff($el) {
+  $el
+    .velocity('stop')
+    .velocity({opacity: 0}, {duration: 0})
+    .velocity({opacity: 1}, {duration: 200})
+    .velocity({opacity: 0}, {duration: 800, delay: 1000});
 }
 
 
