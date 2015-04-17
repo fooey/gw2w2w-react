@@ -34,12 +34,24 @@ const propTypes = {
 };
 
 class Overview extends React.Component {
+    /*
+    *
+    * React Lifecycle
+    *
+    */
+
     constructor(props) {
         super(props);
 
-        this.dataProvider = new DataProvider(this);
+        const dataListeners = {
+            regions: this.onRegions.bind(this),
+            matchesByRegion: this.onMatchesByRegion.bind(this),
+            worldsByRegion: this.onWorldsByRegion.bind(this),
+        };
 
-        this.state = this.dataProvider.getDefaults(props.lang);
+        this.dataProvider = new DataProvider(props.lang, dataListeners);
+
+        this.state = this.dataProvider.getDefaults();
     }
 
 
@@ -112,16 +124,36 @@ class Overview extends React.Component {
             </div>
         </div>;
     }
+
+
+
+    /*
+    *
+    * Data Listeners
+    *
+    */
+
+    onMatchesByRegion(matchesByRegion) {
+        // console.log('overview::onMatchesByRegion()', matchesByRegion);
+        this.setState(state => ({
+            matchesByRegion: state.matchesByRegion.mergeDeep(matchesByRegion)
+        }));
+    }
+
+
+
+    onWorldsByRegion(worldsByRegion) {
+        // console.log('overview::onWorldsByRegion()', worldsByRegion.toJS());
+        this.setState({worldsByRegion});
+    }
+
+
+
+    onRegions(regions) {
+        // console.log('overview::onRegions()', regions.toJS());
+        this.setState({regions});
+    }
 }
-
-
-
-
-/*
-*
-* Private Methods
-*
-*/
 
 
 

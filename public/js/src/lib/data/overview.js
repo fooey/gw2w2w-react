@@ -7,16 +7,16 @@ const api       = require('lib/api');
 const STATIC    = require('lib/static');
 
 
-class DataProvider {
+class OverviewDataProvider {
 
-    constructor(component) {
+    constructor(lang, listeners) {
         // console.log('lib::data::overview::constructor()');
 
 
-        this.mounted = true;
         this.timeouts = {};
 
-        this.component = component;
+        this.lang = lang;
+        this.listeners = listeners;
     }
 
 
@@ -24,7 +24,7 @@ class DataProvider {
     init(lang) {
         // console.log('lib::data::overview::init()');
 
-        this.setLang(lang);
+        this.mounted = true;
         this.getData();
     }
 
@@ -34,25 +34,15 @@ class DataProvider {
         // console.log('lib::data::overview::close()');
 
         this.mounted = false;
-        clearTimeout(this.timeouts.matchData);
+        this.timeouts = _.map(
+            this.timeouts,
+            (timeout) => clearTimeout(timeout)
+        );
     }
 
 
 
-    setLang(lang) {
-        // console.log('lib::data::overview::setLang()');
-
-        if (!Immutable.is(lang, this.lang)) {
-            this.lang = lang;
-            this.component.setState({
-                worldsByRegion: getWorldsByRegion(lang)
-            });
-        }
-    }
-
-
-
-    getDefaults(lang) {
+    getDefaults() {
         // console.log('lib::data::overview::getDefaults()');
 
         return {
@@ -62,8 +52,21 @@ class DataProvider {
             }),
 
             matchesByRegion: Immutable.fromJS({'1': {}, '2': {}}),
-            worldsByRegion : getWorldsByRegion(lang), //Immutable.fromJS({'1': {}, '2': {}})
+            worldsByRegion : getWorldsByRegion(this.lang), //Immutable.fromJS({'1': {}, '2': {}})
         };
+    }
+
+
+
+    setLang(lang) {
+        // console.log('lib::data::overview::setLang()');
+
+        if (!Immutable.is(lang, this.lang)) {
+            this.lang = lang;
+
+            const newWorldsByRegion = getWorldsByRegion(lang);
+            (this.listeners.worldsByRegion || _.noop)(newWorldsByRegion);
+        }
     }
 
 
@@ -87,9 +90,7 @@ class DataProvider {
         if (!err && matchData && !matchData.isEmpty()) {
             const newMatchesByRegion = getMatchesByRegion(matchData);
 
-            this.component.setState(state => ({
-                matchesByRegion: state.matchesByRegion.mergeDeep(newMatchesByRegion)
-            }));
+            (this.listeners.matchesByRegion || _.noop)(newMatchesByRegion);
         }
 
         this.setDataTimeout();
@@ -166,4 +167,4 @@ function getInterval() {
 
 
 
-module.exports = DataProvider;
+module.exports = OverviewDataProvider;
