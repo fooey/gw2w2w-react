@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 var gulp        = require('gulp');
 var gutil       = require('gulp-util');
@@ -61,38 +61,38 @@ paths.js.dist = paths.js.base + '/dist';
 */
 
 gulp.task('compile-css', [], function() {
-  var src  = paths.css.src + '/app.less';
-  var dest = paths.css.dist;
+    var src  = paths.css.src + '/app.less';
+    var dest = paths.css.dist;
 
-  var versionHash = "~" + require('shortid').generate() + "~";
+    var versionHash = "~" + require('shortid').generate() + "~";
 
-  var less         = require('gulp-less');
-  var autoprefixer = require('gulp-autoprefixer');
-  var CleanCSS     = require("clean-css");
+    var less         = require('gulp-less');
+    var autoprefixer = require('gulp-autoprefixer');
+    var CleanCSS     = require("clean-css");
 
-  var minify = vinylMap(function (buff, filename) {
-    return new CleanCSS({
-      advanced           : true,
-      aggressiveMerging  : true,
-      keepBreaks         : false,
-      shorthandCompacting: true,
-      rebase             : false,
-      debug              : false,
-    }).minify(buff.toString()).styles;
-  });
+    var minify = vinylMap(function (buff, filename) {
+        return new CleanCSS({
+            advanced           : true,
+            aggressiveMerging  : true,
+            keepBreaks         : false,
+            shorthandCompacting: true,
+            rebase             : false,
+            debug              : false,
+        }).minify(buff.toString()).styles;
+    });
 
-  var stream = gulp
-    .on('error', gutil.log.bind(gutil, 'Less Error'))
-    .src(src)
-    .pipe(less())
-    .pipe(replace('${VERSION}', versionHash))
-    .pipe(autoprefixer())
-    .pipe(gulp.dest(dest))
-    .pipe(minify)
-    .pipe(rename({suffix: '.min'}))
-    .pipe(gulp.dest(dest));
+    var stream = gulp
+        .on('error', gutil.log.bind(gutil, 'Less Error'))
+        .src(src)
+        .pipe(less())
+        .pipe(replace('${VERSION}', versionHash))
+        .pipe(autoprefixer())
+        .pipe(gulp.dest(dest))
+        .pipe(minify)
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest(dest));
 
-  return stream;
+    return stream;
 });
 
 
@@ -106,56 +106,68 @@ gulp.task('compile-css', [], function() {
 *
 */
 var browserifyConfig = _.defaults(watchify.args, {
-  entries       : [paths.js.src + '/app.js'],
-  debug         : true,
-  bundleExternal: true,
-  ignore        : ['request', 'zlib', 'assert', 'buffer', 'util', '_process'],
+    entries       : [paths.js.src + '/app.js'],
+    debug         : true,
+    bundleExternal: true,
+    verbose       : true,
+    ignore        : ['request', 'zlib', 'assert', 'buffer', 'util', '_process'],
 });
 
-var browserifyBundler = browserify(browserifyConfig);
+var browserifyBundler = browserify(browserifyConfig)
+    // .on('bundle', logEvent.bind(null, 'bundle'))
+    // .on('reset',  logEvent.bind(null, 'reset '))
+    .on('error', gutil.log.bind(gutil, 'Browserify Error'));
 
 var watchifyBundler = watchify(browserifyBundler)
-  .transform(babelify)
-  .on('error', gutil.log.bind(gutil, 'Watchify Error'))
-  .on('log', function (msg) { console.log('Watchify', 'log', msg); });
+    .transform(babelify)
+    .on('update', logEvent.bind(null, 'update'))
+    // .on('bytes',  logEvent.bind(null, 'bytes '))
+    // .on('time',   logEvent.bind(null, 'time  '))
+    .on('log',    logEvent.bind(null, 'log   '))
+    .on('error', gutil.log.bind(gutil, 'Watchify Error'));
+
+
+function logEvent(event, data) {
+    console.log('%d Watchify Event :: %s :: %s', Date.now(), event, JSON.stringify(data));
+}
 
 
 
 
 
 var uglifier = function() {
-  return uglify({
-  // report: 'min',
-    stripBanners: true,
-    mangle      : true,
-    compress: {
-      unsafe: true,
-      drop_console: true,
-    },
-  }).on('error', gutil.log.bind(gutil, 'Uglify Error'));
+    return uglify({
+    // report: 'min',
+        stripBanners: true,
+        mangle      : true,
+        compress: {
+            unsafe: true,
+            drop_console: true,
+        },
+    }).on('error', gutil.log.bind(gutil, 'Uglify Error'));
 };
 
 var compileJS = function() {
-  return watchifyBundler
-    .bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    return watchifyBundler
+        .bundle()
+        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
 
-    .pipe(vinylSource('app.js'))
-    .pipe(vinylBuffer())
+        .pipe(vinylSource('app.js'))
+        .pipe(vinylBuffer())
 
-    .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest(paths.js.dist)) // non-minified app.js
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest(paths.js.dist)) // non-minified app.js
 
-    .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(sourcemaps.init({loadMaps: true}))
 
-    .pipe(uglifier())
+        .pipe(uglifier())
 
-    .pipe(rename({suffix: '.min'}))
-    .pipe(sourcemaps.write('./'))
+        .pipe(rename({suffix: '.min'}))
+        .pipe(sourcemaps.write('./'))
 
-    .pipe(gulp.dest(paths.js.dist)) // minified app.min.js
+        .pipe(gulp.dest(paths.js.dist)) // minified app.min.js
 
-    .pipe(livereload())
+        .pipe(livereload())
 };
 
 watchifyBundler.on('update', compileJS);
@@ -171,78 +183,77 @@ gulp.task('compile-js', [], compileJS);
 */
 
 gulp.task('watch', ['compile'], function(cb) {
-  livereload.listen();
-  gulp.watch(paths.css.src + '/**/*.less', ['compile-css']);
-  // gulp.watch(paths.js.src + '/**/*.*', ['compile-js']);
+    livereload.listen();
 
-  gulp.watch(paths.css.dist + '/app.min.css', livereload.changed);
-  // gulp.watch(paths.js.dist + '/app.min.js', livereload.changed);
-  gulp.watch('./views/**/*.jade', livereload.changed);
+    gulp.watch(paths.css.src + '/**/*.less', ['compile-css']);
+    gulp.watch(paths.css.dist + '/app.min.css', livereload.changed);
 
-  cb();
+    gulp.watch('./views/**/*.jade', livereload.changed);
+
+    cb();
 });
 
 
 
 
 function nodemon(cb, options) {
-  var config = _.merge({
-    "execMap": {
-      "js": "iojs",
-    },
-    script: './server.js',
-    ext: 'js,jade',
-    ignore: [
-      '.git/**',
-      'gulpfile.js',
+    var config = _.merge({
+        "execMap": {
+            "js": "iojs",
+        },
+        script: './server.js',
+        ext: 'js,jade',
+        ignore: [
+            '.git/**',
+            'gulpfile.js',
 
-      'node_modules/**',
-      'public/**',
-      'gulp/**',
-    ],
-    env: {
-      PORT: '3000',
-      NODE_PATH: './',
-    },
+            'node_modules/**',
+            'public/**',
+            'gulp/**',
+        ],
+        env: {
+            PORT: '3000',
+            NODE_PATH: './',
+        },
 
-    delay: 200,
-  }, options);
+        delay: 200,
+    }, options);
 
-  var called = false;
+    var called = false;
 
 
-  return require('gulp-nodemon')(config)
-    .on('start', function() {
-      if (!called) {
-        called = true;
-        cb();
-      }
-    })
-    .on('restart', function() {
-      console.log('restarted!');
-      livereload();
-    });
+    return require('gulp-nodemon')(config)
+        .on('start', function() {
+            if (!called) {
+                called = true;
+                cb();
+            }
+        })
+        .on('restart', function() {
+            console.log('restarted!');
+            livereload();
+        });
 }
 
 gulp.task('nodemon', ['compile'], function(cb) {
-  return nodemon(cb,
-    {env: {
-      NODE_ENV: 'development',
-    }}
-  );
+    return nodemon(cb,
+        {env: {
+            NODE_ENV: 'development',
+        }}
+    );
 });
 
 gulp.task('nodemon-prod', ['compile'], function(cb) {
-  return nodemon(cb,
-    {env: {
-      NODE_ENV: 'production',
-      NEW_RELIC_NO_CONFIG_FILE: true,
-      NEW_RELIC_LICENSE_KEY: null,
-      NEW_RELIC_APP_NAME: ['jasonrushton.com'],
-      NEW_RELIC_LOG: 'stdout',
-      NEW_RELIC_LOG_LEVEL: 'info',
-    }}
-  );
+    return nodemon(cb,
+        {env: {
+            NODE_ENV: 'production',
+            NEW_RELIC_NO_CONFIG_FILE: true,
+            NEW_RELIC_LICENSE_KEY: null,
+            NEW_RELIC_APP_NAME: ['jasonrushton.com'],
+            NEW_RELIC_LOG: 'stdout',
+            NEW_RELIC_LOG_LEVEL: 'info',
+        }}
+    );
 });
 
 
@@ -259,16 +270,16 @@ gulp.task('nodemon-prod', ['compile'], function(cb) {
 
 
 gulp.task('compile', ['compile-js', 'compile-css'], function(cb) {
-  cb();
+    cb();
 });
 
 
 gulp.task('default', ['compile', 'watch', 'nodemon'], function(cb) {
-  cb();
+    cb();
 });
 
 
 gulp.task('prod', ['compile', 'watch', 'nodemon-prod'], function(cb) {
-  cb();
+    cb();
 });
 
