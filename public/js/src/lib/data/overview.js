@@ -45,14 +45,18 @@ class OverviewDataProvider {
     getDefaults() {
         // console.log('lib::data::overview::getDefaults()');
 
-        return {
-            regions: Immutable.fromJS({
-                '1': {label: 'NA', id: '1'},
-                '2': {label: 'EU', id: '2'}
-            }),
+        const regions = Immutable.fromJS({
+            '1': {label: 'NA', id: '1'},
+            '2': {label: 'EU', id: '2'}
+        });
 
-            matchesByRegion: Immutable.fromJS({'1': {}, '2': {}}),
-            worldsByRegion : getWorldsByRegion(this.lang), //Immutable.fromJS({'1': {}, '2': {}})
+        const matchesByRegion = Immutable.fromJS({'1': {}, '2': {}});
+        const worldsByRegion  = getWorldsByRegion(this.lang); //Immutable.fromJS({'1': {}, '2': {}})
+
+        return {
+            regions,
+            matchesByRegion,
+            worldsByRegion
         };
     }
 
