@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /*
 *
@@ -22,36 +22,36 @@ const STATIC = require('gw2w2w-static');
 */
 
 const propTypes ={
-  mapFilter: React.PropTypes.string.isRequired,
-  setWorld : React.PropTypes.func.isRequired,
+    mapFilter: React.PropTypes.string.isRequired,
+    setWorld : React.PropTypes.func.isRequired,
 };
 
 class MapFilters extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    return (this.props.mapFilter !== nextProps.mapFilter);
-  }
+    shouldComponentUpdate(nextProps) {
+        return (this.props.mapFilter !== nextProps.mapFilter);
+    }
 
 
 
-  render() {
-    const props = this.props;
+    render() {
+        const props = this.props;
 
-    return (
-      <ul id="log-map-filters" className="nav nav-pills">
+        return (
+            <ul id="log-map-filters" className="nav nav-pills">
 
-        <li className={(props.mapFilter === 'all') ? 'active': 'null'}>
-          <a onClick={props.setWorld} data-filter="all">All</a>
-        </li>
+                <li className={(props.mapFilter === 'all') ? 'active': 'null'}>
+                    <a onClick={props.setWorld} data-filter="all">All</a>
+                </li>
 
-        {_.map(STATIC.objective_map, mapMeta =>
-          <li key={mapMeta.mapIndex} className={(props.mapFilter === mapMeta.color) ? 'active': null}>
-            <a onClick={props.setWorld} data-filter={mapMeta.color}>{mapMeta.abbr}</a>
-          </li>
-        )}
+                {_.map(STATIC.objective_map, mapMeta =>
+                    <li key={mapMeta.mapIndex} className={(props.mapFilter === mapMeta.color) ? 'active': null}>
+                        <a onClick={props.setWorld} data-filter={mapMeta.color}>{mapMeta.abbr}</a>
+                    </li>
+                )}
 
-      </ul>
-    );
-  }
+            </ul>
+        );
+    }
 }
 
 

@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 /*
-*
-* Dependencies
-*
-*/
+ *
+ * Dependencies
+ *
+ */
 
 const React = require('react');
 
@@ -13,40 +13,40 @@ const React = require('react');
 
 
 /*
-*
-* Component Definition
-*
-*/
+ *
+ * Component Definition
+ *
+ */
 
 const propTypes = {
-  type : React.PropTypes.string.isRequired,
-  color: React.PropTypes.string.isRequired,
+    type : React.PropTypes.string.isRequired,
+    color: React.PropTypes.string.isRequired,
 };
 
 class Sprite extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    const newType      = (this.props.type !== nextProps.type);
-    const newColor     = (this.props.color !== nextProps.color);
-    const shouldUpdate = (newType || newColor);
+    shouldComponentUpdate(nextProps) {
+        const newType      = (this.props.type !== nextProps.type);
+        const newColor     = (this.props.color !== nextProps.color);
+        const shouldUpdate = (newType || newColor);
 
-    return shouldUpdate;
-  }
+        return shouldUpdate;
+    }
 
 
 
-  render() {
-    return <span className={`sprite ${this.props.type} ${this.props.color}`} />;
-  }
+    render() {
+        return <span className = {`sprite ${this.props.type} ${this.props.color}`} />;
+    }
 }
 
 
 
 
 /*
-*
-* Export Module
-*
-*/
+ *
+ * Export Module
+ *
+ */
 
 Sprite.propTypes = propTypes;
 module.exports   = Sprite;

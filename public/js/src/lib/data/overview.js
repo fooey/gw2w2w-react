@@ -12,11 +12,13 @@ class OverviewDataProvider {
     constructor(lang, listeners) {
         // console.log('lib::data::overview::constructor()');
 
+        this.lang      = lang;
 
-        this.timeouts = {};
-
-        this.lang = lang;
+        this.mounted   = false;
         this.listeners = listeners;
+
+        this.timeouts  = {};
+        this.intervals = {};
     }
 
 
@@ -33,11 +35,10 @@ class OverviewDataProvider {
     close() {
         // console.log('lib::data::overview::close()');
 
-        this.mounted = false;
-        this.timeouts = _.map(
-            this.timeouts,
-            (timeout) => clearTimeout(timeout)
-        );
+        this.mounted   = false;
+
+        this.timeouts  = _.map(this.timeouts,  t => clearTimeout(t));
+        this.intervals = _.map(this.intervals, i => clearInterval(i));
     }
 
 
@@ -69,6 +70,7 @@ class OverviewDataProvider {
             this.lang = lang;
 
             const newWorldsByRegion = getWorldsByRegion(lang);
+
             (this.listeners.worldsByRegion || _.noop)(newWorldsByRegion);
         }
     }
@@ -116,8 +118,8 @@ class OverviewDataProvider {
 
 
 /*
-* Data - Worlds
-*/
+ * Data - Worlds
+ */
 
 
 function getWorldsByRegion(lang) {
@@ -137,15 +139,17 @@ function getWorldByLang(lang, world) {
     const region      = world.get('region');
     const link        = getWorldLink(langSlug, worldByLang);
 
-    return worldByLang.merge({link, region});
+    return worldByLang.merge({
+        link, region
+    });
 }
 
 
 
 
 /*
-* Data - Matches
-*/
+ * Data - Matches
+ */
 
 function getWorldLink(langSlug, world) {
     return ['', langSlug, world.get('slug')].join('/');

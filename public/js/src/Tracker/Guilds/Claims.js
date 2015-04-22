@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /*
 *
@@ -26,16 +26,16 @@ const Objective = require('../Objectives');
 */
 
 const objectiveCols = {
-  elapsed  : true,
-  timestamp: true,
-  mapAbbrev: true,
-  arrow    : true,
-  sprite   : true,
-  name     : true,
-  eventType: false,
-  guildName: false,
-  guildTag : false,
-  timer    : false,
+    elapsed  : true,
+    timestamp: true,
+    mapAbbrev: true,
+    arrow    : true,
+    sprite   : true,
+    name     : true,
+    eventType: false,
+    guildName: false,
+    guildTag : false,
+    timer    : false,
 };
 
 
@@ -48,47 +48,47 @@ const objectiveCols = {
 */
 
 const propTypes ={
-  lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-  guild: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    guild: React.PropTypes.instanceOf(Immutable.Map).isRequired,
 };
 
 class GuildClaims extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
-    const newClaims    = !Immutable.is(this.props.guild.get('claims'), nextProps.guild.get('claims'));
+    shouldComponentUpdate(nextProps) {
+        const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
+        const newClaims    = !Immutable.is(this.props.guild.get('claims'), nextProps.guild.get('claims'));
 
-    const shouldUpdate = (newLang || newClaims);
+        const shouldUpdate = (newLang || newClaims);
 
-    return shouldUpdate;
-  }
-
-
-
-  render() {
-    const guildId = this.props.guild.get('guild_id');
-    const claims  = this.props.guild.get('claims');
+        return shouldUpdate;
+    }
 
 
-    return (
-      <ul className="list-unstyled">
-        {claims.map(entry =>
-          <li key={entry.get('id')}>
-            <Objective
-              cols        = {objectiveCols}
 
-              lang        = {this.props.lang}
-              guildId     = {guildId}
-              guild       = {this.props.guild}
+    render() {
+        const guildId = this.props.guild.get('guild_id');
+        const claims  = this.props.guild.get('claims');
 
-              objectiveId = {entry.get('objectiveId')}
-              worldColor  = {entry.get('world')}
-              timestamp   = {entry.get('timestamp')}
-            />
-          </li>
-        )}
-      </ul>
-    );
-  }
+
+        return (
+            <ul className="list-unstyled">
+                {claims.map(entry =>
+                    <li key={entry.get('id')}>
+                        <Objective
+                            cols        = {objectiveCols}
+
+                            lang        = {this.props.lang}
+                            guildId     = {guildId}
+                            guild       = {this.props.guild}
+
+                            objectiveId = {entry.get('objectiveId')}
+                            worldColor  = {entry.get('world')}
+                            timestamp   = {entry.get('timestamp')}
+                        />
+                    </li>
+                )}
+            </ul>
+        );
+    }
 }
 
 

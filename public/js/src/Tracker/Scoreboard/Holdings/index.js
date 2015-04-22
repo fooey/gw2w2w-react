@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 
 /*
@@ -27,32 +27,32 @@ const Item      = require('./Item');
 */
 
 const propTypes = {
-  color   : React.PropTypes.string.isRequired,
-  holdings: React.PropTypes.instanceOf(Immutable.List).isRequired,
+    color   : React.PropTypes.string.isRequired,
+    holdings: React.PropTypes.instanceOf(Immutable.List).isRequired,
 };
 
 class Holdings extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    const newHoldings  = !Immutable.is(this.props.holdings, nextProps.holdings);
-    const shouldUpdate = (newHoldings);
+    shouldComponentUpdate(nextProps) {
+        const newHoldings  = !Immutable.is(this.props.holdings, nextProps.holdings);
+        const shouldUpdate = (newHoldings);
 
-    return shouldUpdate;
-  }
+        return shouldUpdate;
+    }
 
 
 
-  render() {
-    return <ul className="list-inline">
-      {this.props.holdings.map((typeQuantity, typeIndex) =>
-        <Item
-          key          = {typeIndex}
-          color        = {this.props.color}
-          typeQuantity = {typeQuantity}
-          typeId       = {(typeIndex+1).toString()}
-        />
-      )}
-    </ul>;
-  }
+    render() {
+        return <ul className="list-inline">
+            {this.props.holdings.map((typeQuantity, typeIndex) =>
+                <Item
+                    key          = {typeIndex}
+                    color        = {this.props.color}
+                    typeQuantity = {typeQuantity}
+                    typeId       = {(typeIndex+1).toString()}
+                />
+            )}
+        </ul>;
+    }
 }
 
 

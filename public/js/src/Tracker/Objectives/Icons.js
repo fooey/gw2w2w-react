@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /*
 *
@@ -31,45 +31,45 @@ const Arrow     = require('common/Icons/Arrow');
 */
 
 const propTypes = {
-  showArrow  : React.PropTypes.bool.isRequired,
-  showSprite : React.PropTypes.bool.isRequired,
-  objectiveId: React.PropTypes.string.isRequired,
-  color      : React.PropTypes.string.isRequired,
+    showArrow  : React.PropTypes.bool.isRequired,
+    showSprite : React.PropTypes.bool.isRequired,
+    objectiveId: React.PropTypes.string.isRequired,
+    color      : React.PropTypes.string.isRequired,
 };
 
 class Icons extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    const newColor     = !Immutable.is(this.props.color, nextProps.color);
-    const shouldUpdate = (newColor);
+    shouldComponentUpdate(nextProps) {
+        const newColor     = !Immutable.is(this.props.color, nextProps.color);
+        const shouldUpdate = (newColor);
 
-    return shouldUpdate;
-  }
-
-
-
-  render() {
-    if (!this.props.showArrow && !this.props.showSprite) {
-      return null;
+        return shouldUpdate;
     }
-    else {
-      const oMeta   = STATIC.objective_meta.get(this.props.objectiveId);
-      const oTypeId = oMeta.get('type').toString();
-      const oType   = STATIC.objective_types.get(oTypeId);
 
-      return <div className="objective-icons">
-        {(this.props.showArrow) ?
-          <Arrow oMeta={oMeta} />
-        : null}
 
-        {(this.props.showSprite) ?
-          <Sprite
-            type  = {oType.get('name')}
-            color = {this.props.color}
-          />
-        : null}
-      </div>;
+
+    render() {
+        if (!this.props.showArrow && !this.props.showSprite) {
+            return null;
+        }
+        else {
+            const oMeta   = STATIC.objective_meta.get(this.props.objectiveId);
+            const oTypeId = oMeta.get('type').toString();
+            const oType   = STATIC.objective_types.get(oTypeId);
+
+            return <div className="objective-icons">
+                {(this.props.showArrow) ?
+                    <Arrow oMeta={oMeta} />
+                : null}
+
+                {(this.props.showSprite) ?
+                    <Sprite
+                        type  = {oType.get('name')}
+                        color = {this.props.color}
+                    />
+                : null}
+            </div>;
+        }
     }
-  }
 }
 
 

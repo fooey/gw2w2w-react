@@ -1,49 +1,50 @@
 
 
-@spriteHeight:		16px;
-@spriteNeutral:		0 * -@spriteHeight;
-@spriteRed:			1 * -@spriteHeight;
-@spriteBlue:		2 * -@spriteHeight;
-@spriteGreen:		3 * -@spriteHeight;
+@spriteHeight : 16px;
+@spriteNeutral: 0 * -@spriteHeight;
+@spriteRed    : 1 * -@spriteHeight;
+@spriteBlue   : 2 * -@spriteHeight;
+@spriteGreen  : 3 * -@spriteHeight;
 
-@spriteWidth:		16px;
-@spriteCamp:		0 * -@spriteWidth;
-@spriteTower:		1 * -@spriteWidth - 1;
-@spriteKeep:		2 * -@spriteWidth;
-@spriteCastle:		3 * -@spriteWidth;
+@spriteWidth  : 16px;
+@spriteCamp   : 0 * -@spriteWidth;
+@spriteTower  : 1 * -@spriteWidth - 1;
+@spriteKeep   : 2 * -@spriteWidth;
+@spriteCastle : 3 * -@spriteWidth;
 
 .sprite {
-	background-image: url(/img/sprite16.${VERSION}.png);
-	background-repeat: no-repeat;
-	display: inline-block;
-	width: @spriteWidth;
-	height: @spriteHeight;
+    background-image : url(/img/sprite16.${VERSION}.png);
+    background-repeat: no-repeat;
 
-	&, &.neutral {
-		&, &.camp 	{background-position: @spriteCamp @spriteNeutral;}
-		&.tower		{background-position: @spriteTower @spriteNeutral;}
-		&.keep		{background-position: @spriteKeep @spriteNeutral;}
-		&.castle	{background-position: @spriteCastle @spriteNeutral;}
-	}
+    display: inline-block;
+    width  : @spriteWidth;
+    height : @spriteHeight;
 
-	&.red {
-		&, &.camp 	{background-position: @spriteCamp @spriteRed;}
-		&.tower		{background-position: @spriteTower @spriteRed;}
-		&.keep		{background-position: @spriteKeep @spriteRed;}
-		&.castle	{background-position: @spriteCastle @spriteRed;}
-	}
+    &, &.neutral {
+        &, &.camp   {background-position: @spriteCamp   @spriteNeutral;}
+        &.tower     {background-position: @spriteTower  @spriteNeutral;}
+        &.keep      {background-position: @spriteKeep   @spriteNeutral;}
+        &.castle    {background-position: @spriteCastle @spriteNeutral;}
+    }
 
-	&.blue {
-		&, &.camp 	{background-position: @spriteCamp @spriteBlue;}
-		&.tower		{background-position: @spriteTower @spriteBlue;}
-		&.keep		{background-position: @spriteKeep @spriteBlue;}
-		&.castle	{background-position: @spriteCastle @spriteBlue;}
-	}
+    &.red {
+        &, &.camp   {background-position: @spriteCamp   @spriteRed;}
+        &.tower     {background-position: @spriteTower  @spriteRed;}
+        &.keep      {background-position: @spriteKeep   @spriteRed;}
+        &.castle    {background-position: @spriteCastle @spriteRed;}
+    }
 
-	&.green {
-		&, &.camp 	{background-position: @spriteCamp @spriteGreen;}
-		&.tower		{background-position: @spriteTower @spriteGreen;}
-		&.keep		{background-position: @spriteKeep @spriteGreen;}
-		&.castle	{background-position: @spriteCastle @spriteGreen;}
-	}
+    &.blue {
+        &, &.camp   {background-position: @spriteCamp   @spriteBlue;}
+        &.tower     {background-position: @spriteTower  @spriteBlue;}
+        &.keep      {background-position: @spriteKeep   @spriteBlue;}
+        &.castle    {background-position: @spriteCastle @spriteBlue;}
+    }
+
+    &.green {
+        &, &.camp   {background-position: @spriteCamp   @spriteGreen;}
+        &.tower     {background-position: @spriteTower  @spriteGreen;}
+        &.keep      {background-position: @spriteKeep   @spriteGreen;}
+        &.castle    {background-position: @spriteCastle @spriteGreen;}
+    }
 }

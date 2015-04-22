@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 
 /*
@@ -23,59 +23,59 @@ const numeral = require('numeral');
 */
 
 const propTypes ={
-  score: React.PropTypes.number.isRequired,
+    score: React.PropTypes.number.isRequired,
 };
 
 class Score extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      diff: 0,
-      $diffNode: null,
-    };
-  }
-
-
-
-  shouldComponentUpdate(nextProps) {
-    return (this.props.score !== nextProps.score);
-  }
-
-
-
-  componentWillReceiveProps(nextProps){
-    const props = this.props;
-
-    this.setState({diff: nextProps.score - props.score});
-  }
-
-
-
-  componentDidUpdate() {
-    const state = this.state;
-
-    if(state.diff !== 0) {
-      animateScoreDiff(this.state.$diffNode);
+    constructor(props) {
+        super(props);
+        this.state = {
+            diff: 0,
+            $diffNode: null,
+        };
     }
-  }
 
 
 
-  componentDidMount() {
-    // cache jQuery object to state
-    this.setState({
-      $diffNode: $(this.refs.diff.getDOMNode())
-    });
-  }
+    shouldComponentUpdate(nextProps) {
+        return (this.props.score !== nextProps.score);
+    }
 
 
 
-  render() {
-    return <div>
-      <span className="diff" ref="diff">{getDiffText(this.state.diff)}</span>
-      <span className="value">{getScoreText(this.props.score)}</span>
-    </div>;
-  }
+    componentWillReceiveProps(nextProps){
+        const props = this.props;
+
+        this.setState({diff: nextProps.score - props.score});
+    }
+
+
+
+    componentDidUpdate() {
+        const state = this.state;
+
+        if(state.diff !== 0) {
+            animateScoreDiff(this.state.$diffNode);
+        }
+    }
+
+
+
+    componentDidMount() {
+        // cache jQuery object to state
+        this.setState({
+            $diffNode: $(this.refs.diff.getDOMNode())
+        });
+    }
+
+
+
+    render() {
+        return <div>
+            <span className="diff" ref="diff">{getDiffText(this.state.diff)}</span>
+            <span className="value">{getScoreText(this.props.score)}</span>
+        </div>;
+    }
 }
 
 
@@ -90,25 +90,25 @@ class Score extends React.Component {
 */
 
 function animateScoreDiff($el) {
-  $el
-    .velocity('stop')
-    .velocity({opacity: 0}, {duration: 0})
-    .velocity({opacity: 1}, {duration: 200})
-    .velocity({opacity: 0}, {duration: 800, delay: 1000});
+    $el
+        .velocity('stop')
+        .velocity({opacity: 0}, {duration: 0})
+        .velocity({opacity: 1}, {duration: 200})
+        .velocity({opacity: 0}, {duration: 800, delay: 1000});
 }
 
 
 function getDiffText(diff) {
-  return (diff)
-    ? numeral(diff).format('+0,0')
-    : null;
+    return (diff)
+        ? numeral(diff).format('+0,0')
+        : null;
 }
 
 
 function getScoreText(score) {
-  return (score)
-    ? numeral(score).format('0,0')
-    : null;
+    return (score)
+        ? numeral(score).format('0,0')
+        : null;
 }
 
 

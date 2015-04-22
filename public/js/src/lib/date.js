@@ -1,20 +1,20 @@
-'use strict';
+"use strict";
 
 let _ = require('lodash');
 
 module.exports = {
-  dateNow: dateNow,
-  add5   : add5,
+    dateNow: dateNow,
+    add5   : add5,
 };
 
 
 function dateNow() {
-  return Math.floor(_.now() / 1000);
+    return Math.floor(_.now() / 1000);
 }
 
 
 function add5(inDate) {
-  let _baseDate = inDate || dateNow();
+    let _baseDate = inDate || dateNow();
 
-  return (_baseDate + (5 * 60));
+    return (_baseDate + (5 * 60));
 }

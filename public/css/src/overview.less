@@ -1,68 +1,69 @@
 
 
 #overview {
-	.RegionMatches,
-	.RegionWorlds {
-		padding: 0 1em;
-	}
+    .RegionMatches,
+    .RegionWorlds {
+        padding: 0 1em;
+    }
 
-	.matchContainer {
+    .matchContainer {
 
-		& + .matchContainer {
-			margin-top: .5em;
-			padding-top: .5em;
-			border-top: 1px solid @gray-lighter;
-		}
+        & + .matchContainer {
+            margin-top : .5em;
+            padding-top: .5em;
+            border-top : 1px solid @gray-lighter;
+        }
 
-		// &:nth-child(even) {
-		// 	background-color: @gray-lighter;
-		// }
-	}
-	.match {
-		width: 100%;
-		table-layout: fixed;
+        // &:nth-child(even) {
+        //  background-color: @gray-lighter;
+        // }
+    }
+    .match {
+        width: 100%;
+        table-layout: fixed;
 
-		tr:hover {
-			td {
-				font-weight: 700;
-			}
-		}
+        tr:hover {
+            td {
+                font-weight: 700;
+            }
+        }
 
-		td {
-			line-height: 20px;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
+        td {
+            font-size  : 9pt;
+            line-height: 20px;
+            white-space: nowrap;
 
-			font-size: 9pt;
-			@media(min-width: @screen-xs-min) { font-size: 10pt; }
+            overflow     : hidden;
+            text-overflow: ellipsis;
 
-			&.name {
-			}
+            @media(min-width: @screen-xs-min) { font-size: 10pt; }
 
-			&.score {
-				text-align: right;
-				width: 30%;
+            &.name {
+            }
 
-				.diff {
-					display: inline-block;
-				}
-				.value {
-					width: 4.5em;
-					display: inline-block;
-				}
-			}
-			&.pie {
-				width: 70px;
-				text-align: right;
+            &.score {
+                text-align: right;
+                width     : 30%;
 
-				img {
-					width: 60px;
-					height: 60px;
-				}
-			}
-		}
-	}
+                .diff {
+                    display: inline-block;
+                }
+                .value {
+                    width  : 4.5em;
+                    display: inline-block;
+                }
+            }
+            &.pie {
+                width     : 70px;
+                text-align: right;
+
+                img {
+                    width : 60px;
+                    height: 60px;
+                }
+            }
+        }
+    }
 }
 
 

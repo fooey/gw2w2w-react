@@ -3,116 +3,120 @@
 
 
 .objective {
-	display: table;
-	width: 100%;
-	line-height: 20px;
-	height: 20px;
+    transition : all 200ms ease-in;
 
-	transition: all 200ms ease-in;
+    display    : table;
+    width      : 100%;
+    height     : 20px;
+    line-height: 20px;
 
-	&.fresh {
-		background-color: #ffc;
-	}
+    &.fresh {
+        background-color: #ffc;
+    }
 
+    & > div {
+        display       : table-cell;
+        vertical-align: middle;
+    }
 
-	& > div {
-		display: table-cell;
-		vertical-align: middle;
-	}
-	&, & > div {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
+    &, & > div {
+        white-space  : nowrap;
+        overflow     : hidden;
+        text-overflow: ellipsis;
+    }
 
-	.objective-icons {
-	}
+    .objective-icons {
+    }
 
-	.objective-label {
-		width: 100%;
-	}
-	.objective-relative span {
-		display: inline-block;
-		width: 2em;
-		text-align: center;
-		font-size: 10pt;
-	}
-	.objective-timestamp {
-		padding-right: .5em;
-		font-size: 10pt;
-	}
-	.objective-map span {
-		display: inline-block;
-		width: 2.5em;
-		text-align: center;
-	}
-	.objective-state {
-	}
-
-
-
-	font-size: 12pt;
-	@media(min-width: @screen-sm-min) { font-size: 9pt; }
-	@media(min-width: @screen-md-min) { font-size: 10pt; }
-	@media(min-width: @screen-lg-min) { font-size: 11pt; }
+    .objective-label {
+        width: 100%;
+    }
+    .objective-relative span {
+        display   : inline-block;
+        width     : 2em;
+        text-align: center;
+        font-size : 10pt;
+    }
+    .objective-timestamp {
+        padding-right: .5em;
+        font-size    : 10pt;
+    }
+    .objective-map span {
+        display   : inline-block;
+        width     : 2.5em;
+        text-align: center;
+    }
+    .objective-state {
+    }
 
 
-	// &:hover{
-	// 	font-weight: 700;
-	// 	// background-color: @gray-lightest;
-	// 	transition: all 200ms ease-in;
-	// }
 
-	.sprite {
-		margin-right: .2em;
-		position: relative;
-		top: 2px;
-	}
-
-	.direction {
-		width: 8px;
-		height: 8px;
-		display: inline-block;
-		margin-right: .2em;
-		img {
-			width: 100%;
-			height: 100%;
-			opacity: .4;
-		}
-	}
+    font-size: 12pt;
+    @media(min-width: @screen-sm-min) { font-size: 9pt; }
+    @media(min-width: @screen-md-min) { font-size: 10pt; }
+    @media(min-width: @screen-lg-min) { font-size: 11pt; }
 
 
-	.guildname {
-		font-size: 7pt;
-		margin-right: 4px;
-		cursor: pointer;
-	}
+    // &:hover{
+    //  font-weight: 700;
+    //  // background-color: @gray-lightest;
+    //  transition: all 200ms ease-in;
+    // }
 
-	.timer.countdown {
-		display: inline-block;
-		line-height: 16px;
-		height: 16px;
-		font-size: 8pt;
+    .sprite {
+        margin-right: .2em;
+        position    : relative;
+        top         : 2px;
+    }
 
-		color: #333;
-		background-color: #ffc;
+    .direction {
+        width       : 8px;
+        height      : 8px;
+        display     : inline-block;
+        margin-right: .2em;
 
-		transition: all 800ms ease-in;
+        img {
+            width  : 100%;
+            height : 100%;
+            opacity: .4;
+        }
+    }
 
-		&.active {
-			opacity: 1;
-			padding: 0 .5em;
-			max-width: 3em;
 
-			&.highlight {
-				background-color: #f00;
-				color: #fff;
-			}
-		}
-		&.inactive {
-			opacity: 0;
-			padding: 0;
-			max-width: 0;
-		}
-	}
+    .guildname {
+        font-size   : 7pt;
+        margin-right: 4px;
+        cursor      : pointer;
+    }
+
+    .timer.countdown {
+        transition : all 800ms ease-in;
+
+        display: inline-block;
+        height : 16px;
+
+        color           : #333;
+        background-color: #ffc;
+
+        line-height: 16px;
+        font-size  : 8pt;
+
+
+
+        &.active {
+            opacity  : 1;
+            padding  : 0 .5em;
+            max-width: 3em;
+
+            &.highlight {
+                background-color: #f00;
+                color           : #fff;
+            }
+        }
+        &.inactive {
+            opacity  : 0;
+            padding  : 0;
+            max-width: 0;
+        }
+    }
 }

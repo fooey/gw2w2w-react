@@ -1,60 +1,61 @@
 
 body {
-	padding-bottom: 60px;
+    padding-bottom: 60px;
 }
 
 .navbar.navbar-default {
-	border-radius: 0;
-	border-top: none;
-	border-right: none;
-	border-left: none;
+    border-radius: 0;
+    border-top   : none;
+    border-right : none;
+    border-left  : none;
 }
 
 
 
 .navbar-header {
-	display: table;
+    display: table;
 
-	.navbar-brand {
-		margin: 0;
-		padding: 0;
-		height: 50px;
-		display: table-cell;
-		vertical-align: middle;
+    .navbar-brand {
+        margin : 0;
+        padding: 0;
+        height : 50px;
+        display: table-cell;
+        vertical-align: middle;
 
-		img {
-			margin-top: 7px;
-			max-width: 35vw;
-			@media(max-width: @screen-xs-max) { margin-left: 2vw; }
-		}
-	}
+        img {
+            margin-top: 7px;
+            max-width : 35vw;
+            @media(max-width: @screen-xs-max) { margin-left: 2vw; }
+        }
+    }
 }
 
 
 
 .navbar-nav {
-	font-size: 8pt;
-	@media(min-width: @screen-xs-min) { font-size: 10pt; }
+    font-size: 8pt;
+    @media(min-width: @screen-xs-min) { font-size: 10pt; }
 
-	li > a {
-		line-height: 50px;
-		margin: 0;
+    li > a {
+        line-height: 50px;
 
-		padding: 0 3vw;
-		@media(min-width: @screen-xs-min) { padding: 0 1.5em; }
-	}
+        margin : 0;
+        padding: 0 3vw;
+
+        @media(min-width: @screen-xs-min) { padding: 0 1.5em; }
+    }
 }
 
 
 
 .team {
-	&.red {&, & a {color: @red}}
-	&.blue {&, & a {color: @blue}}
-	&.green {&, & a {color: @green}}
+    &.red   {&, & a {color: @red}}
+    &.blue  {&, & a {color: @blue}}
+    &.green {&, & a {color: @green}}
 }
 
 .team-bg {
-	&.red {background-color: @red-bg}
-	&.blue {background-color: @blue-bg}
-	&.green {background-color: @green-bg}
+    &.red   {background-color: @red-bg}
+    &.blue  {background-color: @blue-bg}
+    &.green {background-color: @green-bg}
 }

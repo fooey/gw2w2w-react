@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /*
 *
@@ -21,32 +21,32 @@ const spinner =  <i className="fa fa-spinner fa-spin"></i>;
 */
 
 const propTypes = {
-  isEnabled: React.PropTypes.bool.isRequired,
-  timestamp: React.PropTypes.number.isRequired,
+    isEnabled: React.PropTypes.bool.isRequired,
+    timestamp: React.PropTypes.number.isRequired,
 };
 
 class TimerCountdown extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    const newTimestamp = !Immutable.is(this.props.timestamp, nextProps.timestamp);
-    const shouldUpdate = (newTimestamp);
+    shouldComponentUpdate(nextProps) {
+        const newTimestamp = !Immutable.is(this.props.timestamp, nextProps.timestamp);
+        const shouldUpdate = (newTimestamp);
 
-    return shouldUpdate;
-  }
-
-
-
-  render() {
-    if (!this.props.isEnabled) {
-      return null;
+        return shouldUpdate;
     }
-    else {
-      const expires = this.props.timestamp + (5 * 60);
 
-      return <span className='timer countdown inactive' data-expires={expires}>
-        {spinner}
-      </span>;
+
+
+    render() {
+        if (!this.props.isEnabled) {
+            return null;
+        }
+        else {
+            const expires = this.props.timestamp + (5 * 60);
+
+            return <span className='timer countdown inactive' data-expires={expires}>
+                {spinner}
+            </span>;
+        }
     }
-  }
 }
 
 

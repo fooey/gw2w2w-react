@@ -1,5 +1,5 @@
 {
-  "optional": [
-    "optimisation.react.constantElements"
-  ]
+    "optional": [
+        "optimisation.react.constantElements"
+    ]
 }

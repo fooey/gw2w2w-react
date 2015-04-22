@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 
 /*
@@ -30,61 +30,61 @@ const Log        = require('Tracker/Log');
 */
 
 const propTypes = {
-  lang       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-  details    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-  matchWorlds: React.PropTypes.instanceOf(Immutable.List).isRequired,
-  guilds     : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    lang       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    details    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    matchWorlds: React.PropTypes.instanceOf(Immutable.List).isRequired,
+    guilds     : React.PropTypes.instanceOf(Immutable.Map).isRequired,
 };
 
 class Maps extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
-    const newGuilds    = !Immutable.is(this.props.guilds, nextProps.guilds);
-    const newDetails   = !Immutable.is(this.props.details, nextProps.details);
-    const newWorlds    = !Immutable.is(this.props.matchWorlds, nextProps.matchWorlds);
+    shouldComponentUpdate(nextProps) {
+        const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
+        const newGuilds    = !Immutable.is(this.props.guilds, nextProps.guilds);
+        const newDetails   = !Immutable.is(this.props.details, nextProps.details);
+        const newWorlds    = !Immutable.is(this.props.matchWorlds, nextProps.matchWorlds);
 
-    const shouldUpdate = (newLang || newGuilds || newDetails || newWorlds);
+        const shouldUpdate = (newLang || newGuilds || newDetails || newWorlds);
 
-    return shouldUpdate;
-  }
-
-
-
-  render() {
-    const props = this.props;
-
-    const isDataInitialized = props.details.get('initialized');
-
-    if (!isDataInitialized) {
-      return null;
+        return shouldUpdate;
     }
 
 
-    return (
-      <section id="maps">
-        <div className="row">
 
-          <div className="col-md-6">{<MapDetails mapKey="Center" {...props} />}</div>
+    render() {
+        const props = this.props;
 
-          <div className="col-md-18">
+        const isDataInitialized = props.details.get('initialized');
 
-            <div className="row">
-              <div className="col-md-8">{<MapDetails mapKey="RedHome" {...props} />}</div>
-              <div className="col-md-8">{<MapDetails mapKey="BlueHome" {...props} />}</div>
-              <div className="col-md-8">{<MapDetails mapKey="GreenHome" {...props} />}</div>
-            </div>
+        if (!isDataInitialized) {
+            return null;
+        }
 
-            <div className="row">
-              <div className="col-md-24">
-                <Log {...props} />
-              </div>
-            </div>
 
-          </div>
-         </div>
-      </section>
-    );
-  }
+        return (
+            <section id="maps">
+                <div className="row">
+
+                    <div className="col-md-6">{<MapDetails mapKey="Center" {...props} />}</div>
+
+                    <div className="col-md-18">
+
+                        <div className="row">
+                            <div className="col-md-8">{<MapDetails mapKey="RedHome" {...props} />}</div>
+                            <div className="col-md-8">{<MapDetails mapKey="BlueHome" {...props} />}</div>
+                            <div className="col-md-8">{<MapDetails mapKey="GreenHome" {...props} />}</div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-24">
+                                <Log {...props} />
+                            </div>
+                        </div>
+
+                    </div>
+                 </div>
+            </section>
+        );
+    }
 }
 
 

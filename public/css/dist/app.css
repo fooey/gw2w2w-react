@@ -1,7 +1,7 @@
 @import '//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic|Roboto+Condensed:300italic,400italic,700italic,400,300,700|Poiret+One:400|Source+Code+Pro:200,300,400,500,600,700,900';
 /*!
 *
-*	external libraries
+*   external libraries
 *
 !*/
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
@@ -7078,11 +7078,11 @@ button.close {
 }
 /*!
 *
-*	app
+*   app
 *
 !*/
 /*
-*	Variables
+*   Variables
 */
 /*
 *
@@ -7160,17 +7160,17 @@ body {
   opacity: 0;
 }
 .transition-fade-in-enter-active {
-  opacity: 1;
   -webkit-transition: all 400ms ease-in;
           transition: all 400ms ease-in;
+  opacity: 1;
 }
 .transition-fade-out-leave {
   opacity: 1;
 }
 .transition-fade-out-leave-active {
-  opacity: 0;
   -webkit-transition: all 400ms ease-in;
           transition: all 400ms ease-in;
+  opacity: 0;
 }
 #overview .RegionMatches,
 #overview .RegionWorlds {
@@ -7189,11 +7189,11 @@ body {
   font-weight: 700;
 }
 #overview .match td {
+  font-size: 9pt;
   line-height: 20px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 9pt;
 }
 @media (min-width: 480px) {
   #overview .match td {
@@ -7220,7 +7220,7 @@ body {
   height: 60px;
 }
 #tracker .sprite {
-  background-image: url(/img/sprite16.~V1LRaScZ~.png);
+  background-image: url(/img/sprite16.~EyU9tnkf~.png);
   background-repeat: no-repeat;
   display: inline-block;
   width: 16px;
@@ -7284,12 +7284,12 @@ body {
   background-position: -48px -48px;
 }
 #tracker .objective {
-  display: table;
-  width: 100%;
-  line-height: 20px;
-  height: 20px;
   -webkit-transition: all 200ms ease-in;
           transition: all 200ms ease-in;
+  display: table;
+  width: 100%;
+  height: 20px;
+  line-height: 20px;
   font-size: 12pt;
 }
 #tracker .objective.fresh {
@@ -7360,14 +7360,14 @@ body {
   cursor: pointer;
 }
 #tracker .objective .timer.countdown {
-  display: inline-block;
-  line-height: 16px;
-  height: 16px;
-  font-size: 8pt;
-  color: #333;
-  background-color: #ffc;
   -webkit-transition: all 800ms ease-in;
           transition: all 800ms ease-in;
+  display: inline-block;
+  height: 16px;
+  color: #333;
+  background-color: #ffc;
+  line-height: 16px;
+  font-size: 8pt;
 }
 #tracker .objective .timer.countdown.active {
   opacity: 1;
@@ -7390,9 +7390,9 @@ body {
 #tracker #scoreboards .scoreboard h1 {
   font-size: 18pt;
   font-weight: 400;
+  white-space: nowrap;
   padding: 0;
   margin: 0;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -7406,9 +7406,9 @@ body {
   margin: 0;
 }
 #tracker #scoreboards .scoreboard li {
+  display: inline-block;
   line-height: 20px;
   height: 20px;
-  display: inline-block;
   font-size: 10pt;
 }
 #tracker #maps .map {
@@ -7486,13 +7486,13 @@ body {
 #tracker #log-container #log li {
   -webkit-transition: all 200ms ease-in;
           transition: all 200ms ease-in;
+  opacity: 1;
   white-space: nowrap;
   overflow: hidden;
   display: block;
   font-size: 9pt;
   line-height: 20px;
   max-height: 20px;
-  opacity: 1;
 }
 #tracker #log-container #log li.hide-entry {
   max-height: 0;
@@ -7514,9 +7514,9 @@ body {
   font-size: 7pt;
 }
 #tracker #options {
-  padding-right: 1em;
   -webkit-transition: all 400ms ease-in;
           transition: all 400ms ease-in;
+  padding-right: 1em;
 }
 #tracker #options .sub-options {
   padding-left: 1em;

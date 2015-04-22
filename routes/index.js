@@ -2,45 +2,45 @@
 
 module.exports = function(app, express) {
 
-  /*
-  *
-  * Statics
-  *
-  */
+    /*
+    *
+    * Statics
+    *
+    */
 
-  require('./statics.js')(app, express);
-
-
-
-  function staticCacheBusted(realPath) {
-    let pathArray = realPath.split('.');
-    let ext       = pathArray.pop();
-
-    pathArray.push(GLOBAL.versionHash);
-    pathArray.push(ext);
-
-    return pathArray.join('.');
-  }
+    require('./statics.js')(app, express);
 
 
-  /*
-  *
-  * App Routes
-  *
-  */
 
-  var router = express.Router();
+    function staticCacheBusted(realPath) {
+        let pathArray = realPath.split('.');
+        let ext       = pathArray.pop();
 
-  router.get('/:langSlug(en|de|es|fr)?', function(req, res) {
-    res.render('index', {staticCacheBusted});
-    // res.sendFile(process.cwd() + '/public/index.html');
-  });
+        pathArray.push(GLOBAL.versionHash);
+        pathArray.push(ext);
 
-  router.get('/:langSlug(en|de|es|fr)/:langSlug([a-z-]+)', function(req, res) {
-    res.render('index', {staticCacheBusted});
-    // res.sendFile(process.cwd() + '/public/index.html');
-  });
+        return pathArray.join('.');
+    }
 
 
-  app.use(router);
+    /*
+    *
+    * App Routes
+    *
+    */
+
+    var router = express.Router();
+
+    router.get('/:langSlug(en|de|es|fr)?', function(req, res) {
+        res.render('index', {staticCacheBusted});
+        // res.sendFile(process.cwd() + '/public/index.html');
+    });
+
+    router.get('/:langSlug(en|de|es|fr)/:langSlug([a-z-]+)', function(req, res) {
+        res.render('index', {staticCacheBusted});
+        // res.sendFile(process.cwd() + '/public/index.html');
+    });
+
+
+    app.use(router);
 };
