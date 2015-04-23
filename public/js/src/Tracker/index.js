@@ -110,11 +110,9 @@ class Tracker extends React.Component {
 
 
     componentWillReceiveProps(nextProps) {
-        const newLang = !Immutable.is(this.props.lang, nextProps.lang);
-
         // console.log('componentWillReceiveProps()', newLang);
 
-        if (newLang) {
+        if (!Immutable.is(this.props.lang, nextProps.lang)) {
             setMatchWorlds.call(this, nextProps.lang);
         }
     }

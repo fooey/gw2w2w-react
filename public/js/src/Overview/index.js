@@ -2,7 +2,7 @@
 
 /*
 *
-* Dependencies
+*   Dependencies
 *
 */
 
@@ -11,14 +11,14 @@ const Immutable    = require('Immutable');
 
 
 /*
-* Data
+*   Data
 */
 
-const DataProvider = require('lib/data/overview');
+const DAO = require('lib/data/overview');
 
 
 /*
-* React Components
+*   React Components
 */
 
 const Matches      = require('./Matches');
@@ -30,7 +30,7 @@ const Worlds       = require('./Worlds');
 
 /*
 *
-* Component Definition
+*   Component Definition
 *
 */
 
@@ -39,9 +39,10 @@ const propTypes = {
 };
 
 class Overview extends React.Component {
+
     /*
     *
-    * React Lifecycle
+    *     React Lifecycle
     *
     */
 
@@ -49,14 +50,23 @@ class Overview extends React.Component {
         super(props);
 
         const dataListeners = {
-            regions: this.onRegions.bind(this),
-            matchesByRegion: this.onMatchesByRegion.bind(this),
-            worldsByRegion: this.onWorldsByRegion.bind(this),
+            // regions     : this.onRegions.bind(this),
+            // matchesByRegion: this.onMatchesByRegion.bind(this),
+            // worldsByRegion : this.onWorldsByRegion.bind(this),
+            onMatchData    : this.onMatchData.bind(this),
         };
 
-        this.dataProvider = new DataProvider(props.lang, dataListeners);
+        this.dao = new DAO(dataListeners);
 
-        this.state = this.dataProvider.getDefaults();
+
+        this.state = {
+            regions: Immutable.fromJS({
+                '1': {label: 'NA', id: '1'},
+                '2': {label: 'EU', id: '2'}
+            }),
+            matchesByRegion: Immutable.fromJS({'1': {}, '2': {}}),
+            worldsByRegion: this.dao.getWorldsByRegion(props.lang) //Immutable.fromJS({'1': {}, '2': {}})
+        };
     }
 
 
@@ -74,59 +84,59 @@ class Overview extends React.Component {
 
 
     componentWillMount() {
-        setPageTitle.call(this, this.props.lang);
+        setPageTitle(this.props.lang);
         // setWorlds.call(this, this.props.lang);
     }
 
 
 
     componentDidMount() {
-        this.dataProvider.init(this.props.lang);
+        this.dao.init(this.props.lang);
     }
 
 
 
     componentWillReceiveProps(nextProps) {
         if (!Immutable.is(nextProps.lang, this.props.lang)) {
-            setPageTitle.call(this, nextProps.lang);
-            this.dataProvider.setLang(nextProps.lang);
+            const worldsByRegion = this.dao.getWorldsByRegion(nextProps.lang);
+            this.setState({worldsByRegion});
+
+            setPageTitle(nextProps.lang);
         }
     }
 
 
 
     componentWillUnmount() {
-        this.dataProvider.close();
+        this.dao.close();
     }
 
 
 
     render() {
         return <div id="overview">
-            <div className="row">
-                {this.state.regions.map((region, regionId) =>
-                    <div className="col-sm-12" key={regionId}>
-                        <Matches
-                            region  = {region}
-                            matches = {this.state.matchesByRegion.get(regionId)}
-                            worlds  = {this.state.worldsByRegion.get(regionId)}
-                        />
-                    </div>
-                )}
-            </div>
+
+            <div className="row">{this.state.regions.map((region, regionId) =>
+                <div className="col-sm-12" key={regionId}>
+                    <Matches
+                        region  = {region}
+                        matches = {this.state.matchesByRegion.get(regionId)}
+                        worlds  = {this.state.worldsByRegion.get(regionId)}
+                    />
+                </div>
+            )}</div>
 
             <hr />
 
-            <div className="row">
-                {this.state.regions.map((region, regionId) =>
-                    <div className="col-sm-12" key={regionId}>
-                        <Worlds
-                            region = {region}
-                            worlds = {this.state.worldsByRegion.get(regionId)}
-                        />
-                    </div>
-                )}
-            </div>
+            <div className="row">{this.state.regions.map((region, regionId) =>
+                <div className="col-sm-12" key={regionId}>
+                    <Worlds
+                        region = {region}
+                        worlds = {this.state.worldsByRegion.get(regionId)}
+                    />
+                </div>
+            )}</div>
+
         </div>;
     }
 
@@ -134,29 +144,16 @@ class Overview extends React.Component {
 
     /*
     *
-    * Data Listeners
+    *   Data Listeners
     *
     */
 
-    onMatchesByRegion(matchesByRegion) {
-        // console.log('overview::onMatchesByRegion()', matchesByRegion);
+    onMatchData(matchData) {
+        const newMatchesByRegion = this.dao.getMatchesByRegion(matchData);
+
         this.setState(state => ({
-            matchesByRegion: state.matchesByRegion.mergeDeep(matchesByRegion)
+            matchesByRegion: state.matchesByRegion.mergeDeep(newMatchesByRegion)
         }));
-    }
-
-
-
-    onWorldsByRegion(worldsByRegion) {
-        // console.log('overview::onWorldsByRegion()', worldsByRegion.toJS());
-        this.setState({worldsByRegion});
-    }
-
-
-
-    onRegions(regions) {
-        // console.log('overview::onRegions()', regions.toJS());
-        this.setState({regions});
     }
 }
 
@@ -166,7 +163,7 @@ class Overview extends React.Component {
 
 /*
 *
-* Direct DOM Manipulation
+*   Direct DOM Manipulation
 *
 */
 
@@ -186,7 +183,7 @@ function setPageTitle(lang) {
 
 /*
 *
-* Export Module
+*   Export Module
 *
 */
 

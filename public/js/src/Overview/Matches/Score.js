@@ -26,6 +26,10 @@ const propTypes ={
     score: React.PropTypes.number.isRequired,
 };
 
+const defaultProps ={
+    score: 0,
+};
+
 class Score extends React.Component {
     constructor(props) {
         super(props);
@@ -120,4 +124,5 @@ function getScoreText(score) {
 */
 
 Score.propTypes = propTypes;
+Score.defaultProps = defaultProps;
 module.exports  = Score;
