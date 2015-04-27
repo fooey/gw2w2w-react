@@ -67,29 +67,34 @@ gulp.task('compile-css', [], function() {
     var versionHash = "~" + require('shortid').generate() + "~";
 
     var less         = require('gulp-less');
-    var autoprefixer = require('gulp-autoprefixer');
-    var CleanCSS     = require("clean-css");
+    var postcss      = require('gulp-postcss');
+    var autoprefixer = require('autoprefixer-core');
+    var postcssFocus = require('postcss-focus');
+    var cssnano      = require('cssnano');
+    var csswring     = require('csswring');
 
-    var minify = vinylMap(function (buff, filename) {
-        return new CleanCSS({
-            advanced           : true,
-            aggressiveMerging  : true,
-            keepBreaks         : false,
-            shorthandCompacting: true,
-            rebase             : false,
-            debug              : false,
-        }).minify(buff.toString()).styles;
-    });
+    var processors = [
+        autoprefixer({browsers: ['last 2 versions', 'ie >= 8']}),
+        postcssFocus,
+        cssnano,
+        csswring({removeAllComments: true}),
+    ];
 
     var stream = gulp
         .on('error', gutil.log.bind(gutil, 'Less Error'))
         .src(src)
+        // .pipe(sourcemaps.init())
+
         .pipe(less())
         .pipe(replace('${VERSION}', versionHash))
-        .pipe(autoprefixer())
-        .pipe(gulp.dest(dest))
-        .pipe(minify)
+        .pipe(postcss(processors))
+        // .pipe(sourcemaps.write('.'))
+        // .pipe(gulp.dest(dest))
+
+        // .pipe(sourcemaps.init({loadMaps: true}))
+        // .pipe(postcss(productionProcessors))
         .pipe(rename({suffix: '.min'}))
+        // .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(dest));
 
     return stream;

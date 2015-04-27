@@ -8,10 +8,10 @@ head
 
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css")
 
-    if (process.env.NODE_ENV === 'development')
-        link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.css") )
-    else
-        link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.min.css") )
+    //- if (process.env.NODE_ENV === 'development')
+    //-     link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.css") )
+    //- else
+    link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.min.css") )
 
 
     script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js")
