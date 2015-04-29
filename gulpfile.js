@@ -60,41 +60,102 @@ paths.js.dist = paths.js.base + '/dist';
 *
 */
 
+var less         = require('gulp-less');
+
+var postcss      = require('gulp-postcss');
+var postcssLog   = require('postcss-log-warnings');
+
+var cssAssets    = require('postcss-assets');
+var autoprefixer = require('autoprefixer-core');
+var postcssFocus = require('postcss-focus');
+
+var cssnano      = require('cssnano');
+var csswring     = require('csswring');
+
 gulp.task('compile-css', [], function() {
     var src  = paths.css.src + '/app.less';
     var dest = paths.css.dist;
 
-    var versionHash = "~" + require('shortid').generate() + "~";
+    var postcssCore = [
+        cssAssets({
+            basePath: './public/',
+            cachebuster: function (filePath, urlPathname) {
+                var fs = require('fs');
+                var path = require('path');
+                var hash = fs.statSync(filePath).mtime.getTime().toString(16);
+                var pathname = path.dirname(urlPathname)
+                        + '/' + path.basename(urlPathname, path.extname(urlPathname))
+                        + '.~' + hash + '~' + path.extname(urlPathname);
 
-    var less         = require('gulp-less');
-    var postcss      = require('gulp-postcss');
-    var autoprefixer = require('autoprefixer-core');
-    var postcssFocus = require('postcss-focus');
-    var cssnano      = require('cssnano');
-    var csswring     = require('csswring');
-
-    var processors = [
+                // console.log(hash, filePath, pathname);
+                return {
+                    pathname: pathname
+                };
+            }
+        }),
         autoprefixer({browsers: ['last 2 versions', 'ie >= 8']}),
-        postcssFocus,
-        cssnano,
+        postcssFocus(),
+        postcssLog(),
+    ];
+
+    // var versionHash = "~" + require('shortid').generate() + "~";
+
+    var stream = gulp
+        .on('error', gutil.log.bind(gutil, 'Less Error'))
+        .src(src)
+        .pipe(sourcemaps.init({debug: true}))
+
+        .pipe(less())
+        .pipe(postcss(postcssCore))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(dest));
+
+    return stream;
+});
+
+
+
+gulp.task('css-compress', [], function() {
+    var src  = paths.css.dist + '/app.css';
+    var dest = paths.css.dist;
+
+    var postcssProd = [
+        cssnano(),
         csswring({removeAllComments: true}),
+        postcssLog(),
     ];
 
     var stream = gulp
         .on('error', gutil.log.bind(gutil, 'Less Error'))
         .src(src)
-        // .pipe(sourcemaps.init())
-
-        .pipe(less())
-        .pipe(replace('${VERSION}', versionHash))
-        .pipe(postcss(processors))
-        // .pipe(sourcemaps.write('.'))
-        // .pipe(gulp.dest(dest))
-
-        // .pipe(sourcemaps.init({loadMaps: true}))
-        // .pipe(postcss(productionProcessors))
+        .pipe(sourcemaps.init({debug: true, loadMaps: true}))
+        .pipe(postcss(postcssProd))
         .pipe(rename({suffix: '.min'}))
-        // .pipe(sourcemaps.write('.'))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(dest));
+
+    return stream;
+});
+
+
+
+gulp.task('compile-bootstrap', [], function() {
+    var src  = paths.css.src + '/bootstrap.less';
+    var dest = paths.css.dist;
+
+    // var versionHash = "~" + require('shortid').generate() + "~";
+
+    var stream = gulp
+        .on('error', gutil.log.bind(gutil, 'Less Error'))
+        .src(src)
+        .pipe(sourcemaps.init({debug: true, loadMaps: true}))
+        .pipe(less())
+        .pipe(postcss([
+            csswring({removeAllComments: true}),
+            postcssLog(),
+        ]))
+        .pipe(rename({suffix: '.min'}))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(dest));
 
     return stream;
@@ -187,11 +248,25 @@ gulp.task('compile-js', [], compileJS);
 *
 */
 
-gulp.task('watch', ['compile'], function(cb) {
+gulp.task('watch', [], function(cb) {
     livereload.listen();
 
-    gulp.watch(paths.css.src + '/**/*.less', ['compile-css']);
-    gulp.watch(paths.css.dist + '/app.min.css', livereload.changed);
+    gulp.watch([
+        paths.css.src + '/**/*.less',
+        '!' + paths.css.src + '/**/bootstrap.less',
+    ], ['compile-css']);
+    gulp.watch([
+        paths.css.src + '//bootstrap.less',
+    ], ['compile-bootstrap']);
+
+    gulp.watch([
+        paths.css.dist + '/app.css',
+    ], ['css-compress']);
+
+    gulp.watch([
+        paths.css.dist + '/app.min.css',
+        paths.css.dist + '/bootstrap.min.css',
+    ], livereload.changed);
 
     gulp.watch('./views/**/*.jade', livereload.changed);
 
@@ -274,17 +349,17 @@ gulp.task('nodemon-prod', ['compile'], function(cb) {
 */
 
 
-gulp.task('compile', ['compile-js', 'compile-css'], function(cb) {
+gulp.task('compile', ['compile-js', 'compile-css', 'compile-bootstrap'], function(cb) {
     cb();
 });
 
 
-gulp.task('default', ['compile', 'watch', 'nodemon'], function(cb) {
+gulp.task('default', ['watch', 'compile', 'nodemon'], function(cb) {
     cb();
 });
 
 
-gulp.task('prod', ['compile', 'watch', 'nodemon-prod'], function(cb) {
+gulp.task('prod', ['watch', 'compile', 'nodemon-prod'], function(cb) {
     cb();
 });
 

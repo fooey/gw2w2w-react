@@ -1,4 +1,6 @@
 "use strict";
+const fs = require('fs');
+const path = require('path');
 
 module.exports = function(app, express) {
 
@@ -12,14 +14,15 @@ module.exports = function(app, express) {
 
 
 
-    function staticCacheBusted(realPath) {
-        let pathArray = realPath.split('.');
-        let ext       = pathArray.pop();
+    function staticCacheBusted(urlPath, filePath) {
+        const fullPath = path.join(process.cwd(), filePath);
+        const hash     = '~' + fs.statSync(fullPath).mtime.getTime().toString(16) + '~';
 
-        pathArray.push(GLOBAL.versionHash);
-        pathArray.push(ext);
+        var pathname   = path.dirname(urlPath)
+            + '/' + path.basename(urlPath, path.extname(urlPath))
+            + '.' + hash + path.extname(urlPath);
 
-        return pathArray.join('.');
+        return pathname;
     }
 
 

@@ -7,11 +7,12 @@ head
     title gw2w2w
 
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css")
+    link(rel="stylesheet", href=staticCacheBusted("/css/dist/bootstrap.min.css", "public/css/dist/bootstrap.min.css") )
 
-    //- if (process.env.NODE_ENV === 'development')
-    //-     link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.css") )
-    //- else
-    link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.min.css") )
+    if (process.env.NODE_ENV === 'development')
+        link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.css", "public/css/dist/app.css") )
+    else
+        link(rel="stylesheet", href=staticCacheBusted("/css/dist/app.min.css", "public/css/dist/app.min.css") )
 
 
     script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js")
@@ -23,20 +24,20 @@ head
     script(src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js")
 
-    script(src=staticCacheBusted("/nm/moment-twitter/moment-twitter.js"))
+    script(src=staticCacheBusted("/nm/moment-twitter/moment-twitter.js", "node_modules/moment-twitter/moment-twitter.js"))
 
     if (process.env.NODE_ENV === 'development')
         script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.js")
         script(src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.js")
-        script(src=staticCacheBusted("/nm/react/dist/react.js"))
-        script(src=staticCacheBusted("/js/dist/app.js"))
+        script(src=staticCacheBusted("/nm/react/dist/react.js", "node_modules/react/dist/react.js"))
+        script(src=staticCacheBusted("/js/dist/app.js", "public/js/dist/app.js"))
 
 
     else
         script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.min.js")
         script(src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable.min.js")
-        script(src=staticCacheBusted("/nm/react/dist/react.min.js"))
-        script(src=staticCacheBusted("/js/dist/app.min.js"))
+        script(src=staticCacheBusted("/nm/react/dist/react.min.js", "node_modules/react/dist/react.min.js"))
+        script(src=staticCacheBusted("/js/dist/app.min.js", "public/js/dist/app.min.js"))
 
 
 
@@ -46,7 +47,7 @@ body
         .container
             .navbar-header
                 a.navbar-brand(href="/")
-                    img(src=staticCacheBusted("/img/logo/logo-96x36.png"))
+                    img(src=staticCacheBusted("/img/logo/logo-96x36.png", "public/img/logo/logo-96x36.png"))
             #nav-langs.pull-right
 
 
