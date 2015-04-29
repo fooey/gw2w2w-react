@@ -120,7 +120,7 @@ gulp.task('css-compress', [], function() {
     var dest = paths.css.dist;
 
     var postcssProd = [
-        cssnano(),
+        cssnano({urls:false}),
         csswring({removeAllComments: true}),
         postcssLog(),
     ];
