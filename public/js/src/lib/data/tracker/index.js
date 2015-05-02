@@ -3,34 +3,41 @@
 const Immutable = require('Immutable');
 const _         = require('lodash');
 
-const libDate   = require('lib/date');
+const GuildsDAO = require('./guilds');
+
 const api       = require('lib/api');
 const STATIC    = require('lib/static');
 
 
+class OverviewDataProvider {
 
-
-
-class TrackerDataProvider {
-
-    constructor(lang, listeners) {
+    constructor(listeners) {
         // console.log('lib::data::tracker::constructor()');
 
-        this.lang = lang;
+        this.__langSlug  = null;
+        this.__worldSlug = null;
 
-        this.mounted = false;
-        this.listeners = listeners;
+        this.guilds      = new GuildsDAO();
 
-        this.timeouts  = {};
-        this.intervals = {};
+
+        this.__mounted   = false;
+        this.__listeners = listeners;
+
+        this.__timeouts  = {};
+        this.__intervals = {};
     }
 
 
 
-    init() {
+    init(lang, world) {
         // console.log('lib::data::tracker::init()');
 
-        this.mounted = true;
+        this.__langSlug  = lang.get('slug');
+        this.__worldSlug = world.getIn([this.__langSlug, 'slug']);
+
+
+        this.__mounted = true;
+        this.__getData();
     }
 
 
@@ -38,35 +45,91 @@ class TrackerDataProvider {
     close() {
         // console.log('lib::data::tracker::close()');
 
-        this.mounted   = false;
+        this.__mounted   = false;
 
-        this.timeouts  = _.map(this.timeouts,  t => clearTimeout(t));
-        this.intervals = _.map(this.intervals, i => clearInterval(i));
+        this.__timeouts  = _.map(this.__timeouts,  t => clearTimeout(t));
+        this.__intervals = _.map(this.__intervals, i => clearInterval(i));
     }
 
 
 
-    getDefaults() {
-        // console.log('lib::data::tracker::getDefaults()');
+    getMatchWorlds(lang, match) {
+        return Immutable
+            .List(['red', 'blue', 'green'])
+            .map(getMatchWorld.bind(null, lang, match));
+    }
 
-        return {
-            hasData    : false,
 
-            dateNow    : libDate.dateNow(),
-            lastmod    : 0,
-            timeOffset : 0,
+    /*
+    *
+    *   Private Methods
+    *
+    */
 
-            match      : Immutable.Map({lastmod:0}),
-            matchWorlds: Immutable.List(),
-            details    : Immutable.Map(),
-            claimEvents: Immutable.List(),
-            guilds     : Immutable.Map(),
-        };
+    __getData() {
+        // console.log('lib::data::tracker::__getData()');
+
+        api.getMatchDetailsByWorld(
+            this.__worldSlug,
+            this.__onMatchDetails.bind(this)
+        );
+    }
+
+
+
+    __onMatchDetails(err, data) {
+        // console.log('lib::data::tracker::__onMatchData()', data);
+
+        if (!this.__mounted) {
+            return;
+        }
+
+
+        if (!err && data && data.match && data.details) {
+            const timeRemote  = Immutable.fromJS(data.now);
+            const matchData   = Immutable.fromJS(data.match);
+            const detailsData = Immutable.fromJS(data.details);
+
+            this.__listeners.onMatchDetails(timeRemote, matchData, detailsData);
+        }
+
+
+        this.__rescheduleDataUpdate.call(this);
+    }
+
+
+
+    __rescheduleDataUpdate() {
+        const refreshTime = _.random(1000*2, 1000*4);
+
+        this.__timeouts.data = setTimeout(this.__getData.bind(this), refreshTime);
     }
 }
 
 
 
 
+/*
+*   Worlds
+*/
 
-module.exports = TrackerDataProvider;
+function getMatchWorld(lang, match, color) {
+    const langSlug    = lang.get('slug');
+    const worldKey    = color + 'Id';
+    const worldId     = match.getIn([worldKey]).toString();
+    const worldByLang = STATIC.worlds.getIn([worldId, langSlug]);
+
+    return worldByLang
+        .set('color', color)
+        .set('link', getWorldLink(langSlug, worldByLang));
+}
+
+
+
+function getWorldLink(langSlug, world) {
+    return ['', langSlug, world.get('slug')].join('/');
+}
+
+
+
+module.exports = OverviewDataProvider;

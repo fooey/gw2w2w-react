@@ -77,12 +77,16 @@ const propTypes = {
 class Objective extends React.Component {
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
+
         const newCapture   = !Immutable.is(this.props.timestamp, nextProps.timestamp);
         const newOwner     = !Immutable.is(this.props.worldColor, nextProps.worldColor);
         const newClaimer   = !Immutable.is(this.props.guildId, nextProps.guildId);
         const newGuildData = !Immutable.is(this.props.guild, nextProps.guild);
+        const newData      = (newCapture || newOwner || newClaimer || newGuildData);
 
-        const shouldUpdate = (newLang || newCapture || newOwner || newClaimer || newGuildData);
+        const shouldUpdate = (newLang || newData);
+
+        // console.log('Tracker::Objectives::shouldComponentUpdate()', newRemoteNow, nextProps.remoteNow);
 
         return shouldUpdate;
     }
@@ -106,9 +110,18 @@ class Objective extends React.Component {
 
         return (
             <div className = {`objective team ${this.props.worldColor}`}>
-                <TimerRelative isEnabled = {!!cols.elapsed} timestamp = {props.timestamp} />
-                <Timestamp isEnabled = {!!cols.timestamp} timestamp = {props.timestamp} />
-                <MapName isEnabled = {!!cols.mapAbbrev} objectiveId = {objectiveId} />
+                <TimerRelative
+                    isEnabled   = {!!cols.elapsed}
+                    timestamp   = {props.timestamp}
+                />
+                <Timestamp
+                    isEnabled   = {!!cols.timestamp}
+                    timestamp   = {props.timestamp}
+                />
+                <MapName
+                    isEnabled   = {!!cols.mapAbbrev}
+                    objectiveId = {objectiveId}
+                />
 
                 <Icons
                     showArrow   = {!!cols.arrow}
@@ -117,7 +130,11 @@ class Objective extends React.Component {
                     color       = {this.props.worldColor}
                 />
 
-                <Label isEnabled = {!!cols.name} objectiveId = {objectiveId} lang = {this.props.lang} />
+                <Label
+                    isEnabled   = {!!cols.name}
+                    objectiveId = {objectiveId}
+                    lang        = {this.props.lang}
+                />
 
                 <div className="objective-state">
                     <Guild
@@ -127,7 +144,10 @@ class Objective extends React.Component {
                         guild    = {this.props.guild}
                     />
 
-                    <TimerCountdown isEnabled = {!!cols.timer} timestamp = {props.timestamp} />
+                    <TimerCountdown
+                        isEnabled = {!!cols.timer}
+                        timestamp = {props.timestamp}
+                    />
                 </div>
             </div>
         );

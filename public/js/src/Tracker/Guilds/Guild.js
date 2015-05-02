@@ -62,6 +62,10 @@ class Guild extends React.Component {
         const guildTag    = this.props.guild.get('tag');
         const guildClaims = this.props.guild.get('claims');
 
+        const guildLink   = (guildName)
+            ? `http://guilds.gw2w2w.com/guilds/${slugify(guildName)}`
+            : `http://guilds.gw2w2w.com/${guildId}`;
+
         // console.log('Guild::render()', guildId, guildName);
 
 
@@ -70,20 +74,17 @@ class Guild extends React.Component {
                 <div className="row">
 
                     <div className="col-sm-4">
-                        {(dataReady)
-                            ? <a href={`http://guilds.gw2w2w.com/guilds/${slugify(guildName)}`} target="_blank">
-                                <Emblem guildName={guildName} size={256} />
-                            </a>
-                            : <Emblem size={256} />
-                        }
+                        <a href={guildLink} target="_blank">
+                            <Emblem key={guildId} guildName={guildName} size={256} />
+                        </a>
                     </div>
 
                     <div className="col-sm-20">
                         {(dataReady)
-                            ? <h1><a href={`http://guilds.gw2w2w.com/guilds/${slugify(guildName)}`} target="_blank">
+                            ? <h1><a href={guildLink} target="_blank">
                                 {guildName} [{guildTag}]
                             </a></h1>
-                            : loadingHtml
+                            : <div>{loadingHtml}<br />{guildId}</div>
                         }
 
                         {!guildClaims.isEmpty()

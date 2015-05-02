@@ -28,8 +28,8 @@ const trackerTimers = require('lib/trackerTimers');
 *   Data
 */
 
-const DataProvider  = require('lib/data/tracker');
-const GuildsLib     = require('lib/tracker/guilds');
+const DAO           = require('lib/data/tracker');
+const GuildsLib     = require('lib/data/tracker/guilds');
 const STATIC        = require('lib/static');
 
 
@@ -45,6 +45,13 @@ const Guilds        = require('./Guilds');
 
 
 
+/*
+* Globals
+*/
+
+const updateTimeInterval = 1000;
+
+
 
 /*
 *
@@ -58,30 +65,59 @@ const propTypes = {
 };
 
 class Tracker extends React.Component {
+
+    /*
+    *
+    *     React Lifecycle
+    *
+    */
+
     constructor(props) {
         super(props);
 
 
-        this.mounted   = true;
-        this.intervals = {timers: null};
-        this.timeouts  = {data: null};
-
-        this.guildLib  = new GuildsLib(this);
+        this.__mounted   = false;
+        this.__timeouts  = {};
+        this.__intervals = {};
 
 
-        const dataListeners = {};
-        this.dataProvider = new DataProvider(props.lang, dataListeners);
+        const dataListeners = {
+            onMatchDetails: this.onMatchDetails.bind(this),
+            onGuildDetails: this.onGuildDetails.bind(this),
+        };
+        this.dao = new DAO(dataListeners);
 
-        this.state = this.dataProvider.getDefaults();
+
+
+        this.state = {
+            hasData    : false,
+            lastmod    : 0,
+
+            time       : {
+                local  : libDate.dateNow(),
+                remote : 0,
+                offset : 0,
+            },
+
+            match      : Immutable.Map({lastmod:0}),
+            matchWorlds: Immutable.List(),
+            details    : Immutable.Map(),
+            claimEvents: Immutable.List(),
+            guilds     : Immutable.Map(),
+        };
     }
 
 
+
     shouldComponentUpdate(nextProps, nextState) {
+        const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
+
         const initialData  = !Immutable.is(this.state.hasData, nextState.hasData);
         const newMatchData = !Immutable.is(this.state.lastmod, nextState.lastmod);
         const newGuildData = !Immutable.is(this.state.guilds, nextState.guilds);
-        const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
-        const shouldUpdate = (initialData || newMatchData || newGuildData || newLang);
+        const newData      = (initialData || newMatchData || newGuildData);
+
+        const shouldUpdate = (newLang || newData);
 
         return shouldUpdate;
     }
@@ -90,11 +126,14 @@ class Tracker extends React.Component {
 
     componentDidMount() {
         // console.log('Tracker::componentDidMount()');
+        this.__mounted   = true;
 
-        this.intervals.timers = setInterval(updateTimers.bind(this), 1000);
+        this.dao.init(this.props.lang, this.props.world);
 
-        setImmediate(updateTimers.bind(this));
-        setImmediate(getMatchDetails.bind(this));
+        setPageTitle(this.props.lang, this.props.world);
+
+        // this.updateTimers(() => setInterval(this.updateTimers.bind(this), 1000));
+        this.updateTimers.call(this);
     }
 
 
@@ -102,19 +141,22 @@ class Tracker extends React.Component {
     componentWillUnmount() {
         // console.log('Tracker::componentWillUnmount()');
 
-        clearTimers.call(this);
+        this.__mounted   = false;
+        this.__timeouts  = _.map(this.__timeouts,  t => clearTimeout(t));
+        this.__intervals = _.map(this.__intervals, i => clearInterval(i));
 
-        this.mounted = false;
+        this.dao.close();
     }
 
 
 
     componentWillReceiveProps(nextProps) {
         // console.log('componentWillReceiveProps()', newLang);
+        setPageTitle(this.props.lang, this.props.world);
 
-        if (!Immutable.is(this.props.lang, nextProps.lang)) {
-            setMatchWorlds.call(this, nextProps.lang);
-        }
+        this.setState({
+            matchWorlds: this.dao.getMatchWorlds(nextProps.lang, this.state.match)
+        });
     }
 
 
@@ -127,205 +169,134 @@ class Tracker extends React.Component {
 
     render() {
         // console.log('Tracker::render()');
-        setPageTitle(this.props.lang, this.props.world);
 
 
         if (!this.state.hasData) {
             return null;
         }
 
-
-
         return (
             <div id="tracker">
 
-                {<Scoreboard
+                <Scoreboard
                     matchWorlds = {this.state.matchWorlds}
                     match       = {this.state.match}
-                />}
+                />
 
-                {<Maps
+                <Maps
                     lang        = {this.props.lang}
+
+                    time        = {this.state.time}
                     details     = {this.state.details}
                     matchWorlds = {this.state.matchWorlds}
                     guilds      = {this.state.guilds}
-                />}
+                />
 
-                {<div className="row">
+                <div className="row">
                     <div className="col-md-24">
                         {(!this.state.guilds.isEmpty())
                             ? <Guilds
                                 lang        = {this.props.lang}
 
+                                time        = {this.state.time}
                                 guilds      = {this.state.guilds}
                                 claimEvents = {this.state.claimEvents}
                             />
                             : null
                         }
                     </div>
-                </div>}
+                </div>
 
             </div>
         );
-
     }
 
-}
+
+
+    /*
+    *
+    *   Data Listeners
+    *
+    */
+
+
+
+    updateTimers(cb=_.noop) {
+        if (this.__mounted) {
+            trackerTimers.update(this.state.time.offset, cb);
+            this.__timeouts.updateTimers = setTimeout(this.updateTimers.bind(this), updateTimeInterval);
+        }
+    }
 
 
 
 
-
-/*
-*
-* Private Methods
-*
-*/
+    onMatchDetails(timeRemote, matchData, detailsData) {
+        const lastmod      = matchData.get('lastmod');
+        const isModified   = (lastmod !== this.state.match.get('lastmod'));
 
 
+        if (isModified) {
+            const claimEvents = this.dao.guilds.getEventsByType(detailsData, 'claim');
 
-/*
-* Timers
-*/
+            const timeLocal    = Date.now();
+            const remoteOffset = timeLocal - timeRemote;
+            const timeOffset   = (this.state.time.offset)
+                                ? (remoteOffset + this.state.time.offset) / 2 // average with previous offset
+                                : remoteOffset;
 
-function updateTimers() {
-    let component = this;
-    const state   = component.state;
-    // console.log('updateTimers()');
-
-    const timeOffset = state.timeOffset;
-    const now        = libDate.dateNow() - timeOffset;
-
-    trackerTimers.update(now, timeOffset);
-}
-
+            const time = {
+                local : timeLocal,
+                offset: Math.round(timeOffset),
+                remote: timeRemote,
+            };
 
 
-function clearTimers(){
-    // console.log('clearTimers()');
-    let component = this;
+            // use transactional setState
+            this.setState(state => ({
+                hasData: true,
 
-    _.forEach(component.intervals, clearInterval);
-    _.forEach(component.timeouts, clearTimeout);
-}
+                lastmod,
+                time,
+                claimEvents,
+
+                match  : state.match.mergeDeep(matchData),
+                details: state.details.mergeDeep(detailsData),
+            }));
 
 
-
-/*
-*
-* Match Details
-*
-*/
-
-function getMatchDetails() {
-    let component = this;
-    const props   = component.props;
-
-    const world     = props.world;
-    const langSlug  = props.lang.get('slug');
-    const worldSlug = world.getIn([langSlug, 'slug']);
-
-    api.getMatchDetailsByWorld(
-        worldSlug,
-        onMatchDetails.bind(this)
-    );
-}
+            this.dao.guilds.lookup(
+                this.state.guilds,
+                detailsData,
+                this.onGuildDetails.bind(this)
+            );
 
 
 
-function onMatchDetails(err, data) {
-    let component = this;
-    const props   = component.props;
-    const state   = component.state;
-
-
-    if (component.mounted) {
-        if (!err && data && data.match && data.details) {
-            const lastmod    = data.match.lastmod;
-            const isModified = (lastmod !== state.match.get('lastmod'));
-
-            // console.log('onMatchDetails', data.match.lastmod, isModified);
-
-            if (isModified) {
-                const dateNow     = libDate.dateNow();
-                const timeOffset  = Math.floor(dateNow  - (data.now / 1000));
-
-                const matchData   = Immutable.fromJS(data.match);
-                const detailsData = Immutable.fromJS(data.details);
-
-                // use transactional setState
-                component.setState(state => ({
-                    hasData: true,
-                    dateNow,
-                    timeOffset,
-                    lastmod,
-
-                    match : state.match.mergeDeep(matchData),
-                    details : state.details.mergeDeep(detailsData),
-                }));
-
-
-                setImmediate(component.guildLib.onMatchData.bind(component.guildLib, detailsData));
-
-                if (state.matchWorlds.isEmpty()) {
-                    setImmediate(setMatchWorlds.bind(component, props.lang));
-                }
+            if (this.state.matchWorlds.isEmpty()) {
+                this.setState({
+                    matchWorlds: this.dao.getMatchWorlds(this.props.lang, this.state.match)
+                });
+                // setImmediate(setMatchWorlds.bind(component, props.lang));
             }
         }
-
-
-        rescheduleDataUpdate.call(component);
     }
+
+
+
+    onGuildDetails(guild, guildId) {
+        const _guildId = guildId || guild.get('guild_id');
+        if (!this.state.claimEvents.isEmpty()) {
+            guild = this.dao.guilds.attachClaims(this.state.claimEvents, guild);
+        }
+
+        this.setState(state => ({
+            guilds: state.guilds.mergeIn([_guildId], guild)
+        }));
+    }
+
 }
 
-
-
-function rescheduleDataUpdate() {
-    let component     = this;
-    const refreshTime = _.random(1000*2, 1000*4);
-
-    component.timeouts.data = setTimeout(getMatchDetails.bind(component), refreshTime);
-}
-
-
-
-/*
-*
-* MatchWorlds
-*
-*/
-
-function setMatchWorlds(lang) {
-    let component = this;
-
-    const matchWorlds = Immutable
-        .List(['red', 'blue', 'green'])
-        .map(getMatchWorld.bind(component, lang));
-
-    component.setState({matchWorlds});
-}
-
-
-
-function getMatchWorld(lang, color) {
-    let component = this;
-    const state   = component.state;
-
-    const langSlug    = lang.get('slug');
-    const worldKey    = color + 'Id';
-    const worldId     = state.match.getIn([worldKey]).toString();
-    const worldByLang = STATIC.worlds.getIn([worldId, langSlug]);
-
-    return worldByLang
-        .set('color', color)
-        .set('link', getWorldLink(langSlug, worldByLang));
-}
-
-
-
-function getWorldLink(langSlug, world) {
-    return ['', langSlug, world.get('slug')].join('/');
-}
 
 
 

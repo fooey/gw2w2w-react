@@ -77,11 +77,18 @@ const propTypes = {
 class Entry extends React.Component {
     shouldComponentUpdate(nextProps) {
         const newLang        = !Immutable.is(this.props.lang, nextProps.lang);
+
         const newGuild       = !Immutable.is(this.props.guild, nextProps.guild);
         const newEntry       = !Immutable.is(this.props.entry, nextProps.entry);
+        const newData        = (newGuild || newEntry);
+
         const newMapFilter   = !Immutable.is(this.props.mapFilter, nextProps.mapFilter);
         const newEventFilter = !Immutable.is(this.props.eventFilter, nextProps.eventFilter);
-        const shouldUpdate   = (newLang || newGuild || newEntry || newMapFilter || newEventFilter);
+        const newFilters     = (newMapFilter || newEventFilter);
+
+        const shouldUpdate   = (newLang || newData || newFilters);
+
+        // console.log('Tracker::Log::Entry::shouldComponentUpdate()', newRemoteNow, nextProps.remoteNow);
 
         return shouldUpdate;
     }

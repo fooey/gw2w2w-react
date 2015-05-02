@@ -49,11 +49,11 @@ class Guild extends React.Component {
         else {
             const hasGuildData = (props.guild && props.guild.get('loaded'));
 
-            const id    = props.guildId;
-            const href  = `#${id}`;
+            const guildId = props.guildId;
+            const href    = `#${guildId}`;
 
-            let content = <i className="fa fa-spinner fa-spin"></i>;
-            let title   = null;
+            let content   = <i className="fa fa-spinner fa-spin"></i>;
+            let title     = null;
 
             if (hasGuildData) {
                 const name = props.guild.get('guild_name');

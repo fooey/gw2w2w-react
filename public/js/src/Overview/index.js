@@ -49,14 +49,9 @@ class Overview extends React.Component {
     constructor(props) {
         super(props);
 
-        const dataListeners = {
-            // regions     : this.onRegions.bind(this),
-            // matchesByRegion: this.onMatchesByRegion.bind(this),
-            // worldsByRegion : this.onWorldsByRegion.bind(this),
-            onMatchData    : this.onMatchData.bind(this),
-        };
-
-        this.dao = new DAO(dataListeners);
+        this.dao = new DAO({
+            onMatchData: this.onMatchData.bind(this),
+        });
 
 
         this.state = {

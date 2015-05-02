@@ -28,26 +28,28 @@ const imgPlaceholder = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/20
  */
 
 const propTypes = {
-    guildName: React.PropTypes.string,
     size     : React.PropTypes.number.isRequired,
+    guildName  : React.PropTypes.string,
 };
 
 const defaultProps = {
-    guildName: undefined,
-    size: 256,
+    size     : 256,
+    guildName  : undefined,
 };
 
 class Emblem extends React.Component {
     shouldComponentUpdate(nextProps) {
-        const newGuildName = (this.props.guildName !== nextProps.guildName);
+        const newName      = (this.props.guildName !== nextProps.guildName); // changes when defined
         const newSize      = (this.props.size !== nextProps.size);
-        const shouldUpdate = (newGuildName || newSize);
+        const shouldUpdate = (newSize || newName);
 
         return shouldUpdate;
     }
 
     render() {
         const emblemSrc = getEmblemSrc(this.props.guildName);
+
+        // console.log('emblem', this.props.guildName, emblemSrc);
 
         return <img
             className = "emblem"

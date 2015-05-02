@@ -42,11 +42,15 @@ const propTypes = {
 class MapDetails extends React.Component {
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
+
         const newGuilds    = !Immutable.is(this.props.guilds, nextProps.guilds);
         const newDetails   = !Immutable.is(this.props.details, nextProps.details);
         const newWorlds    = !Immutable.is(this.props.matchWorlds, nextProps.matchWorlds);
+        const newData      = (newGuilds || newDetails || newWorlds);
 
-        const shouldUpdate = (newLang || newGuilds || newDetails || newWorlds);
+        const shouldUpdate = (newLang || newData);
+
+        // console.log('Tracker::Maps::MapDetails::shouldComponentUpdate()', newRemoteNow, nextProps.remoteNow);
 
         return shouldUpdate;
     }

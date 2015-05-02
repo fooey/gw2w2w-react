@@ -41,10 +41,8 @@ class Timestamp extends React.Component {
             return null;
         }
         else {
-            const timestampHtml = moment((this.props.timestamp) * 1000).format('hh:mm:ss');
-
             return <div className="objective-timestamp">
-                {timestampHtml}
+                {moment((this.props.timestamp) * 1000).format('hh:mm:ss')}
             </div>;
         }
     }

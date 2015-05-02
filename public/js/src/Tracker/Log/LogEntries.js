@@ -33,6 +33,7 @@ const defaultProps ={
 const propTypes = {
     lang               : React.PropTypes.instanceOf(Immutable.Map).isRequired,
     guilds             : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    eventHistory       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
 
     triggerNotification: React.PropTypes.bool.isRequired,
     mapFilter          : React.PropTypes.string.isRequired,
@@ -42,12 +43,18 @@ const propTypes = {
 class LogEntries extends React.Component {
     shouldComponentUpdate(nextProps) {
         const newLang         = !Immutable.is(this.props.lang, nextProps.lang);
+
         const newGuilds       = !Immutable.is(this.props.guilds, nextProps.guilds);
+        const newEvents       = !Immutable.is(this.props.eventHistory, nextProps.eventHistory);
+        const newData         = (newGuilds || newEvents);
 
         const newTriggerState = !Immutable.is(this.props.triggerNotification, nextProps.triggerNotification);
         const newFilterState  = !Immutable.is(this.props.mapFilter, nextProps.mapFilter) || !Immutable.is(this.props.eventFilter, nextProps.eventFilter);
+        const newOptions      = (newTriggerState || newFilterState);
 
-        const shouldUpdate    = (newLang || newGuilds || newTriggerState || newFilterState);
+        const shouldUpdate    = (newLang || newData || newOptions);
+
+        // console.log('Tracker::LogEntries::shouldComponentUpdate()', shouldUpdate, newData, newOptions);
 
         return shouldUpdate;
     }

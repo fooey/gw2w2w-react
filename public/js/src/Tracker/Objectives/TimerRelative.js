@@ -2,6 +2,15 @@
 
 /*
 *
+*   THE CONTENT OF COMPONENT IS MANAGED EXTERNALLY
+*   lib.trackerTimers IS INITIALIZED IN Tracker.componentDidMount();
+*
+*/
+
+
+
+/*
+*
 * Dependencies
 *
 */
@@ -9,9 +18,8 @@
 const React     = require('react');
 const Immutable = require('Immutable');
 
-const moment    = require('moment');
 
-
+const spinner   =  <i className="fa fa-spinner fa-spin"></i>;
 
 
 
@@ -42,9 +50,10 @@ class TimerRelative extends React.Component {
         }
         else {
             return <div className="objective-relative">
-                <span className="timer relative" data-timestamp={this.props.timestamp}>
-                    {moment(this.props.timestamp * 1000).twitterShort()}
-                </span>
+                <span
+                    className="timer relative"
+                    data-timestamp={this.props.timestamp}
+                >{spinner}</span>
             </div>;
         }
     }

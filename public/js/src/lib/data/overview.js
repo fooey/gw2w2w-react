@@ -71,6 +71,18 @@ class OverviewDataProvider {
 
 
 
+    __setDataTimeout() {
+        const interval = getInterval();
+        // console.log('lib::data::overview::__setDataTimeout()', interval);
+
+        this.__timeouts.matchData = setTimeout(
+            this.__getData.bind(this),
+            interval
+        );
+    }
+
+
+
     __onMatchData(err, data) {
         // console.log('lib::data::overview::__onMatchData()', data);
 
@@ -85,18 +97,6 @@ class OverviewDataProvider {
         }
 
         this.__setDataTimeout();
-    }
-
-
-
-    __setDataTimeout() {
-        const interval = getInterval();
-        // console.log('lib::data::overview::__setDataTimeout()', interval);
-
-        this.__timeouts.matchData = setTimeout(
-            this.__getData.bind(this),
-            interval
-        );
     }
 }
 

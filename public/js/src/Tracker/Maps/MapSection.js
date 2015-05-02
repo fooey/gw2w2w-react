@@ -51,19 +51,25 @@ const objectiveCols = {
 */
 
 const propTypes = {
-    lang      : React.PropTypes.object.isRequired,
+    lang      : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+
+    details   : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    guilds    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
     mapSection: React.PropTypes.object.isRequired,
-    guilds    : React.PropTypes.object.isRequired,
-    details   : React.PropTypes.object.isRequired,
+
 };
 
 class MapSection extends React.Component {
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
+
         const newGuilds    = !Immutable.is(this.props.guilds, nextProps.guilds);
         const newDetails   = !Immutable.is(this.props.details, nextProps.details);
+        const newData      = (newGuilds || newDetails);
 
-        const shouldUpdate = (newLang || newGuilds || newDetails);
+        const shouldUpdate = (newLang || newData);
+
+        // console.log('Tracker::Maps::MapSection::shouldComponentUpdate()', newRemoteNow, nextProps.remoteNow);
 
         return shouldUpdate;
     }
@@ -90,8 +96,8 @@ class MapSection extends React.Component {
                     return (
                         <li key={objectiveId} id={'objective-' + objectiveId}>
                             <Objective
-                                lang        = {this.props.lang}
                                 cols        = {objectiveCols}
+                                lang        = {this.props.lang}
 
                                 objectiveId = {objectiveId}
                                 worldColor  = {owner.get('world')}

@@ -1,54 +1,64 @@
 "use strict";
 
-const _     = require('lodash');
-const async = require('async');
+const _      = require('lodash');
+const async  = require('async');
+const moment = require('moment');
 
 
 
 
+const buffTime     = 5 * 60 * 1000;
+const highliteTime = 10 * 1000;
 
 
 
-function update(now, timeOffset) {
+function update(remoteOffset=0, cb=_.noop) {
+    const timeLocal = Date.now();
+    const timeRemote = timeLocal - remoteOffset;
+
+    // console.log('update', remoteOffset, timeLocal, timeRemote);
+
     let $timers     = $('.timer');
     let $countdowns = $timers.filter('.countdown');
     let $relatives  = $timers.filter('.relative');
 
     async.parallel([
-        updateRelativeTimers.bind(null, $relatives, timeOffset),
-        updateCountdownTimers.bind(null, $countdowns, now),
-    ], _.noop);
+        updateRelativeTimers.bind(null, $relatives, remoteOffset),
+        updateCountdownTimers.bind(null, $countdowns, timeRemote),
+    ], cb);
 }
 
 
 
-function updateRelativeTimers(relatives, timeOffset, cb) {
+function updateRelativeTimers(relatives, offset, cb) {
     async.each(
         relatives,
-        updateRelativeTimeNode.bind(null, timeOffset),
+        updateRelativeTimeNode.bind(null, offset),
         cb
     );
 }
 
 
 
-function updateCountdownTimers(countdowns, now, cb) {
+function updateCountdownTimers(countdowns, timeRemote, cb) {
     async.each(
         countdowns,
-        updateCountdownTimerNode.bind(null, now),
+        updateCountdownTimerNode.bind(null, timeRemote),
         cb
     );
 }
 
 
 
-function updateRelativeTimeNode(timeOffset, el, next) {
-    let $el = $(el);
+function updateRelativeTimeNode(offset, el, next) {
+    const $el = $(el);
 
     const timestamp         = _.parseInt($el.attr('data-timestamp'));
-    const offsetTimestamp   = timestamp + timeOffset;
-    const timestampMoment   = moment(offsetTimestamp * 1000);
+    const offsetTimestamp   = (timestamp * 1000) + offset;
+    const timestampMoment   = moment(offsetTimestamp);
     const timestampRelative = timestampMoment.twitterShort();
+
+    // console.log(offset, $el, timestamp, offsetTimestamp, timestampMoment);
 
     $el.text(timestampRelative);
 
@@ -57,40 +67,40 @@ function updateRelativeTimeNode(timeOffset, el, next) {
 
 
 
-function updateCountdownTimerNode(now, el, next) {
-    let $el = $(el);
+function updateCountdownTimerNode(timeRemote, el, next) {
+    const $el = $(el);
 
-    const dataExpires  = $el.attr('data-expires');
-    const expires      = _.parseInt(dataExpires);
-    const secRemaining = (expires - now);
-    const secElapsed   = 300 - secRemaining;
-
-
-    const highliteTime       = 10;
-    const isVisible          = expires + highliteTime >= now;
-    const isExpired          = expires < now;
-    const isActive           = !isExpired;
-    const isTimerHighlighted = (secRemaining <= Math.abs(highliteTime));
-    const isTimerFresh       = (secElapsed <= highliteTime);
+    const timestamp   = _.parseInt($el.attr('data-timestamp')) * 1000;
+    const expires     = timestamp + buffTime;
+    const msRemaining = expires - timeRemote;
+    const msElapsed   = buffTime - msRemaining;
 
 
-    const timerText = (isActive) ? moment(secRemaining * 1000).format('m:ss') : '0:00';
+    const isVisible     = expires + highliteTime >= timeRemote;
+    const isExpired     = expires < timeRemote;
+    const isActive      = !isExpired;
+    const isHighlighted = (msRemaining <= Math.abs(highliteTime));
+    const isFresh       = (msElapsed <= highliteTime);
+
+
 
 
     if (isVisible) {
-        let $objective        = $el.closest('.objective');
-        let hasClassHighlight = $el.hasClass('highlight');
-        let hasClassFresh     = $objective.hasClass('fresh');
+        const timerText = (isActive) ? moment(msRemaining).format('m:ss') : '0:00';
 
-        if (isTimerHighlighted && !hasClassHighlight) {
-            $el.addClass('highlight');
-        } else if (!isTimerHighlighted && hasClassHighlight) {
-            $el.removeClass('highlight');
+        const $objective        = $el.closest('.objective');
+        const hasClassHighlight = $objective.hasClass('highlight');
+        const hasClassFresh     = $objective.hasClass('fresh');
+
+        if (isHighlighted && !hasClassHighlight) {
+            $objective.addClass('highlight');
+        } else if (!isHighlighted && hasClassHighlight) {
+            $objective.removeClass('highlight');
         }
 
-        if (isTimerFresh && !hasClassFresh) {
+        if (isFresh && !hasClassFresh) {
             $objective.addClass('fresh');
-        } else if (!isTimerFresh && hasClassFresh) {
+        } else if (!isFresh && hasClassFresh) {
             $objective.removeClass('fresh');
         }
 

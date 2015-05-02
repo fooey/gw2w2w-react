@@ -32,6 +32,7 @@ const LogEntries   = require('./LogEntries');
 
 const propTypes = {
     lang   : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+
     details: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     guilds : React.PropTypes.instanceOf(Immutable.Map).isRequired,
 };
@@ -51,13 +52,18 @@ class Log extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         const newLang        = !Immutable.is(this.props.lang, nextProps.lang);
+
         const newGuilds      = !Immutable.is(this.props.guilds, nextProps.guilds);
         const newHistory     = !Immutable.is(this.props.details.get('history'), nextProps.details.get('history'));
+        const newData        = (newGuilds || newHistory);
 
         const newMapFilter   = !Immutable.is(this.state.mapFilter, nextState.mapFilter);
         const newEventFilter = !Immutable.is(this.state.eventFilter, nextState.eventFilter);
+        const newFilters     = (newMapFilter || newEventFilter);
 
-        const shouldUpdate   = (newLang || newGuilds || newHistory || newMapFilter || newEventFilter);
+        const shouldUpdate   = (newLang || newData || newFilters);
+
+        // console.log('Tracker::Logs::shouldComponentUpdate()', shouldUpdate, newData, newFilters);
 
         return shouldUpdate;
     }
