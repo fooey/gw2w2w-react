@@ -80,33 +80,33 @@ class MapSection extends React.Component {
         const claimers      = this.props.details.getIn(['objectives', 'claimers']);
         const sectionClass  = getSectionClass(this.props.mapMeta.get('key'), this.props.mapSection.get('label'));
 
-
         return (
             <ul className={`list-unstyled ${sectionClass}`}>
                 {mapObjectives.map(objectiveId => {
-                    const owner        = owners.get(objectiveId.toString());
-                    const claimer      = claimers.get(objectiveId.toString());
 
-                    const guildId      = (claimer) ? claimer.guild : null;
+                    const stringId     = objectiveId.toString();
+                    const owner        = owners.get(stringId);
+                    const claimer      = claimers.get(stringId);
+
+                    const guildId      = (claimer) ? claimer.get('guild') : null;
                     const hasClaimer   = !!guildId;
 
                     const hasGuildData = hasClaimer && this.props.guilds.has(guildId);
                     const guild        = hasGuildData ? this.props.guilds.get(guildId) : null;
 
-                    return (
-                        <li key={objectiveId} id={'objective-' + objectiveId}>
-                            <Objective
-                                cols        = {objectiveCols}
-                                lang        = {this.props.lang}
 
-                                objectiveId = {objectiveId}
-                                worldColor  = {owner.get('world')}
-                                timestamp   = {owner.get('timestamp')}
-                                guildId     = {guildId}
-                                guild       = {guild}
-                            />
-                        </li>
-                    );
+                    return <li key={objectiveId} id={'objective-' + objectiveId}>
+                        <Objective
+                            cols        = {objectiveCols}
+                            lang        = {this.props.lang}
+
+                            objectiveId = {objectiveId}
+                            worldColor  = {owner.get('world')}
+                            timestamp   = {owner.get('timestamp')}
+                            guildId     = {guildId}
+                            guild       = {guild}
+                        />
+                    </li>;
 
                 })}
             </ul>

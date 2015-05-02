@@ -138,8 +138,8 @@ class Objective extends React.Component {
 
                 <div className="objective-state">
                     <Guild
-                        showName = {cols.guildName}
-                        showTag  = {cols.guildTag}
+                        showName = {!!cols.guildName}
+                        showTag  = {!!cols.guildTag}
                         guildId  = {this.props.guildId}
                         guild    = {this.props.guild}
                     />

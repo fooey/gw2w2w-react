@@ -52,7 +52,7 @@ class TimerCountdown extends React.Component {
             return <span
                 className='timer countdown inactive'
                 data-timestamp={this.props.timestamp}
-            >{spinner}</span>;
+            ></span>;
         }
     }
 }
