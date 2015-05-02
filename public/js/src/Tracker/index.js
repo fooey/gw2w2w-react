@@ -213,13 +213,12 @@ class Tracker extends React.Component {
 
 
 
+
     /*
     *
     *   Data Listeners
     *
     */
-
-
 
     updateTimers(cb=_.noop) {
         if (this.__mounted) {

@@ -40,9 +40,6 @@ $(function() {
 
 
 
-
-
-
 /*
 *
 * Routes
@@ -50,39 +47,14 @@ $(function() {
 */
 
 function attachRoutes() {
-    const domMounts = {
-        navLangs: document.getElementById('nav-langs'),
-        content : document.getElementById('content'),
-    };
-
-
-    page('/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)?', function(ctx) {
-        const langSlug  = ctx.params.langSlug;
-        const lang      = STATIC.langs.get(langSlug);
-
-        const worldSlug = ctx.params.worldSlug;
-        const world     = getWorldFromSlug(langSlug, worldSlug);
-
-
-        let App   = Overview;
-        let props = {lang};
-
-        if (world && Immutable.Map.isMap(world) && !world.isEmpty()) {
-            App = Tracker;
-            props.world = world;
-        }
-
-
-        React.render(<Langs {...props} />, domMounts.navLangs);
-        React.render(<App {...props} />, domMounts.content);
-    });
-
-
 
     // redirect '/' to '/en'
     page('/', redirectPage.bind(null, '/en'));
 
 
+    page('/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)?', function(ctx) {
+        React.render(<App {...ctx.params} />, document.getElementById('react-app'));
+    });
 
 
     page.start({
@@ -95,6 +67,51 @@ function attachRoutes() {
 }
 
 
+
+
+
+/*
+*
+* App Container
+*
+*/
+
+class App extends React.Component {
+    render() {
+        const langSlug  = this.props.langSlug;
+        const worldSlug = this.props.worldSlug;
+
+        const lang      = STATIC.langs.get(langSlug);
+        const world     = getWorldFromSlug(langSlug, worldSlug);
+
+        const hasWorld  = world && Immutable.Map.isMap(world) && !world.isEmpty();
+
+        const Handler   = (hasWorld) ? Tracker : Overview;
+
+        // console.log('Langs::render()', this.props.lang.toJS());
+
+        const navbarHeader = <div className="navbar-header">
+            <a className="navbar-brand" href="/">
+                <img src="/img/logo/logo-96x36.png" />
+            </a>
+        </div>;
+
+        return <div>
+            <nav className="navbar navbar-default">
+                <div className="container">
+                    {navbarHeader}
+                    <div id="nav-langs" className="pull-right">
+                        <Langs lang={lang} world={world} />
+                    </div>
+                </div>
+            </nav>
+
+            <div id="content" className="container">
+                <Handler lang={lang} world={world} />
+            </div>
+        </div>;
+    }
+}
 
 
 
