@@ -1,4 +1,5 @@
-"use strict";
+'use strict';
+
 const fs = require('fs');
 const path = require('path');
 
@@ -18,7 +19,7 @@ module.exports = function(app, express) {
         const fullPath = path.join(process.cwd(), filePath);
         const hash     = '~' + fs.statSync(fullPath).mtime.getTime().toString(16) + '~';
 
-        var pathname   = path.dirname(urlPath)
+        const pathname = path.dirname(urlPath)
             + '/' + path.basename(urlPath, path.extname(urlPath))
             + '.' + hash + path.extname(urlPath);
 
@@ -32,7 +33,7 @@ module.exports = function(app, express) {
     *
     */
 
-    var router = express.Router();
+    let router = express.Router();
 
     router.get('/:langSlug(en|de|es|fr)?', function(req, res) {
         res.render('index', {staticCacheBusted});

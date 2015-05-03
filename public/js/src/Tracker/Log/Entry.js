@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
 *
@@ -9,7 +9,7 @@
 const React     = require('react');
 const Immutable = require('Immutable');
 
-const $         = require('jQuery');
+// const $         = require('jQuery');
 const _         = require('lodash');
 
 const STATIC    = require('gw2w2w-static');

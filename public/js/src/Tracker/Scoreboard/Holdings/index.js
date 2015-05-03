@@ -1,5 +1,4 @@
-"use strict";
-
+'use strict';
 
 /*
 *
@@ -48,7 +47,7 @@ class Holdings extends React.Component {
                     key          = {typeIndex}
                     color        = {this.props.color}
                     typeQuantity = {typeQuantity}
-                    typeId       = {(typeIndex+1).toString()}
+                    typeId       = {(typeIndex + 1).toString()}
                 />
             )}
         </ul>;

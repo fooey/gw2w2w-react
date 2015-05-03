@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
 *
@@ -56,11 +56,11 @@ class Overview extends React.Component {
 
         this.state = {
             regions: Immutable.fromJS({
-                '1': {label: 'NA', id: '1'},
-                '2': {label: 'EU', id: '2'}
+                1: {label: 'NA', id: '1'},
+                2: {label: 'EU', id: '2'},
             }),
-            matchesByRegion: Immutable.fromJS({'1': {}, '2': {}}),
-            worldsByRegion: this.dao.getWorldsByRegion(props.lang) //Immutable.fromJS({'1': {}, '2': {}})
+            matchesByRegion: Immutable.fromJS({1: {}, 2: {}}),
+            worldsByRegion : this.dao.getWorldsByRegion(props.lang), // Immutable.fromJS({'1': {}, '2': {}})
         };
     }
 
@@ -147,7 +147,7 @@ class Overview extends React.Component {
         const newMatchesByRegion = this.dao.getMatchesByRegion(matchData);
 
         this.setState(state => ({
-            matchesByRegion: state.matchesByRegion.mergeDeep(newMatchesByRegion)
+            matchesByRegion: state.matchesByRegion.mergeDeep(newMatchesByRegion),
         }));
     }
 }

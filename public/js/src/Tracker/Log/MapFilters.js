@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
 *
@@ -21,7 +21,7 @@ const STATIC = require('gw2w2w-static');
 *
 */
 
-const propTypes ={
+const propTypes = {
     mapFilter: React.PropTypes.string.isRequired,
     setWorld : React.PropTypes.func.isRequired,
 };

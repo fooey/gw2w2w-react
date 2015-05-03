@@ -1,5 +1,4 @@
-"use strict";
-
+'use strict';
 
 /*
 *
@@ -18,7 +17,6 @@ const _             = require('lodash');
 *   libs
 */
 
-const api           = require('lib/api');
 const libDate       = require('lib/date');
 const trackerTimers = require('lib/trackerTimers');
 
@@ -29,8 +27,6 @@ const trackerTimers = require('lib/trackerTimers');
 */
 
 const DAO           = require('lib/data/tracker');
-const GuildsLib     = require('lib/data/tracker/guilds');
-const STATIC        = require('lib/static');
 
 
 
@@ -99,7 +95,7 @@ class Tracker extends React.Component {
                 offset : 0,
             },
 
-            match      : Immutable.Map({lastmod:0}),
+            match      : Immutable.Map({lastmod: 0}),
             matchWorlds: Immutable.List(),
             details    : Immutable.Map(),
             claimEvents: Immutable.List(),
@@ -155,7 +151,7 @@ class Tracker extends React.Component {
         setPageTitle(this.props.lang, this.props.world);
 
         this.setState({
-            matchWorlds: this.dao.getMatchWorlds(nextProps.lang, this.state.match)
+            matchWorlds: this.dao.getMatchWorlds(nextProps.lang, this.state.match),
         });
     }
 
@@ -274,7 +270,7 @@ class Tracker extends React.Component {
 
             if (this.state.matchWorlds.isEmpty()) {
                 this.setState({
-                    matchWorlds: this.dao.getMatchWorlds(this.props.lang, this.state.match)
+                    matchWorlds: this.dao.getMatchWorlds(this.props.lang, this.state.match),
                 });
                 // setImmediate(setMatchWorlds.bind(component, props.lang));
             }
@@ -290,7 +286,7 @@ class Tracker extends React.Component {
         }
 
         this.setState(state => ({
-            guilds: state.guilds.mergeIn([_guildId], guild)
+            guilds: state.guilds.mergeIn([_guildId], guild),
         }));
     }
 

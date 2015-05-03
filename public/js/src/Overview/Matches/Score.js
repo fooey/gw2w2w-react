@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 
 /*
@@ -22,11 +22,11 @@ const numeral = require('numeral');
 *
 */
 
-const propTypes ={
+const propTypes = {
     score: React.PropTypes.number.isRequired,
 };
 
-const defaultProps ={
+const defaultProps = {
     score: 0,
 };
 
@@ -47,7 +47,7 @@ class Score extends React.Component {
 
 
 
-    componentWillReceiveProps(nextProps){
+    componentWillReceiveProps(nextProps) {
         const props = this.props;
 
         this.setState({diff: nextProps.score - props.score});
@@ -58,7 +58,7 @@ class Score extends React.Component {
     componentDidUpdate() {
         const state = this.state;
 
-        if(state.diff !== 0) {
+        if (state.diff !== 0) {
             animateScoreDiff(this.state.$diffNode);
         }
     }
@@ -68,7 +68,7 @@ class Score extends React.Component {
     componentDidMount() {
         // cache jQuery object to state
         this.setState({
-            $diffNode: $(this.refs.diff.getDOMNode())
+            $diffNode: $(this.refs.diff.getDOMNode()),
         });
     }
 

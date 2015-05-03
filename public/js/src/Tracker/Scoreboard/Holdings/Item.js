@@ -1,5 +1,4 @@
-"use strict";
-
+'use strict';
 
 /*
 *
@@ -38,7 +37,7 @@ class HoldingsItem extends React.Component {
         super(props);
 
         this.state = {
-            oType: STATIC.objective_types.get(props.typeId)
+            oType: STATIC.objective_types.get(props.typeId),
         };
     }
 

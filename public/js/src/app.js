@@ -1,5 +1,6 @@
-"use strict";
-require("babel/polyfill");
+'use strict';
+
+require('babel/polyfill');
 
 /*
 *
@@ -48,12 +49,14 @@ $(function() {
 
 function attachRoutes() {
 
-    // redirect '/' to '/en'
+    // Redirect '/' to '/en'
     page('/', redirectPage.bind(null, '/en'));
 
-
     page('/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)?', function(ctx) {
-        React.render(<App {...ctx.params} />, document.getElementById('react-app'));
+        React.render(
+            <App {...ctx.params} />,
+            document.getElementById('react-app')
+        );
     });
 
 
@@ -62,7 +65,7 @@ function attachRoutes() {
         popstate: true,
         dispatch: true,
         hashbang: false,
-        decodeURLComponents : true,
+        decodeURLComponents: true,
     });
 }
 
@@ -84,7 +87,7 @@ class App extends React.Component {
         const lang      = STATIC.langs.get(langSlug);
         const world     = getWorldFromSlug(langSlug, worldSlug);
 
-        const hasWorld  = world && Immutable.Map.isMap(world) && !world.isEmpty();
+        const hasWorld  = (world && Immutable.Map.isMap(world) && !world.isEmpty());
 
         const Handler   = (hasWorld) ? Tracker : Overview;
 

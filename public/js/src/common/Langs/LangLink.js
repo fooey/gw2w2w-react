@@ -1,5 +1,4 @@
-"use strict";
-
+'use strict';
 
 /*
  *
@@ -36,7 +35,8 @@ class LangLink extends React.Component {
 
         return <li className = {listClass} title = {title}>
             <a href = {link}>{label}</a>
-        </li>; }
+        </li>;
+    }
 }
 
 

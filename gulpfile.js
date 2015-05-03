@@ -1,4 +1,7 @@
-"use strict";
+'use strict';
+
+// jscs:disable esnext
+// jscs:disable disallowKeywords
 
 var gulp        = require('gulp');
 var gutil       = require('gulp-util');
@@ -11,16 +14,16 @@ var watchify    = require('watchify');
 
 // var notify   = require('gulp-notify');
 var rename      = require('gulp-rename');
-var replace     = require('gulp-replace');
+// var replace     = require('gulp-replace');
 var sourcemaps  = require('gulp-sourcemaps');
 
 var vinylBuffer = require('vinyl-buffer');
-var vinylMap    = require('vinyl-map');
+// var vinylMap    = require('vinyl-map');
 var vinylSource = require('vinyl-source-stream');
 
 
 var browserify  = require('browserify');
-var babelify    = require('babelify');//.configure({experimental: true});
+var babelify    = require('babelify'); // .configure({experimental: true});
 var uglify      = require('gulp-uglify');
 
 
@@ -79,7 +82,7 @@ gulp.task('compile-css', [], function() {
     var postcssCore = [
         cssAssets({
             basePath: './public/',
-            cachebuster: function (filePath, urlPathname) {
+            cachebuster: function(filePath, urlPathname) {
                 var fs = require('fs');
                 var path = require('path');
                 var hash = fs.statSync(filePath).mtime.getTime().toString(16);
@@ -89,9 +92,9 @@ gulp.task('compile-css', [], function() {
 
                 // console.log(hash, filePath, pathname);
                 return {
-                    pathname: pathname
+                    pathname: pathname,
                 };
-            }
+            },
         }),
         autoprefixer({browsers: ['last 2 versions', 'ie >= 8']}),
         postcssFocus(),
@@ -120,7 +123,7 @@ gulp.task('css-compress', [], function() {
     var dest = paths.css.dist;
 
     var postcssProd = [
-        cssnano({urls:false}),
+        cssnano({urls: false}),
         csswring({removeAllComments: true}),
         postcssLog(),
     ];
@@ -203,11 +206,11 @@ function logEvent(event, data) {
 
 var uglifier = function() {
     return uglify({
-    // report: 'min',
+        // report: 'min',
         stripBanners: true,
         mangle      : true,
         compress: {
-            unsafe: true,
+            unsafe      : true,
             drop_console: true,
         },
     }).on('error', gutil.log.bind(gutil, 'Uglify Error'));
@@ -233,7 +236,7 @@ var compileJS = function() {
 
         .pipe(gulp.dest(paths.js.dist)) // minified app.min.js
 
-        .pipe(livereload())
+        .pipe(livereload());
 };
 
 watchifyBundler.on('update', compileJS);
@@ -278,8 +281,8 @@ gulp.task('watch', [], function(cb) {
 
 function nodemon(cb, options) {
     var config = _.merge({
-        "execMap": {
-            "js": "iojs",
+        execMap: {
+            js: 'iojs',
         },
         script: './server.js',
         ext: 'js,jade',
@@ -316,24 +319,24 @@ function nodemon(cb, options) {
 }
 
 gulp.task('nodemon', ['compile'], function(cb) {
-    return nodemon(cb,
-        {env: {
+    return nodemon(cb, {
+        env: {
             NODE_ENV: 'development',
-        }}
-    );
+        },
+    });
 });
 
 gulp.task('nodemon-prod', ['compile'], function(cb) {
-    return nodemon(cb,
-        {env: {
+    return nodemon(cb, {
+        env: {
             NODE_ENV: 'production',
             NEW_RELIC_NO_CONFIG_FILE: true,
             NEW_RELIC_LICENSE_KEY: null,
             NEW_RELIC_APP_NAME: ['jasonrushton.com'],
             NEW_RELIC_LOG: 'stdout',
             NEW_RELIC_LOG_LEVEL: 'info',
-        }}
-    );
+        },
+    });
 });
 
 

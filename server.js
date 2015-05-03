@@ -1,4 +1,5 @@
-"use strict";
+'use strict';
+
 require('babel/register');
 
 const nodeEnv      = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';

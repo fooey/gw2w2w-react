@@ -1,11 +1,12 @@
-"use strict";
-var path = require('path');
+'use strict';
+
+const path = require('path');
 
 module.exports = function(express, nodeEnv) {
-    var app = express();
+    let app = express();
 
-    var isDev  = (nodeEnv === 'development');
-    var isProd = !isDev;
+    const isDev  = (nodeEnv === 'development');
+    // const isProd = !isDev;
 
     app.set('env', nodeEnv);
 
@@ -34,9 +35,9 @@ module.exports = function(express, nodeEnv) {
     *
     */
 
-    var morgan       = require('morgan');
-    var compression  = require('compression');
-    var errorhandler = require('errorhandler');
+    const morgan       = require('morgan');
+    const compression  = require('compression');
+    const errorhandler = require('errorhandler');
 
 
     if (isDev) {

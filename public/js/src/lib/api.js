@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const gw2api = require('gw2api');
 
@@ -20,7 +20,7 @@ function getMatches(callback) {
 
 function getGuildDetails(guildId, callback) {
     gw2api.getGuildDetails({
-        guild_id: guildId
+        guild_id: guildId,
     }, callback);
 }
 
@@ -38,6 +38,6 @@ function getMatchDetailsByWorld(worldSlug, callback) {
     //  3000
     // );
     gw2api.getMatchDetailsState({
-        world_slug: worldSlug
+        world_slug: worldSlug,
     }, callback);
 }

@@ -1,5 +1,4 @@
-"use strict";
-
+'use strict';
 
 /*
  *
@@ -60,8 +59,8 @@ class LibGuilds {
     getEventsByType(matchDetails, eventType) {
         return matchDetails
             .get('history')
-            .filter(entry => entry.get('type') === eventType)
-            // .sortBy(entry => -entry.get('timestamp'));
+            .filter(entry => entry.get('type') === eventType);
+        // .sortBy(entry => -entry.get('timestamp'));
     }
 
 
@@ -113,7 +112,7 @@ class LibGuilds {
             // get from remote
             this.__asyncGuildQueue.push({
                 guildId,
-                listener
+                listener,
             });
 
         });

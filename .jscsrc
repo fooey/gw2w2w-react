@@ -1,0 +1,22 @@
+{
+    "preset": "node-style-guide",
+    "esprima": "esprima-fb",
+    "fileExtensions": [".js", ".jsx"],
+    "excludeFiles": ["node_modules/**", "**/dist/**"],
+    "esnext": true,
+
+    "disallowKeywords": ["var", "with"],
+    "disallowKeywordsOnNewLine": [],
+    "disallowMixedSpacesAndTabs": true,
+    "disallowPaddingNewLinesAfterUseStrict": null,
+    "disallowPaddingNewlinesInBlocks": null,
+    "disallowSpaceAfterObjectKeys": null,
+
+    "requireCapitalizedComments": null,
+    "requirePaddingNewLinesAfterUseStrict": true,
+    "requireCamelCaseOrUpperCaseIdentifiers": null,
+
+    "maximumLineLength": null,
+    "validateLineBreaks": null,
+    "validateIndentation": 4
+}

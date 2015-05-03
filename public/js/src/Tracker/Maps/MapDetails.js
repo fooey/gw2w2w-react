@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
 *
@@ -113,7 +113,7 @@ function onTitleClick(e) {
     let hasFocus = $map.hasClass('map-focus');
 
 
-    if(!hasFocus) {
+    if (!hasFocus) {
         $map
             .addClass('map-focus')
             .removeClass('map-blur');

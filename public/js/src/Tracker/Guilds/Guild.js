@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
 *
@@ -24,8 +24,8 @@ const Claims    = require('./Claims');
 * Component Globals
 */
 
-const loadingHtml = <h1 style={{whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"}}>
-    <i className="fa fa-spinner fa-spin" />
+const loadingHtml = <h1 style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+    <i className='fa fa-spinner fa-spin' />
     {' Loading...'}
 </h1>;
 
@@ -70,18 +70,18 @@ class Guild extends React.Component {
 
 
         return (
-            <div className="guild" id={guildId}>
-                <div className="row">
+            <div className='guild' id={guildId}>
+                <div className='row'>
 
-                    <div className="col-sm-4">
-                        <a href={guildLink} target="_blank">
+                    <div className='col-sm-4'>
+                        <a href={guildLink} target='_blank'>
                             <Emblem key={guildId} guildName={guildName} size={256} />
                         </a>
                     </div>
 
-                    <div className="col-sm-20">
+                    <div className='col-sm-20'>
                         {(dataReady)
-                            ? <h1><a href={guildLink} target="_blank">
+                            ? <h1><a href={guildLink} target='_blank'>
                                 {guildName} [{guildTag}]
                             </a></h1>
                             : <div>{loadingHtml}<br />{guildId}</div>

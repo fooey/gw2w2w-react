@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const Immutable = require('Immutable');
 const _         = require('lodash');
@@ -100,7 +100,7 @@ class OverviewDataProvider {
 
 
     __rescheduleDataUpdate() {
-        const refreshTime = _.random(1000*2, 1000*4);
+        const refreshTime = _.random(1000 * 2, 1000 * 4);
 
         this.__timeouts.data = setTimeout(this.__getData.bind(this), refreshTime);
     }

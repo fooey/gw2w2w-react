@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
 *
@@ -47,7 +47,7 @@ const objectiveCols = {
 *
 */
 
-const propTypes ={
+const propTypes = {
     lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
     guild: React.PropTypes.instanceOf(Immutable.Map).isRequired,
 };

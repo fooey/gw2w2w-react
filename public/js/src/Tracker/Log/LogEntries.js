@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
 *
@@ -26,7 +26,7 @@ const Entry     = require('./Entry');
 *
 */
 
-const defaultProps ={
+const defaultProps = {
     guilds: {},
 };
 

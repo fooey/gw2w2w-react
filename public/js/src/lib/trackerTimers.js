@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const _      = require('lodash');
 const async  = require('async');
@@ -124,6 +124,4 @@ function updateCountdownTimerNode(timeRemote, el, next) {
 
 
 
-module.exports = {
-    update
-};
+module.exports = {update};

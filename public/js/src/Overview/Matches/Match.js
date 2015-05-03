@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 
 /*
@@ -34,8 +34,8 @@ const propTypes = {
 
 class Match extends React.Component {
     shouldComponentUpdate(nextProps) {
-        const newScores    = !Immutable.is(this.props.match.get("scores"), nextProps.match.get("scores"));
-        const newMatch     = !Immutable.is(this.props.match.get("startTime"), nextProps.match.get("startTime"));
+        const newScores    = !Immutable.is(this.props.match.get('scores'), nextProps.match.get('scores'));
+        const newMatch     = !Immutable.is(this.props.match.get('startTime'), nextProps.match.get('startTime'));
         const newWorlds    = !Immutable.is(this.props.worlds, nextProps.worlds);
         const shouldUpdate = (newScores || newMatch || newWorlds);
 

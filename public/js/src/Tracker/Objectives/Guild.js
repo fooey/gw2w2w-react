@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
 *
@@ -32,7 +32,6 @@ class Guild extends React.Component {
     shouldComponentUpdate(nextProps) {
         const newGuild     = !Immutable.is(this.props.guildId, nextProps.guildId);
         const newGuildData = !Immutable.is(this.props.guild, nextProps.guild);
-        const newShow      = !Immutable.is(this.props.showName, nextProps.showName) || !Immutable.is(this.props.showTag, nextProps.showTag);
         const shouldUpdate = (newGuild || newGuildData);
 
         return shouldUpdate;

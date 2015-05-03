@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const Immutable = require('Immutable');
 const _         = require('lodash');
@@ -54,7 +54,7 @@ class OverviewDataProvider {
     getMatchesByRegion(matchData) {
         return Immutable
             .Seq(matchData)
-            .groupBy(match => match.get("region").toString());
+            .groupBy(match => match.get('region').toString());
     }
 
 
@@ -114,7 +114,8 @@ function getWorldByLang(lang, world) {
     const link        = getWorldLink(langSlug, worldByLang);
 
     return worldByLang.merge({
-        link, region
+        link,
+        region,
     });
 }
 

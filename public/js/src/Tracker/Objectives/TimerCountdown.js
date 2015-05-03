@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
 *
@@ -19,7 +19,7 @@ const React     = require('react');
 const Immutable = require('Immutable');
 
 
-const spinner   =  <i className="fa fa-spinner fa-spin"></i>;
+// const spinner   =  <i className='fa fa-spinner fa-spin'></i>;
 
 
 /*
