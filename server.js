@@ -2,15 +2,19 @@
 
 require('babel/register');
 
+
+
 const nodeEnv      = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
 const serverPort   = process.env.PORT ? process.env.PORT : 3000;
+
+
 
 GLOBAL.timestamp   = Date.now();
 // GLOBAL.versionHash = "~" + require('shortid').generate() + "~";
 
 
 
-if (process.env.NODE_ENV !== 'development') {
+if (nodeEnv !== 'development') {
     require('newrelic');
 }
 

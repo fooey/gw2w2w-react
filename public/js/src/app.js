@@ -80,6 +80,10 @@ function attachRoutes() {
 */
 
 class App extends React.Component {
+    componentDidMount() {
+        console.log('App Started!');
+    }
+
     render() {
         const langSlug  = this.props.langSlug;
         const worldSlug = this.props.worldSlug;
