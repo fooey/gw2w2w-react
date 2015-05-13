@@ -33,7 +33,7 @@ const defaultProps = {
 const propTypes = {
     lang               : React.PropTypes.instanceOf(Immutable.Map).isRequired,
     guilds             : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    eventHistory       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    eventHistory       : React.PropTypes.instanceOf(Immutable.List).isRequired,
 
     triggerNotification: React.PropTypes.bool.isRequired,
     mapFilter          : React.PropTypes.string.isRequired,
