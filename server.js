@@ -10,11 +10,10 @@ const serverPort   = process.env.PORT ? process.env.PORT : 3000;
 
 
 GLOBAL.timestamp   = Date.now();
-// GLOBAL.versionHash = "~" + require('shortid').generate() + "~";
 
 
 
-if (nodeEnv !== 'development') {
+if (nodeEnv !== 'development' && process.env.NEW_RELIC_LICENSE_KEY) {
     require('newrelic');
 }
 

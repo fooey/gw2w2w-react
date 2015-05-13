@@ -272,7 +272,6 @@ class Tracker extends React.Component {
                 this.setState({
                     matchWorlds: this.dao.getMatchWorlds(this.props.lang, this.state.match),
                 });
-                // setImmediate(setMatchWorlds.bind(component, props.lang));
             }
         }
     }

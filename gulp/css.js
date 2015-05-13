@@ -58,7 +58,6 @@ function gulpTasks(gulp, paths) {
             postcssLog(),
         ];
 
-        // var versionHash = "~" + require('shortid').generate() + "~";
 
         var stream = gulp
             .on('error', gutil.log.bind(gutil, 'Less Error'))
@@ -103,7 +102,6 @@ function gulpTasks(gulp, paths) {
         var src  = paths.css.src + '/bootstrap.less';
         var dest = paths.css.dist;
 
-        // var versionHash = "~" + require('shortid').generate() + "~";
 
         var stream = gulp
             .on('error', gutil.log.bind(gutil, 'Less Error'))
