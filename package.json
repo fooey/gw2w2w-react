@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "main": "server.js",
+  "engines": {
+    "iojs": "~2.0.x",
+    "npm": "~2.x"
+  },
   "dependencies": {
     "babel": "^5.3.1",
     "compression": "^1.4.3",
