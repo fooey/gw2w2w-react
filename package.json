@@ -8,7 +8,7 @@
     "npm": "~2.x"
   },
   "dependencies": {
-    "babel": "^5.3.1",
+    "babel": "^5.3.3",
     "compression": "^1.4.3",
     "errorhandler": "^1.3.5",
     "express": "^4.12.3",
@@ -18,7 +18,7 @@
     "morgan": "^1.5.2",
     "newrelic": "^1.18.5",
     "page": "^1.6.3",
-    "react": "^0.13.3",
+    "react": "^0.14.0-alpha1",
     "serve-favicon": "^2.1.7",
     "serve-static": "^1.9.2"
   },
@@ -26,6 +26,7 @@
     "aliasify": "^1.7.2",
     "async": "^0.9.0",
     "autoprefixer-core": "^5.1.11",
+    "babel-core": "^5.3.3",
     "babelify": "^6.1.0",
     "bootstrap": "^3.3.4",
     "bootswatch": "^3.3.4",
