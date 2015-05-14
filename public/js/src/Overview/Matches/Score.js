@@ -68,7 +68,7 @@ class Score extends React.Component {
     componentDidMount() {
         // cache jQuery object to state
         this.setState({
-            $diffNode: $(this.refs.diff.getDOMNode()),
+            $diffNode: $('diff', React.findDOMNode(this)),
         });
     }
 
