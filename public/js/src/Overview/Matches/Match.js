@@ -52,7 +52,7 @@ class Match extends React.Component {
         const worldColors = ['red', 'blue', 'green'];
 
         return <div className="matchContainer">
-            <table className="match">
+            <table className="match"><tbody>
                 {worldColors.map((color, ixColor) => {
                     const worldKey = color + 'Id';
                     const worldId  = props.match.get(worldKey).toString();
@@ -71,7 +71,7 @@ class Match extends React.Component {
                         showPie   = {ixColor === 0}
                     />;
                 })}
-            </table>
+            </tbody></table>
         </div>;
     }
 }
