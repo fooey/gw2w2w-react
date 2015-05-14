@@ -7,7 +7,9 @@ var gutil       = require('gulp-util');
 
 var _           = require('lodash');
 
+var browserify  = require('browserify');
 var watchify    = require('watchify');
+var uglify      = require('gulp-uglify');
 
 var rename      = require('gulp-rename');
 var sourcemaps  = require('gulp-sourcemaps');
@@ -16,9 +18,12 @@ var vinylBuffer = require('vinyl-buffer');
 var vinylSource = require('vinyl-source-stream');
 
 
-var browserify  = require('browserify');
-var babelify    = require('babelify'); // .configure({experimental: true});
-var uglify      = require('gulp-uglify');
+var aliasify    = require('aliasify');
+var shimify     = require('browserify-shim');
+var babelify    = require('babelify').configure({
+    // optional: ["optimisation.react.constantElements"],
+});
+
 
 
 
@@ -36,6 +41,7 @@ function gulpTasks(gulp, paths) {
         bundleExternal: true,
         verbose       : true,
         ignore        : ['request', 'zlib', 'assert', 'buffer', 'util', '_process'],
+        transform     : [babelify, aliasify, shimify],
     });
 
     var browserifyBundler = browserify(browserifyConfig)
@@ -44,11 +50,10 @@ function gulpTasks(gulp, paths) {
         .on('error', gutil.log.bind(gutil, 'Browserify Error'));
 
     var watchifyBundler = watchify(browserifyBundler)
-        .transform(babelify)
         .on('update', logEvent.bind(null, 'update'))
-        // .on('bytes',  logEvent.bind(null, 'bytes '))
-        // .on('time',   logEvent.bind(null, 'time  '))
-        .on('log',    logEvent.bind(null, 'log   '))
+        // .on('bytes', logEvent.bind(null, 'bytes '))
+        // .on('time', logEvent.bind(null, 'time  '))
+        .on('log', logEvent.bind(null, 'log   '))
         .on('error', gutil.log.bind(gutil, 'Watchify Error'));
 
 

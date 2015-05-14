@@ -53,12 +53,6 @@
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.2.1"
   },
-  "browserify": {
-    "transform": [
-      "browserify-shim",
-      "aliasify"
-    ]
-  },
   "aliasify": {
     "aliases": {
       "app": "./public/js/src",
