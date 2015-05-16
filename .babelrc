@@ -1,1 +1,6 @@
-{}
+{
+   "optional": [
+        "optimisation.react.constantElements",
+        "minification.inlineExpressions"
+    ]
+}
