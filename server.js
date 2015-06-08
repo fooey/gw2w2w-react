@@ -3,13 +3,17 @@
 require('babel/register');
 
 
+// FORCE process.cwd() to this files __dirname
+process.chdir(__dirname);
+
+
 
 const nodeEnv      = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
 const serverPort   = process.env.PORT ? process.env.PORT : 3000;
 
 
-
 GLOBAL.timestamp   = Date.now();
+
 
 
 
