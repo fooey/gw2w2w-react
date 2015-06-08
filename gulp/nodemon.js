@@ -23,7 +23,7 @@ function gulpTasks(gulp, livereload) {
                 NODE_ENV: 'production',
                 NEW_RELIC_NO_CONFIG_FILE: true,
                 NEW_RELIC_LICENSE_KEY: null,
-                NEW_RELIC_APP_NAME: ['jasonrushton.com'],
+                NEW_RELIC_APP_NAME: ['gw2w2w.com'],
                 NEW_RELIC_LOG: 'stdout',
                 NEW_RELIC_LOG_LEVEL: 'info',
             },

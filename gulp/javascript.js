@@ -21,7 +21,10 @@ var vinylSource = require('vinyl-source-stream');
 var aliasify    = require('aliasify');
 var shimify     = require('browserify-shim');
 var babelify    = require('babelify').configure({
-    // optional: ["optimisation.react.constantElements"],
+    optional: [
+        'optimisation.react.constantElements',
+        'minification.inlineExpressions',
+    ],
 });
 
 
