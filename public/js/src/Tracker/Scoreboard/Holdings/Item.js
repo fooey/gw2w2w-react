@@ -15,7 +15,7 @@ const STATIC = require('lib/static');
 * React Components
 */
 
-const Sprite = require('common/Icons//Sprite');
+const Sprite = require('common/Icons/Sprite');
 
 
 
