@@ -6,8 +6,8 @@
 *
 */
 
-const React        = require('react');
-const Immutable    = require('Immutable');
+const React     = require('react');
+const Immutable = require('Immutable');
 
 
 /*
@@ -21,8 +21,8 @@ const DAO = require('lib/data/overview');
 *   React Components
 */
 
-const Matches      = require('./Matches');
-const Worlds       = require('./Worlds');
+const Matches = require('./Matches');
+const Worlds  = require('./Worlds');
 
 
 
@@ -34,17 +34,12 @@ const Worlds       = require('./Worlds');
 *
 */
 
-const propTypes = {
-    lang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
-
 class Overview extends React.Component {
+    static propTypes = {
+        lang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    }
 
-    /*
-    *
-    *     React Lifecycle
-    *
-    */
+
 
     constructor(props) {
         super(props);
@@ -94,6 +89,7 @@ class Overview extends React.Component {
     componentWillReceiveProps(nextProps) {
         if (!Immutable.is(nextProps.lang, this.props.lang)) {
             const worldsByRegion = this.dao.getWorldsByRegion(nextProps.lang);
+
             this.setState({worldsByRegion});
 
             setPageTitle(nextProps.lang);
@@ -109,30 +105,36 @@ class Overview extends React.Component {
 
 
     render() {
-        return <div id="overview">
+        return (
+            <div id='overview'>
 
-            <div className="row">{this.state.regions.map((region, regionId) =>
-                <div className="col-sm-12" key={regionId}>
-                    <Matches
-                        region  = {region}
-                        matches = {this.state.matchesByRegion.get(regionId)}
-                        worlds  = {this.state.worldsByRegion.get(regionId)}
-                    />
+                <div className='row'>
+                    {this.state.regions.map((region, regionId) =>
+                        <div className='col-sm-12' key={regionId}>
+                            <Matches
+                                matches = {this.state.matchesByRegion.get(regionId)}
+                                region  = {region}
+                                worlds  = {this.state.worldsByRegion.get(regionId)}
+                            />
+                        </div>
+                    )}
                 </div>
-            )}</div>
 
-            <hr />
+                <hr />
 
-            <div className="row">{this.state.regions.map((region, regionId) =>
-                <div className="col-sm-12" key={regionId}>
-                    <Worlds
-                        region = {region}
-                        worlds = {this.state.worldsByRegion.get(regionId)}
-                    />
+                <div className='row'>
+                    {this.state.regions.map((region, regionId) =>
+                        <div className='col-sm-12' key={regionId}>
+                            <Worlds
+                                region = {region}
+                                worlds = {this.state.worldsByRegion.get(regionId)}
+                            />
+                        </div>
+                    )}
                 </div>
-            )}</div>
 
-        </div>;
+            </div>
+        );
     }
 
 
@@ -182,5 +184,4 @@ function setPageTitle(lang) {
 *
 */
 
-Overview.propTypes = propTypes;
-module.exports     = Overview;
+module.exports = Overview;

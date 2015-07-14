@@ -18,13 +18,15 @@ const Immutable = require('Immutable');
  *
  */
 
-const propTypes = {
-    lang    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    world   : React.PropTypes.instanceOf(Immutable.Map),
-    linkLang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
-
 class LangLink extends React.Component {
+    static propTypes = {
+        lang    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        linkLang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        world   : React.PropTypes.instanceOf(Immutable.Map),
+    }
+
+
+
     render() {
         const isActive  = Immutable.is(this.props.lang, this.props.linkLang);
         const listClass = isActive ? 'active' : '';
@@ -33,9 +35,11 @@ class LangLink extends React.Component {
         const label     = this.props.linkLang.get('label');
         const link      = getLink(this.props.linkLang, this.props.world);
 
-        return <li className = {listClass} title = {title}>
-            <a href = {link}>{label}</a>
-        </li>;
+        return (
+            <li className = {listClass} title = {title}>
+                <a href = {link}>{label}</a>
+            </li>
+        );
     }
 }
 
@@ -53,7 +57,8 @@ function getLink(lang, world) {
     let link = `/${langSlug}`;
 
     if (world) {
-        let worldSlug = world.getIn([langSlug, 'slug']);
+        const worldSlug = world.getIn([langSlug, 'slug']);
+
         link += `/${worldSlug}`;
     }
 
@@ -69,5 +74,4 @@ function getLink(lang, world) {
  *
  */
 
-LangLink.propTypes = propTypes;
 module.exports = LangLink;

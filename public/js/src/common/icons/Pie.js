@@ -30,11 +30,13 @@ const INSTANCE = {
  *
  */
 
-const propTypes = {
-    scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
-};
-
 class Pie extends React.Component {
+    static propTypes = {
+        scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         return !Immutable.is(this.props.scores, nextProps.scores);
     }
@@ -44,11 +46,14 @@ class Pie extends React.Component {
 
         // console.log('Pie::render', props.scores.toArray());
 
-        return <img
-            width = {INSTANCE.size}
-            height = {INSTANCE.size}
-            src = {getImageSource(props.scores.toArray())}
-        />;
+        return (
+            <img
+                src = {getImageSource(props.scores.toArray())}
+
+                width = {INSTANCE.size}
+                height = {INSTANCE.size}
+            />
+        );
     }
 }
 
@@ -76,5 +81,4 @@ function getImageSource(scores) {
  *
  */
 
-Pie.propTypes  = propTypes;
 module.exports = Pie;

@@ -8,7 +8,6 @@
 
 const React          = require('react');
 const Immutable      = require('Immutable');
-
 const _              = require('lodash');
 
 const STATIC         = require('lib/static');
@@ -60,21 +59,21 @@ const colDefaults = {
 *
 */
 
-const propTypes = {
-    lang       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-
-    objectiveId: React.PropTypes.number.isRequired,
-    worldColor : React.PropTypes.string.isRequired,
-    timestamp  : React.PropTypes.number.isRequired,
-    eventType  : React.PropTypes.string,
-
-    guildId    : React.PropTypes.string,
-    guild      : React.PropTypes.instanceOf(Immutable.Map),
-
-    cols       : React.PropTypes.object,
-};
 
 class Objective extends React.Component {
+    static propTypes = {
+        cols       : React.PropTypes.object,
+        eventType  : React.PropTypes.string,
+        guild      : React.PropTypes.instanceOf(Immutable.Map),
+        guildId    : React.PropTypes.string,
+        lang       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        objectiveId: React.PropTypes.number.isRequired,
+        timestamp  : React.PropTypes.number.isRequired,
+        worldColor : React.PropTypes.string.isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
 
@@ -85,6 +84,12 @@ class Objective extends React.Component {
         const newData      = (newCapture || newOwner || newClaimer || newGuildData);
 
         const shouldUpdate = (newLang || newData);
+
+        // if (newClaimer || newGuildData) {
+        //     console.log('guildId', this.props.guildId, nextProps.guildId);
+        //     console.log('guild', this.props.guild && this.props.guild.toJS(), nextProps.guild && nextProps.guild.toJS());
+        //     console.log('objectiveId', this.props.objectiveId, nextProps.objectiveId);
+        // }
 
         // console.log('Tracker::Objectives::shouldComponentUpdate()', newRemoteNow, nextProps.remoteNow);
 
@@ -136,7 +141,7 @@ class Objective extends React.Component {
                     lang        = {this.props.lang}
                 />
 
-                <div className="objective-state">
+                <div className='objective-state'>
                     <Guild
                         showName = {!!cols.guildName}
                         showTag  = {!!cols.guildTag}
@@ -163,5 +168,4 @@ class Objective extends React.Component {
 *
 */
 
-Objective.propTypes = propTypes;
 module.exports      = Objective;

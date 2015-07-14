@@ -23,9 +23,11 @@ const Holdings  = require('./Holdings');
 * Component Globals
 */
 
-const loadingHtml = <h1 style={{height: '90px', fontSize: '32pt', lineHeight: '90px'}}>
-    <i className="fa fa-spinner fa-spin"></i>
-</h1>;
+const loadingHtml = (
+    <h1 style={{height: '90px', fontSize: '32pt', lineHeight: '90px'}}>
+        <i className='fa fa-spinner fa-spin'></i>
+    </h1>
+);
 
 
 
@@ -36,19 +38,23 @@ const loadingHtml = <h1 style={{height: '90px', fontSize: '32pt', lineHeight: '9
 *
 */
 
-const propTypes = {
-    world   : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    score   : React.PropTypes.number.isRequired,
-    tick    : React.PropTypes.number.isRequired,
-    holdings: React.PropTypes.instanceOf(Immutable.List).isRequired,
-};
 
 class World extends React.Component {
+    static propTypes = {
+        holdings: React.PropTypes.instanceOf(Immutable.List).isRequired,
+        score   : React.PropTypes.number.isRequired,
+        tick    : React.PropTypes.number.isRequired,
+        world   : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newWorld     = !Immutable.is(this.props.world, nextProps.world);
         const newScore     = (this.props.score !== nextProps.score);
         const newTick      = (this.props.tick !== nextProps.tick);
-        const newHoldings  = (this.props.holdings !== nextProps.holdings);
+        const newHoldings  = !Immutable.is(this.props.holdings, nextProps.holdings);
+
         const shouldUpdate = (newWorld || newScore || newTick || newHoldings);
 
         return shouldUpdate;
@@ -57,28 +63,28 @@ class World extends React.Component {
 
 
     render() {
-        return (
-            <div className="col-sm-8">
-                <div className={`scoreboard team-bg team text-center ${this.props.world.get('color')}`}>
-                    {(this.props.world && Immutable.Map.isMap(this.props.world))
-                        ?  <div>
-                            <h1><a href={this.props.world.get('link')}>
-                                {this.props.world.get('name')}
-                            </a></h1>
-                            <h2>
-                                {numeral(this.props.score).format('0,0')}
-                                {' '}
-                                {numeral(this.props.tick).format('+0,0')}
-                            </h2>
+        const color = this.props.world.get('color');
 
-                            <Holdings
-                                color={this.props.world.get('color')}
-                                holdings={this.props.holdings}
-                            />
-                        </div>
-                        : loadingHtml
-                    }
-                </div>
+        return (
+            <div className={`scoreboard team-bg team text-center ${color}`}>
+                {(this.props.world && Immutable.Map.isMap(this.props.world))
+                    ?  <div>
+                        <h1><a href={this.props.world.get('link')}>
+                            {this.props.world.get('name')}
+                        </a></h1>
+                        <h2>
+                            {numeral(this.props.score).format('0,0')}
+                            {' '}
+                            {numeral(this.props.tick).format('+0,0')}
+                        </h2>
+
+                        <Holdings
+                            color    = {color}
+                            holdings = {this.props.holdings}
+                        />
+                    </div>
+                    : loadingHtml
+                }
             </div>
         );
     }
@@ -93,5 +99,4 @@ class World extends React.Component {
 *
 */
 
-World.propTypes = propTypes;
 module.exports  = World;

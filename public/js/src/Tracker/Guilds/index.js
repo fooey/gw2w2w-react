@@ -26,12 +26,15 @@ const Guild     = require('./Guild');
 *
 */
 
-const propTypes = {
-    lang  : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    guilds: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
 
 class Guilds extends React.Component {
+    static propTypes = {
+        guilds: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        lang  : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
         const newGuildData = !Immutable.is(this.props.guilds, nextProps.guilds);
@@ -54,13 +57,14 @@ class Guilds extends React.Component {
             .sortBy(guild => -guild.get('lastClaim'));
 
         return (
-            <section id="guilds">
-                <h2 className="section-header">Guild Claims</h2>
+            <section id='guilds'>
+                <h2 className='section-header'>Guild Claims</h2>
                 {sortedGuilds.map(guild =>
                     <Guild
                         key   = {guild.get('guild_id')}
-                        lang  = {props.lang}
+
                         guild = {guild}
+                        lang  = {props.lang}
                     />
                 )}
             </section>
@@ -77,5 +81,4 @@ class Guilds extends React.Component {
 *
 */
 
-Guilds.propTypes = propTypes;
 module.exports   = Guilds;

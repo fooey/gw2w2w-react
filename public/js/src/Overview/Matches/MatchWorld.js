@@ -28,15 +28,18 @@ const Pie       = require('common/Icons/Pie');
 *
 */
 
-const propTypes = {
-    world  : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    scores : React.PropTypes.instanceOf(Immutable.List).isRequired,
-    color  : React.PropTypes.string.isRequired,
-    ixColor: React.PropTypes.number.isRequired,
-    showPie: React.PropTypes.bool.isRequired,
-};
 
 class MatchWorld extends React.Component {
+    static propTypes = {
+        color  : React.PropTypes.string.isRequired,
+        ixColor: React.PropTypes.number.isRequired,
+        scores : React.PropTypes.instanceOf(Immutable.List).isRequired,
+        showPie: React.PropTypes.bool.isRequired,
+        world  : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newScores    = !Immutable.is(this.props.scores, nextProps.scores);
         const newColor     = !Immutable.is(this.props.color, nextProps.color);
@@ -55,28 +58,30 @@ class MatchWorld extends React.Component {
 
         // console.log('overview::MatchWorlds::render()');
 
-        return <tr>
-            <td className={`team name ${props.color}`}>
-                <a href={props.world.get('link')}>
-                    {props.world.get('name')}
-                </a>
-            </td>
-            <td className={`team score ${props.color}`}>
-                <Score
-                    team  = {props.color}
-                    score = {props.scores.get(props.ixColor)}
-                />
-            </td>
-            {(props.showPie)
-                ? <td rowSpan="3" className="pie">
-                    <Pie
-                        scores = {props.scores}
-                        size   = {60}
+        return (
+            <tr>
+                <td className={`team name ${props.color}`}>
+                    <a href={props.world.get('link')}>
+                        {props.world.get('name')}
+                    </a>
+                </td>
+                <td className={`team score ${props.color}`}>
+                    <Score
+                        score = {props.scores.get(props.ixColor)}
+                        team  = {props.color}
                     />
                 </td>
-                : null
-            }
-        </tr>;
+                {(props.showPie)
+                    ? <td className='pie' rowSpan='3'>
+                        <Pie
+                            scores = {props.scores}
+                            size   = {60}
+                        />
+                    </td>
+                    : null
+                }
+            </tr>
+        );
     }
 }
 
@@ -89,5 +94,4 @@ class MatchWorld extends React.Component {
 *
 */
 
-MatchWorld.propTypes = propTypes;
-module.exports       = MatchWorld;
+module.exports = MatchWorld;

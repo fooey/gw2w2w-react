@@ -30,14 +30,16 @@ const LogEntries   = require('./LogEntries');
 *
 */
 
-const propTypes = {
-    lang   : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-
-    details: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    guilds : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
 
 class Log extends React.Component {
+    static propTypes = {
+        details: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        guilds : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        lang   : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    }
+
+
+
     constructor(props) {
         super(props);
 
@@ -89,35 +91,33 @@ class Log extends React.Component {
         const eventHistory = this.props.details.get('history');
 
         return (
-            <div id="log-container">
+            <div id='log-container'>
 
-                <div className="log-tabs">
-                    <div className="row">
-                        <div className="col-sm-16">
+                <div className='log-tabs'>
+                    <div className='row'>
+                        <div className='col-sm-16'>
                             <MapFilters
                                 mapFilter = {this.state.mapFilter}
-                                setWorld  = {setWorld.bind(this)}
+                                setWorld  = {this.__setWorld.bind(this)}
                             />
                         </div>
-                        <div className="col-sm-8">
+                        <div className='col-sm-8'>
                             <EventFilters
                                 eventFilter = {this.state.eventFilter}
-                                setEvent    = {setEvent.bind(this)}
+                                setEvent    = {this.__setEvent.bind(this)}
                             />
                         </div>
                     </div>
                 </div>
 
-                {!eventHistory.isEmpty()
+                {(!eventHistory.isEmpty())
                     ? <LogEntries
-                        triggerNotification = {this.state.triggerNotification}
-                        mapFilter           = {this.state.mapFilter}
                         eventFilter         = {this.state.eventFilter}
-
-                        lang                = {this.props.lang}
-                        guilds              = {this.props.guilds}
-
                         eventHistory        = {eventHistory}
+                        guilds              = {this.props.guilds}
+                        lang                = {this.props.lang}
+                        mapFilter           = {this.state.mapFilter}
+                        triggerNotification = {this.state.triggerNotification}
                     />
                     : null
                 }
@@ -125,34 +125,28 @@ class Log extends React.Component {
             </div>
         );
     }
-}
 
 
 
+    __setWorld(e) {
+        const filter = e.target.getAttribute('data-filter');
 
-
-/*
-*
-* Private Methods
-*
-*/
-
-function setWorld(e) {
-    let component = this;
-
-    let filter = e.target.getAttribute('data-filter');
-
-    component.setState({mapFilter: filter, triggerNotification: true});
-}
+        this.setState({
+            mapFilter: filter,
+            triggerNotification: true,
+        });
+    }
 
 
 
-function setEvent(e) {
-    let component = this;
+    __setEvent(e) {
+        const filter = e.target.getAttribute('data-filter');
 
-    let filter = e.target.getAttribute('data-filter');
-
-    component.setState({eventFilter: filter, triggerNotification: true});
+        this.setState({
+            eventFilter: filter,
+            triggerNotification: true,
+        });
+    }
 }
 
 
@@ -165,5 +159,4 @@ function setEvent(e) {
 *
 */
 
-Log.propTypes  = propTypes;
 module.exports = Log;

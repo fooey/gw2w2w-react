@@ -24,10 +24,12 @@ const Claims    = require('./Claims');
 * Component Globals
 */
 
-const loadingHtml = <h1 style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
-    <i className='fa fa-spinner fa-spin' />
-    {' Loading...'}
-</h1>;
+const loadingHtml = (
+    <h1 style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+        <i className='fa fa-spinner fa-spin' />
+        {' Loading...'}
+    </h1>
+);
 
 
 
@@ -37,12 +39,15 @@ const loadingHtml = <h1 style={{whiteSpace: 'nowrap', overflow: 'hidden', textOv
 *
 */
 
-const propTypes = {
-    lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    guild: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
 
 class Guild extends React.Component {
+    static propTypes = {
+        guild: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
         const newGuildData = !Immutable.is(this.props.guild, nextProps.guild);
@@ -124,5 +129,4 @@ function slugify(str) {
 *
 */
 
-Guild.propTypes = propTypes;
 module.exports  = Guild;

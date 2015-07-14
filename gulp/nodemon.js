@@ -38,19 +38,16 @@ function gulpTasks(gulp, livereload) {
 function nodemon(livereload, options) {
     var config = _.merge({
         script: './server.js',
-        ext   : 'js,jade',
+        ext   : 'js jade',
         delay : 200,
 
         execMap: {
             js: 'iojs',
         },
         ignore: [
-            '.git/**',
             'gulpfile.js',
-
-            'node_modules/**',
-            'public/**',
-            'gulp/**',
+            '**/public/**',
+            '**/gulp/**',
         ],
         env: {
             PORT: '3000',

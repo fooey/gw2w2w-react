@@ -16,7 +16,7 @@ const Immutable = require('Immutable');
 * React Components
 */
 
-const Match     = require('./Match');
+const Match = require('./Match');
 
 
 
@@ -24,7 +24,7 @@ const Match     = require('./Match');
 * Component Globals
 */
 
-const loadingHtml = <span style={{paddingLeft: '.5em'}}><i className="fa fa-spinner fa-spin" /></span>;
+const loadingHtml = <span style={{paddingLeft: '.5em'}}><i className='fa fa-spinner fa-spin' /></span>;
 
 
 
@@ -35,13 +35,15 @@ const loadingHtml = <span style={{paddingLeft: '.5em'}}><i className="fa fa-spin
 *
 */
 
-const propTypes = {
-    region : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    matches: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    worlds : React.PropTypes.instanceOf(Immutable.Seq).isRequired,
-};
-
 class Matches extends React.Component {
+    static propTypes = {
+        matches: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        region : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        worlds : React.PropTypes.instanceOf(Immutable.Seq).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newRegion    = !Immutable.is(this.props.region, nextProps.region);
         const newMatches   = !Immutable.is(this.props.matches, nextProps.matches);
@@ -75,8 +77,8 @@ class Matches extends React.Component {
                         key       = {match.get('id')}
                         className = 'match'
 
-                        worlds    = {props.worlds}
                         match     = {match}
+                        worlds    = {props.worlds}
                     />
                 )}
             </div>
@@ -94,5 +96,4 @@ class Matches extends React.Component {
 *
 */
 
-Matches.propTypes = propTypes;
-module.exports    = Matches;
+module.exports = Matches;

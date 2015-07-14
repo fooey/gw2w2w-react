@@ -1,4 +1,6 @@
 'use strict';
+/*eslint camelcase: 0 */
+
 
 const gw2api = require('gw2api');
 

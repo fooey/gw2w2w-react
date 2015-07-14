@@ -20,22 +20,27 @@ const World     = require('./World');
 
 
 
+
 /*
 *
 * Component Definition
 *
 */
 
-const propTypes = {
-    matchWorlds: React.PropTypes.instanceOf(Immutable.List).isRequired,
-    match      : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
-
 class Scoreboard extends React.Component {
+    static propTypes = {
+        match      : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        matchWorlds: React.PropTypes.instanceOf(Immutable.List).isRequired,
+    };
+
+
+
     shouldComponentUpdate(nextProps) {
         const newWorlds    = !Immutable.is(this.props.matchWorlds, nextProps.matchWorlds);
         const newScores    = !Immutable.is(this.props.match.get('scores'), nextProps.match.get('scores'));
-        const shouldUpdate = (newWorlds || newScores);
+        const newTicks     = !Immutable.is(this.props.match.get('ticks'), nextProps.match.get('ticks'));
+        const newHoldings  = !Immutable.is(this.props.match.get('holdings'), nextProps.match.get('holdings'));
+        const shouldUpdate = (newWorlds || newScores || newTicks || newHoldings);
 
         return shouldUpdate;
     }
@@ -48,15 +53,16 @@ class Scoreboard extends React.Component {
         const holdings = this.props.match.get('holdings');
 
         return (
-            <section className="row" id="scoreboards">
+            <section className='row' id='scoreboards'>
                 {this.props.matchWorlds.map((world, ixWorld) =>
-                    <World
-                        key      = {ixWorld}
-                        world    = {world}
-                        score    = {scores.get(ixWorld) || 0}
-                        tick     = {ticks.get(ixWorld) || 0}
-                        holdings = {holdings.get(ixWorld)}
-                    />
+                    <div className='col-sm-8' key = {ixWorld}>
+                        <World
+                            world    = {world}
+                            score    = {scores.get(ixWorld) || 0}
+                            tick     = {ticks.get(ixWorld) || 0}
+                            holdings = {holdings.get(ixWorld)}
+                        />
+                    </div>
                 )}
             </section>
         );
@@ -72,5 +78,4 @@ class Scoreboard extends React.Component {
 *
 */
 
-Scoreboard.propTypes = propTypes;
 module.exports       = Scoreboard;

@@ -50,43 +50,55 @@ const objectiveCols = {
 *
 */
 
-const propTypes = {
-    lang      : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-
-    details   : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    guilds    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    mapSection: React.PropTypes.object.isRequired,
-
-};
-
 class MapSection extends React.Component {
+    static propTypes = {
+        claimers  : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        guilds    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        label     : React.PropTypes.string.isRequired,
+        lang      : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        mapMeta   : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        objectives: React.PropTypes.instanceOf(Immutable.List).isRequired,
+        owners    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
 
         const newGuilds    = !Immutable.is(this.props.guilds, nextProps.guilds);
-        const newDetails   = !Immutable.is(this.props.details, nextProps.details);
-        const newData      = (newGuilds || newDetails);
+        const newOwners    = !Immutable.is(this.props.owners, nextProps.owners);
+        const newClaimers  = !Immutable.is(this.props.claimers, nextProps.claimers);
+        const newData      = (newGuilds || newOwners || newClaimers);
 
         const shouldUpdate = (newLang || newData);
 
-        // console.log('Tracker::Maps::MapSection::shouldComponentUpdate()', newRemoteNow, nextProps.remoteNow);
+        // if (shouldUpdate) {
+        //     console.log('newLang', newLang);
+        //     console.log('newGuilds', newGuilds);
+        //     console.log('newOwners', newOwners);
+        //     console.log('newClaimers', newClaimers);
+        //     console.log('newData', newData);
+        // }
 
         return shouldUpdate;
     }
 
     render() {
-        const mapObjectives = this.props.mapSection.get('objectives');
-        const owners        = this.props.details.getIn(['objectives', 'owners']);
-        const claimers      = this.props.details.getIn(['objectives', 'claimers']);
-        const sectionClass  = getSectionClass(this.props.mapMeta.get('key'), this.props.mapSection.get('label'));
+        const objectives   = this.props.objectives;
+        const owners       = this.props.owners;
+        const claimers     = this.props.claimers;
+        const sectionClass = getSectionClass(this.props.mapMeta.get('key'), this.props.label);
+
+        // console.log(typeof objectives, objectives)
 
         return (
             <ul className={`list-unstyled ${sectionClass}`}>
-                {mapObjectives.map(objectiveId => {
+                {objectives.map(objectiveId => {
 
-                    const stringId     = objectiveId.toString();
-                    const owner        = owners.get(stringId);
-                    const claimer      = claimers.get(stringId);
+                    const idString     = objectiveId.toString();
+                    const owner        = owners.get(idString);
+                    const claimer      = claimers.get(idString);
 
                     const guildId      = (claimer) ? claimer.get('guild') : null;
                     const hasClaimer   = !!guildId;
@@ -95,18 +107,19 @@ class MapSection extends React.Component {
                     const guild        = hasGuildData ? this.props.guilds.get(guildId) : null;
 
 
-                    return <li key={objectiveId} id={'objective-' + objectiveId}>
-                        <Objective
-                            cols        = {objectiveCols}
-                            lang        = {this.props.lang}
-
-                            objectiveId = {objectiveId}
-                            worldColor  = {owner.get('world')}
-                            timestamp   = {owner.get('timestamp')}
-                            guildId     = {guildId}
-                            guild       = {guild}
-                        />
-                    </li>;
+                    return (
+                        <li key={objectiveId} id={'objective-' + objectiveId}>
+                            <Objective
+                                cols        = {objectiveCols}
+                                guild       = {guild}
+                                guildId     = {guildId}
+                                lang        = {this.props.lang}
+                                objectiveId = {objectiveId}
+                                timestamp   = {owner.get('timestamp')}
+                                worldColor  = {owner.get('world')}
+                            />
+                        </li>
+                    );
 
                 })}
             </ul>
@@ -155,5 +168,4 @@ function getSectionClass(mapKey, sectionLabel) {
 *
 */
 
-MapSection.propTypes = propTypes;
 module.exports       = MapSection;

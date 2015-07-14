@@ -1,2 +1,7 @@
 {
+    "stage": 0,
+    "loose": "all",
+    "optional": [
+        "optimisation.react.constantElements"
+    ]
 }

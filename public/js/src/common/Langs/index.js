@@ -23,26 +23,31 @@ const LangLink  = require('./LangLink');
  *
  */
 
-const propTypes = {
-    lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    world: React.PropTypes.instanceOf(Immutable.Map),
-};
-
 class Langs extends React.Component {
+    static propTypes = {
+        lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        world: React.PropTypes.instanceOf(Immutable.Map),
+    }
+
+
+
     render() {
 
         // console.log('Langs::render()', this.props.lang.toJS());
 
-        return <ul className = 'nav navbar-nav'>
-            {STATIC.langs.map((linkLang, key) =>
-                <LangLink
-                    key = {key}
-                    linkLang = {linkLang}
-                    lang = {this.props.lang}
-                    world = {this.props.world}
-                />
-            )}
-        </ul>;
+        return (
+            <ul className = 'nav navbar-nav'>
+                {STATIC.langs.map((linkLang, key) =>
+                    <LangLink
+                        key = {key}
+
+                        lang = {this.props.lang}
+                        linkLang = {linkLang}
+                        world = {this.props.world}
+                    />
+                )}
+            </ul>
+        );
     }
 }
 
@@ -55,5 +60,4 @@ class Langs extends React.Component {
  *
  */
 
-Langs.propTypes = propTypes;
 module.exports  = Langs;

@@ -30,14 +30,17 @@ const Arrow     = require('common/Icons/Arrow');
 *
 */
 
-const propTypes = {
-    showArrow  : React.PropTypes.bool.isRequired,
-    showSprite : React.PropTypes.bool.isRequired,
-    objectiveId: React.PropTypes.string.isRequired,
-    color      : React.PropTypes.string.isRequired,
-};
 
 class Icons extends React.Component {
+    static propTypes = {
+        color      : React.PropTypes.string.isRequired,
+        objectiveId: React.PropTypes.string.isRequired,
+        showArrow  : React.PropTypes.bool.isRequired,
+        showSprite : React.PropTypes.bool.isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newColor     = !Immutable.is(this.props.color, nextProps.color);
         const shouldUpdate = (newColor);
@@ -56,18 +59,20 @@ class Icons extends React.Component {
             const oTypeId = oMeta.get('type').toString();
             const oType   = STATIC.objective_types.get(oTypeId);
 
-            return <div className="objective-icons">
-                {(this.props.showArrow) ?
-                    <Arrow oMeta={oMeta} />
-                : null}
+            return (
+                <div className='objective-icons'>
+                    {(this.props.showArrow) ?
+                        <Arrow oMeta={oMeta} />
+                    : null}
 
-                {(this.props.showSprite) ?
-                    <Sprite
-                        type  = {oType.get('name')}
-                        color = {this.props.color}
-                    />
-                : null}
-            </div>;
+                    {(this.props.showSprite) ?
+                        <Sprite
+                            type  = {oType.get('name')}
+                            color = {this.props.color}
+                        />
+                    : null}
+                </div>
+            );
         }
     }
 }
@@ -81,5 +86,4 @@ class Icons extends React.Component {
 *
 */
 
-Icons.propTypes = propTypes;
 module.exports  = Icons;

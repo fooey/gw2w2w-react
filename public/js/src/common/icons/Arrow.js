@@ -19,11 +19,13 @@ const Immutable = require('Immutable');
  *
  */
 
-const propTypes = {
-    oMeta: React.PropTypes.object.isRequired,
-};
-
 class Arrow extends React.Component {
+    static propTypes = {
+        oMeta: React.PropTypes.object.isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newObjectiveMeta = !Immutable.is(this.props.oMeta, nextProps.oMeta);
         const shouldUpdate = (newObjectiveMeta);
@@ -34,12 +36,14 @@ class Arrow extends React.Component {
     render() {
         const imgSrc = getArrowSrc(this.props.oMeta);
 
-        return <span className = "direction">
-            {(imgSrc)
-                ? <img src = {imgSrc} />
-                : null
-            }
-        </span>;
+        return (
+            <span className = 'direction'>
+                {(imgSrc)
+                    ? <img src = {imgSrc} />
+                    : null
+                }
+            </span>
+        );
     }
 }
 
@@ -61,11 +65,20 @@ function getArrowSrc(meta) {
 
     let src = ['/img/icons/dist/arrow'];
 
-    if (meta.get('n'))      {src.push('north');}
-    else if (meta.get('s')) {src.push('south');}
+    if (meta.get('n')) {
+        src.push('north');
+    }
+    else if (meta.get('s')) {
+        src.push('south');
+    }
 
-    if (meta.get('w'))      {src.push('west');}
-    else if (meta.get('e')) {src.push('east');}
+    if (meta.get('w')) {
+        src.push('west');
+    }
+    else if (meta.get('e')) {
+        src.push('east');
+    }
+
 
     return src.join('-') + '.svg';
 }
@@ -79,5 +92,4 @@ function getArrowSrc(meta) {
  *
  */
 
-Arrow.propTypes = propTypes;
 module.exports  = Arrow;

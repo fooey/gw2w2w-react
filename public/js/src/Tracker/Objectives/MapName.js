@@ -19,12 +19,15 @@ const STATIC = require('lib/static');
 *
 */
 
-const propTypes = {
-    isEnabled  : React.PropTypes.bool.isRequired,
-    objectiveId: React.PropTypes.string.isRequired,
-};
 
 class MapName extends React.Component {
+    static propTypes = {
+        isEnabled  : React.PropTypes.bool.isRequired,
+        objectiveId: React.PropTypes.string.isRequired,
+    }
+
+
+
     // map name can never change, not localized
     shouldComponentUpdate() {
         return false;
@@ -41,11 +44,13 @@ class MapName extends React.Component {
             const mapIndex = oMeta.get('map');
             const mapMeta  = STATIC.objective_map.find(mm => mm.get('mapIndex') === mapIndex);
 
-            return <div className="objective-map">
-                <span title={mapMeta.get('name')}>
-                    {mapMeta.get('abbr')}
-                </span>
-            </div>;
+            return (
+                <div className='objective-map'>
+                    <span title={mapMeta.get('name')}>
+                        {mapMeta.get('abbr')}
+                    </span>
+                </div>
+            );
         }
     }
 }
@@ -59,5 +64,4 @@ class MapName extends React.Component {
 *
 */
 
-MapName.propTypes = propTypes;
 module.exports    = MapName;

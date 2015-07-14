@@ -10,6 +10,8 @@
 const React      = require('react');
 const Immutable  = require('Immutable');
 
+const STATIC     = require('lib/static');
+
 
 
 /*
@@ -28,15 +30,16 @@ const Log        = require('Tracker/Log');
 *
 */
 
-const propTypes = {
-    lang       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-
-    details    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    matchWorlds: React.PropTypes.instanceOf(Immutable.List).isRequired,
-    guilds     : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
-
 class Maps extends React.Component {
+    static propTypes = {
+        details    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        guilds     : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        lang       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        matchWorlds: React.PropTypes.instanceOf(Immutable.List).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
 
@@ -55,29 +58,27 @@ class Maps extends React.Component {
     render() {
         const props = this.props;
 
-        const isDataInitialized = props.details.get('initialized');
-
-        if (!isDataInitialized) {
+        if (!props.details.has('initialized') || !props.details.get('initialized')) {
             return null;
         }
 
 
         return (
-            <section id="maps">
-                <div className="row">
+            <section id='maps'>
+                <div className='row'>
 
-                    <div className="col-md-6">{<MapDetails mapKey="Center" {...props} />}</div>
+                    <div className='col-md-6'>{<MapDetails mapKey='Center' mapMeta={getMapMeta('Center')} {...props} />}</div>
 
-                    <div className="col-md-18">
+                    <div className='col-md-18'>
 
-                        <div className="row">
-                            <div className="col-md-8">{<MapDetails mapKey="RedHome" {...props} />}</div>
-                            <div className="col-md-8">{<MapDetails mapKey="BlueHome" {...props} />}</div>
-                            <div className="col-md-8">{<MapDetails mapKey="GreenHome" {...props} />}</div>
+                        <div className='row'>
+                            <div className='col-md-8'>{<MapDetails mapKey='RedHome' mapMeta={getMapMeta('RedHome')} {...props} />}</div>
+                            <div className='col-md-8'>{<MapDetails mapKey='BlueHome' mapMeta={getMapMeta('BlueHome')} {...props} />}</div>
+                            <div className='col-md-8'>{<MapDetails mapKey='GreenHome' mapMeta={getMapMeta('GreenHome')} {...props} />}</div>
                         </div>
 
-                        <div className="row">
-                            <div className="col-md-24">
+                        <div className='row'>
+                            <div className='col-md-24'>
                                 <Log {...props} />
                             </div>
                         </div>
@@ -90,6 +91,11 @@ class Maps extends React.Component {
 }
 
 
+function getMapMeta(key) {
+    return STATIC.objective_map.find(mm => mm.get('key') === key);
+}
+
+
 
 
 /*
@@ -98,5 +104,4 @@ class Maps extends React.Component {
 *
 */
 
-Maps.propTypes = propTypes;
 module.exports = Maps;

@@ -107,6 +107,7 @@ class LibGuilds {
 
             // initialize
             const guild = defaultGuild.set('guild_id', guildId);
+
             listener(guild, guildId);
 
             // get from remote
@@ -136,7 +137,9 @@ class LibGuilds {
 
         if (hasNewClaims) {
             const lastClaim = incHasClaims ? incNewestClaim.get('timestamp') : 0;
+
             // console.log('claims altered', guildId, hasNewClaims, lastClaim);
+
             guild = guild.set('claims', incClaims);
             guild = guild.set('lastClaim', lastClaim);
         }

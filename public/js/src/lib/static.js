@@ -1,6 +1,9 @@
+'use strict';
+/*eslint camelcase: 0 */
+
+
 const statics = require('gw2w2w-static');
 const Immutable = require('Immutable');
-
 
 
 const immutableStatics = {

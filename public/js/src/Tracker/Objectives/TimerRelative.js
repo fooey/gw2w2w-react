@@ -19,7 +19,7 @@ const React     = require('react');
 const Immutable = require('Immutable');
 
 
-const spinner   =  <i className="fa fa-spinner fa-spin"></i>;
+const spinner   =  <i className='fa fa-spinner fa-spin'></i>;
 
 
 
@@ -29,12 +29,15 @@ const spinner   =  <i className="fa fa-spinner fa-spin"></i>;
 *
 */
 
-const propTypes = {
-    isEnabled: React.PropTypes.bool.isRequired,
-    timestamp: React.PropTypes.number.isRequired,
-};
 
 class TimerRelative extends React.Component {
+    static propTypes = {
+        isEnabled: React.PropTypes.bool.isRequired,
+        timestamp: React.PropTypes.number.isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newTimestamp = !Immutable.is(this.props.timestamp, nextProps.timestamp);
         const shouldUpdate = (newTimestamp);
@@ -49,12 +52,16 @@ class TimerRelative extends React.Component {
             return null;
         }
         else {
-            return <div className="objective-relative">
-                <span
-                    className="timer relative"
-                    data-timestamp={this.props.timestamp}
-                >{spinner}</span>
-            </div>;
+            return (
+                <div className='objective-relative'>
+                    <span
+                        className='timer relative'
+                        data-timestamp={this.props.timestamp}
+                    >
+                        {spinner}
+                    </span>
+                </div>
+            );
         }
     }
 }
@@ -68,5 +75,4 @@ class TimerRelative extends React.Component {
 *
 */
 
-TimerRelative.propTypes = propTypes;
-module.exports          = TimerRelative;
+module.exports = TimerRelative;

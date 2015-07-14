@@ -21,11 +21,13 @@ const numeral   = require('numeral');
 *
 */
 
-const propTypes = {
-    scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
-};
-
 class MapScores extends React.Component {
+    static propTypes = {
+        scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newScores    = !Immutable.is(this.props.scores, nextProps.scores);
         const shouldUpdate = (newScores);
@@ -37,14 +39,16 @@ class MapScores extends React.Component {
 
     render() {
         return (
-            <ul className="list-inline">
+            <ul className='list-inline'>
                 {this.props.scores.map((score, ixScore) => {
                     const formatted = numeral(score).format('0,0');
                     const team      = ['red', 'blue', 'green'][ixScore];
 
-                    return <li key={team} className={`team ${team}`}>
-                        {formatted}
-                    </li>;
+                    return (
+                        <li key={team} className={`team ${team}`}>
+                            {formatted}
+                        </li>
+                    );
                 })}
             </ul>
         );
@@ -61,5 +65,4 @@ class MapScores extends React.Component {
 *
 */
 
-MapScores.propTypes = propTypes;
 module.exports      = MapScores;

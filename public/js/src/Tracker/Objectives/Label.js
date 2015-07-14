@@ -20,13 +20,15 @@ const STATIC    = require('lib/static');
 *
 */
 
-const propTypes = {
-    lang       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    isEnabled  : React.PropTypes.bool.isRequired,
-    objectiveId: React.PropTypes.string.isRequired,
-};
-
 class Label extends React.Component {
+    static propTypes = {
+        isEnabled  : React.PropTypes.bool.isRequired,
+        lang       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        objectiveId: React.PropTypes.string.isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
         const shouldUpdate = (newLang);
@@ -44,9 +46,11 @@ class Label extends React.Component {
             const oLabel   = STATIC.objective_labels.get(this.props.objectiveId);
             const langSlug = this.props.lang.get('slug');
 
-            return <div className="objective-label">
-                <span>{oLabel.get(langSlug)}</span>
-            </div>;
+            return (
+                <div className='objective-label'>
+                    <span>{oLabel.get(langSlug)}</span>
+                </div>
+            );
         }
     }
 }
@@ -61,5 +65,4 @@ class Label extends React.Component {
 *
 */
 
-Label.propTypes = propTypes;
 module.exports  = Label;

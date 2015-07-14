@@ -8,8 +8,6 @@
 */
 
 const React   = require('react');
-
-// const $    = require('jQuery');
 const numeral = require('numeral');
 
 
@@ -22,15 +20,20 @@ const numeral = require('numeral');
 *
 */
 
-const propTypes = {
-    score: React.PropTypes.number.isRequired,
-};
-
-const defaultProps = {
-    score: 0,
-};
 
 class Score extends React.Component {
+    static propTypes = {
+        score: React.PropTypes.number.isRequired,
+    }
+
+
+
+    static defaultProps = {
+        score: 0,
+    }
+
+
+
     constructor(props) {
         super(props);
         this.state = {
@@ -75,10 +78,12 @@ class Score extends React.Component {
 
 
     render() {
-        return <div>
-            <span className="diff" ref="diff">{getDiffText(this.state.diff)}</span>
-            <span className="value">{getScoreText(this.props.score)}</span>
-        </div>;
+        return (
+            <div>
+                <span className='diff' ref='diff'>{getDiffText(this.state.diff)}</span>
+                <span className='value'>{getScoreText(this.props.score)}</span>
+            </div>
+        );
     }
 }
 
@@ -123,6 +128,4 @@ function getScoreText(score) {
 *
 */
 
-Score.propTypes = propTypes;
-Score.defaultProps = defaultProps;
 module.exports  = Score;

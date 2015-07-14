@@ -21,14 +21,17 @@ const Emblem    = require('common/Icons/Emblem');
 *
 */
 
-const propTypes = {
-    showName: React.PropTypes.bool.isRequired,
-    showTag : React.PropTypes.bool.isRequired,
-    guildId : React.PropTypes.string,
-    guild   : React.PropTypes.instanceOf(Immutable.Map),
-};
 
 class Guild extends React.Component {
+    static propTypes = {
+        guild   : React.PropTypes.instanceOf(Immutable.Map),
+        guildId : React.PropTypes.string,
+        showName: React.PropTypes.bool.isRequired,
+        showTag : React.PropTypes.bool.isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newGuild     = !Immutable.is(this.props.guildId, nextProps.guildId);
         const newGuildData = !Immutable.is(this.props.guild, nextProps.guild);
@@ -36,6 +39,8 @@ class Guild extends React.Component {
 
         return shouldUpdate;
     }
+
+
 
     render() {
         const props     = this.props;
@@ -52,7 +57,7 @@ class Guild extends React.Component {
             const guildId = props.guildId;
             const href    = `#${guildId}`;
 
-            let content   = <i className="fa fa-spinner fa-spin"></i>;
+            let content   = <i className='fa fa-spinner fa-spin'></i>;
             let title     = null;
 
             if (hasGuildData) {
@@ -60,10 +65,12 @@ class Guild extends React.Component {
                 const tag  = props.guild.get('tag');
 
                 if (props.showName && props.showTag) {
-                    content = <span>
-                        {`${name} [${tag}] `}
-                        <Emblem guildName={name} size={20} />
-                    </span>;
+                    content = (
+                        <span>
+                            {`${name} [${tag}] `}
+                            <Emblem guildName={name} size={20} />
+                        </span>
+                    );
                 }
                 else if (props.showName) {
                     content = `${name}`;
@@ -75,9 +82,7 @@ class Guild extends React.Component {
                 title = `${name} [${tag}]`;
             }
 
-            return <a className="guildname" href={href} title={title}>
-                {content}
-            </a>;
+            return <a className='guildname' href={href} title={title}>{content}</a>;
         }
     }
 }
@@ -91,5 +96,4 @@ class Guild extends React.Component {
 *
 */
 
-Guild.propTypes = propTypes;
 module.exports  = Guild;

@@ -28,12 +28,15 @@ const Immutable = require('Immutable');
 *
 */
 
-const propTypes = {
-    isEnabled: React.PropTypes.bool.isRequired,
-    timestamp: React.PropTypes.number.isRequired,
-};
 
 class TimerCountdown extends React.Component {
+    static propTypes = {
+        isEnabled: React.PropTypes.bool.isRequired,
+        timestamp: React.PropTypes.number.isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newIsEnabled = !Immutable.is(this.props.isEnabled, nextProps.isEnabled);
         const newTimestamp = !Immutable.is(this.props.timestamp, nextProps.timestamp);
@@ -49,10 +52,12 @@ class TimerCountdown extends React.Component {
             return null;
         }
         else {
-            return <span
-                className='timer countdown inactive'
-                data-timestamp={this.props.timestamp}
-            ></span>;
+            return (
+                <span
+                    className='timer countdown inactive'
+                    data-timestamp={this.props.timestamp}
+                />
+            );
         }
     }
 }
@@ -66,5 +71,4 @@ class TimerCountdown extends React.Component {
 *
 */
 
-TimerCountdown.propTypes = propTypes;
-module.exports           = TimerCountdown;
+module.exports = TimerCountdown;

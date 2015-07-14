@@ -6,16 +6,15 @@
 *
 */
 
-const React         = require('react');
-const Immutable     = require('Immutable');
-
-const _             = require('lodash');
+const React     = require('react');
+const Immutable = require('Immutable');
+const _         = require('lodash');
 
 
 
 /*
-*   libs
-*/
+ *   libs
+ */
 
 const libDate       = require('lib/date');
 const trackerTimers = require('lib/trackerTimers');
@@ -23,20 +22,20 @@ const trackerTimers = require('lib/trackerTimers');
 
 
 /*
-*   Data
-*/
+ *   Data
+ */
 
-const DAO           = require('lib/data/tracker');
+const DAO = require('lib/data/tracker');
 
 
 
 /*
-* React Components
-*/
+ * React Components
+ */
 
-const Scoreboard    = require('./Scoreboard');
-const Maps          = require('./Maps');
-const Guilds        = require('./Guilds');
+const Scoreboard = require('./Scoreboard');
+const Maps       = require('./Maps');
+const Guilds     = require('./Guilds');
 
 
 
@@ -47,6 +46,12 @@ const Guilds        = require('./Guilds');
 
 const updateTimeInterval = 1000;
 
+const loadingHtml = (
+    <h1 id='AppLoading'>
+        <i className='fa fa-spinner fa-spin'></i>
+    </h1>
+);
+
 
 
 /*
@@ -55,12 +60,12 @@ const updateTimeInterval = 1000;
 *
 */
 
-const propTypes = {
-    lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    world: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
 
 class Tracker extends React.Component {
+    static propTypes = {
+        lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        world: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    }
 
     /*
     *
@@ -81,26 +86,54 @@ class Tracker extends React.Component {
             onMatchDetails: this.onMatchDetails.bind(this),
             onGuildDetails: this.onGuildDetails.bind(this),
         };
+
         this.dao = new DAO(dataListeners);
 
 
 
         this.state = {
-            hasData    : false,
-            lastmod    : 0,
+            hasData: false,
+            lastmod: 0,
 
-            time       : {
-                local  : libDate.dateNow(),
-                remote : 0,
-                offset : 0,
+            time: {
+                local: libDate.dateNow(),
+                remote: 0,
+                offset: 0,
             },
 
-            match      : Immutable.Map({lastmod: 0}),
-            matchWorlds: Immutable.List(),
-            details    : Immutable.Map(),
+            match: Immutable.Map({
+                lastmod: 0,
+            }),
+
             claimEvents: Immutable.List(),
+            details    : Immutable.Map(),
             guilds     : Immutable.Map(),
+            matchWorlds: Immutable.List(),
         };
+
+    }
+
+
+
+    componentDidMount() {
+        // console.log('Tracker::componentDidMount()');
+        this.__mounted   = true;
+
+        setPageTitle(this.props.lang, this.props.world);
+
+        setImmediate(() => this.dao.init(this.props.lang, this.props.world));
+        setTimeout(this.updateTimers.bind(this), 1000);
+    }
+
+
+
+    componentWillReceiveProps(nextProps) {
+        // console.log('componentWillReceiveProps()', newLang);
+        setPageTitle(this.props.lang, this.props.world);
+
+        this.setState({
+            matchWorlds: this.dao.getMatchWorlds(nextProps.lang, this.state.match),
+        });
     }
 
 
@@ -120,20 +153,6 @@ class Tracker extends React.Component {
 
 
 
-    componentDidMount() {
-        // console.log('Tracker::componentDidMount()');
-        this.__mounted   = true;
-
-        this.dao.init(this.props.lang, this.props.world);
-
-        setPageTitle(this.props.lang, this.props.world);
-
-        // this.updateTimers(() => setInterval(this.updateTimers.bind(this), 1000));
-        this.updateTimers.call(this);
-    }
-
-
-
     componentWillUnmount() {
         // console.log('Tracker::componentWillUnmount()');
 
@@ -142,17 +161,6 @@ class Tracker extends React.Component {
         this.__intervals = _.map(this.__intervals, i => clearInterval(i));
 
         this.dao.close();
-    }
-
-
-
-    componentWillReceiveProps(nextProps) {
-        // console.log('componentWillReceiveProps()', newLang);
-        setPageTitle(this.props.lang, this.props.world);
-
-        this.setState({
-            matchWorlds: this.dao.getMatchWorlds(nextProps.lang, this.state.match),
-        });
     }
 
 
@@ -167,41 +175,48 @@ class Tracker extends React.Component {
         // console.log('Tracker::render()');
 
 
-        if (!this.state.hasData) {
-            return null;
-        }
 
         return (
-            <div id="tracker">
+            <div id='tracker'>
 
-                <Scoreboard
-                    matchWorlds = {this.state.matchWorlds}
-                    match       = {this.state.match}
-                />
+                {(!this.state.hasData)
+                    ? loadingHtml
+                    : null
+                }
 
-                <Maps
-                    lang        = {this.props.lang}
 
-                    time        = {this.state.time}
-                    details     = {this.state.details}
-                    matchWorlds = {this.state.matchWorlds}
-                    guilds      = {this.state.guilds}
-                />
+                {(this.state.details && !this.state.details.isEmpty())
+                    ? <Scoreboard
+                        match = {this.state.match}
+                        matchWorlds = {this.state.matchWorlds}
+                    />
+                    : null
+                }
 
-                <div className="row">
-                    <div className="col-md-24">
-                        {(!this.state.guilds.isEmpty())
-                            ? <Guilds
-                                lang        = {this.props.lang}
+                {(this.state.details && !this.state.details.isEmpty())
+                    ? <Maps
+                        details = {this.state.details}
+                        guilds = {this.state.guilds}
+                        lang = {this.props.lang}
+                        matchWorlds = {this.state.matchWorlds}
+                        time = {this.state.time}
+                    />
+                    : null
+                }
 
-                                time        = {this.state.time}
-                                guilds      = {this.state.guilds}
+                {(this.state.guilds && !this.state.guilds.isEmpty())
+                    ? <div className='row'>
+                        <div className='col-md-24'>
+                            <Guilds
                                 claimEvents = {this.state.claimEvents}
+                                guilds = {this.state.guilds}
+                                lang = {this.props.lang}
+                                time = {this.state.time}
                             />
-                            : null
-                        }
+                        </div>
                     </div>
-                </div>
+                    : null
+                }
 
             </div>
         );
@@ -226,60 +241,63 @@ class Tracker extends React.Component {
 
 
 
-    onMatchDetails(timeRemote, matchData, detailsData) {
-        const lastmod      = matchData.get('lastmod');
+    onMatchDetails(timeRemote, match, details) {
+        const lastmod      = match.get('lastmod');
         const isModified   = (lastmod !== this.state.match.get('lastmod'));
 
 
         if (isModified) {
-            const claimEvents = this.dao.guilds.getEventsByType(detailsData, 'claim');
-
-            const timeLocal    = Date.now();
-            const remoteOffset = timeLocal - timeRemote;
-            const timeOffset   = (this.state.time.offset)
-                                ? (remoteOffset + this.state.time.offset) / 2 // average with previous offset
-                                : remoteOffset;
-
-            const time = {
-                local : timeLocal,
-                offset: Math.round(timeOffset),
-                remote: timeRemote,
-            };
+            // console.log('onMatchDetails', lastmod);
 
 
-            // use transactional setState
-            this.setState(state => ({
+            const claimEvents = this.dao.guilds.getEventsByType(details, 'claim');
+
+            const matchWorlds = (this.state.matchWorlds && Immutable.Map.isMap(this.state.matchWorlds))
+                ? this.state.matchWorlds
+                : this.dao.getMatchWorlds(this.props.lang, match);
+
+
+            this.setState({
                 hasData: true,
-
+                time: this.getTime(timeRemote),
                 lastmod,
-                time,
+
                 claimEvents,
+                details,
+                match,
+                matchWorlds,
+            });
 
-                match  : state.match.mergeDeep(matchData),
-                details: state.details.mergeDeep(detailsData),
-            }));
 
-
-            this.dao.guilds.lookup(
+            setImmediate(() => this.dao.guilds.lookup(
                 this.state.guilds,
-                detailsData,
+                details,
                 this.onGuildDetails.bind(this)
-            );
-
-
-
-            if (this.state.matchWorlds.isEmpty()) {
-                this.setState({
-                    matchWorlds: this.dao.getMatchWorlds(this.props.lang, this.state.match),
-                });
-            }
+            ));
         }
+    }
+
+
+
+    getTime(timeRemote) {
+        const timeLocal    = Date.now();
+        const remoteOffset = timeLocal - timeRemote;
+        const timeOffset   = (this.state.time.offset)
+                            ? (remoteOffset + this.state.time.offset) / 2 // average with previous offset
+                            : remoteOffset;
+
+        return {
+            local : timeLocal,
+            offset: Math.round(timeOffset),
+            remote: timeRemote,
+        };
     }
 
 
 
     onGuildDetails(guild, guildId) {
         const _guildId = guildId || guild.get('guild_id');
+
         if (!this.state.claimEvents.isEmpty()) {
             guild = this.dao.guilds.attachClaims(this.state.claimEvents, guild);
         }
@@ -303,10 +321,10 @@ class Tracker extends React.Component {
 */
 
 function setPageTitle(lang, world) {
-    let langSlug  = lang.get('slug');
-    let worldName = world.getIn([langSlug, 'name']);
+    const langSlug  = lang.get('slug');
+    const worldName = world.getIn([langSlug, 'name']);
 
-    let title     = [worldName, 'gw2w2w'];
+    const title     = [worldName, 'gw2w2w'];
 
     if (langSlug !== 'en') {
         title.push(lang.get('name'));
@@ -325,5 +343,4 @@ function setPageTitle(lang, world) {
 *
 */
 
-Tracker.propTypes = propTypes;
 module.exports    = Tracker;

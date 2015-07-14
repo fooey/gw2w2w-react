@@ -26,12 +26,13 @@ const World     = require('./World');
 *
 */
 
-const propTypes = {
-    region: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    worlds: React.PropTypes.instanceOf(Immutable.Seq).isRequired,
-};
-
 class Worlds extends React.Component {
+    static propTypes = {
+        region: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        worlds: React.PropTypes.instanceOf(Immutable.Seq).isRequired,
+    }
+
+
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.worlds, nextProps.worlds);
         const newRegion    = !Immutable.is(this.props.region.get('worlds'), nextProps.region.get('worlds'));
@@ -50,9 +51,9 @@ class Worlds extends React.Component {
         // console.log('overview::Worlds::render()', props.region.get('label'), props.region.get('worlds').toJS());
 
         return (
-            <div className="RegionWorlds">
+            <div className='RegionWorlds'>
                 <h2>{props.region.get('label')} Worlds</h2>
-                <ul className="list-unstyled">
+                <ul className='list-unstyled'>
                     {props.worlds.map(world =>
                         <World
                             key   = {world.get('id')}
@@ -75,5 +76,4 @@ class Worlds extends React.Component {
 *
 */
 
-Worlds.propTypes = propTypes;
 module.exports   = Worlds;

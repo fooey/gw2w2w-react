@@ -94,13 +94,15 @@ function updateCountdownTimerNode(timeRemote, el, next) {
 
         if (isHighlighted && !hasClassHighlight) {
             $objective.addClass('highlight');
-        } else if (!isHighlighted && hasClassHighlight) {
+        }
+        else if (!isHighlighted && hasClassHighlight) {
             $objective.removeClass('highlight');
         }
 
         if (isFresh && !hasClassFresh) {
             $objective.addClass('fresh');
-        } else if (!isFresh && hasClassFresh) {
+        }
+        else if (!isFresh && hasClassFresh) {
             $objective.removeClass('fresh');
         }
 
@@ -110,7 +112,8 @@ function updateCountdownTimerNode(timeRemote, el, next) {
             .removeClass('inactive')
             .end();
 
-    } else {
+    }
+    else {
         $el.filter('.active')
             .addClass('inactive')
             .removeClass('active')

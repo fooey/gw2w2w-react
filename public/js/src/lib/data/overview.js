@@ -73,6 +73,7 @@ class OverviewDataProvider {
 
     __setDataTimeout() {
         const interval = getInterval();
+
         // console.log('lib::data::overview::__setDataTimeout()', interval);
 
         this.__timeouts.matchData = setTimeout(

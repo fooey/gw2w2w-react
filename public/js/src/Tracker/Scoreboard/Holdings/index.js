@@ -25,12 +25,15 @@ const Item      = require('./Item');
 *
 */
 
-const propTypes = {
-    color   : React.PropTypes.string.isRequired,
-    holdings: React.PropTypes.instanceOf(Immutable.List).isRequired,
-};
 
 class Holdings extends React.Component {
+    static propTypes = {
+        color   : React.PropTypes.string.isRequired,
+        holdings: React.PropTypes.instanceOf(Immutable.List).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newHoldings  = !Immutable.is(this.props.holdings, nextProps.holdings);
         const shouldUpdate = (newHoldings);
@@ -41,16 +44,18 @@ class Holdings extends React.Component {
 
 
     render() {
-        return <ul className="list-inline">
-            {this.props.holdings.map((typeQuantity, typeIndex) =>
-                <Item
-                    key          = {typeIndex}
-                    color        = {this.props.color}
-                    typeQuantity = {typeQuantity}
-                    typeId       = {(typeIndex + 1).toString()}
-                />
-            )}
-        </ul>;
+        return (
+            <ul className='list-inline'>
+                {this.props.holdings.map((typeQuantity, typeIndex) =>
+                    <Item
+                        key          = {typeIndex}
+                        color        = {this.props.color}
+                        typeQuantity = {typeQuantity}
+                        typeId       = {(typeIndex + 1).toString()}
+                    />
+                )}
+            </ul>
+        );
     }
 }
 
@@ -63,5 +68,4 @@ class Holdings extends React.Component {
 *
 */
 
-Holdings.propTypes = propTypes;
 module.exports     = Holdings;

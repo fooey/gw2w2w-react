@@ -26,13 +26,16 @@ const Sprite = require('common/Icons/Sprite');
 *
 */
 
-const propTypes = {
-    color       : React.PropTypes.string.isRequired,
-    typeQuantity: React.PropTypes.number.isRequired,
-    typeId      : React.PropTypes.string.isRequired,
-};
 
 class HoldingsItem extends React.Component {
+    static propTypes = {
+        color       : React.PropTypes.string.isRequired,
+        typeId      : React.PropTypes.string.isRequired,
+        typeQuantity: React.PropTypes.number.isRequired,
+    }
+
+
+
     constructor(props) {
         super(props);
 
@@ -89,5 +92,4 @@ class HoldingsItem extends React.Component {
 *
 */
 
-HoldingsItem.propTypes = propTypes;
-module.exports         = HoldingsItem;
+module.exports = HoldingsItem;

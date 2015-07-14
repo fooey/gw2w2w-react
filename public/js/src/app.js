@@ -80,8 +80,13 @@ function attachRoutes() {
 */
 
 class App extends React.Component {
+    static propTypes = {
+        langSlug : React.PropTypes.string.isRequired,
+        worldSlug : React.PropTypes.string,
+    }
+
     componentDidMount() {
-        console.log('App Started!');
+        // console.log('App Started!');
     }
 
     render() {
@@ -97,26 +102,35 @@ class App extends React.Component {
 
         // console.log('Langs::render()', this.props.lang.toJS());
 
-        const navbarHeader = <div className="navbar-header">
-            <a className="navbar-brand" href="/">
-                <img src="/img/logo/logo-96x36.png" />
-            </a>
-        </div>;
 
-        return <div>
-            <nav className="navbar navbar-default">
-                <div className="container">
-                    {navbarHeader}
-                    <div id="nav-langs" className="pull-right">
-                        <Langs lang={lang} world={world} />
-                    </div>
-                </div>
-            </nav>
-
-            <div id="content" className="container">
-                <Handler lang={lang} world={world} />
+        const navbarHeader = (
+            <div className='navbar-header'>
+                <a className='navbar-brand' href='/'>
+                    <img src='/img/logo/logo-96x36.png' />
+                </a>
             </div>
-        </div>;
+        );
+
+
+        return (
+            <div>
+                <nav className='navbar navbar-default'>
+                    <div className='container'>
+
+                        {navbarHeader}
+
+                        <div id='nav-langs' className='pull-right'>
+                            <Langs lang={lang} world={world} />
+                        </div>
+
+                    </div>
+                </nav>
+
+                <div id='content' className='container'>
+                    <Handler lang={lang} world={world} />
+                </div>
+            </div>
+        );
     }
 }
 

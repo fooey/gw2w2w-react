@@ -26,21 +26,24 @@ const Entry     = require('./Entry');
 *
 */
 
-const defaultProps = {
-    guilds: {},
-};
-
-const propTypes = {
-    lang               : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    guilds             : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    eventHistory       : React.PropTypes.instanceOf(Immutable.List).isRequired,
-
-    triggerNotification: React.PropTypes.bool.isRequired,
-    mapFilter          : React.PropTypes.string.isRequired,
-    eventFilter        : React.PropTypes.string.isRequired,
-};
-
 class LogEntries extends React.Component {
+    static defaultProps = {
+        guilds: {},
+    }
+
+
+
+    static propTypes = {
+        eventFilter        : React.PropTypes.string.isRequired,
+        eventHistory       : React.PropTypes.instanceOf(Immutable.List).isRequired,
+        guilds             : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        lang               : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        mapFilter          : React.PropTypes.string.isRequired,
+        triggerNotification: React.PropTypes.bool.isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newLang         = !Immutable.is(this.props.lang, nextProps.lang);
 
@@ -67,12 +70,13 @@ class LogEntries extends React.Component {
         // console.log('LogEntries::render()', props.mapFilter, props.eventFilter, props.triggerNotification);
 
         return (
-            <ul id="log">
+            <ul id='log'>
                 {props.eventHistory.map(entry => {
                     const eventType = entry.get('type');
                     const entryId   = entry.get('id');
 
                     let guildId, guild;
+
                     if (eventType === 'claim') {
                         guildId = entry.get('guild');
                         guild   = (props.guilds.has(guildId))
@@ -81,20 +85,20 @@ class LogEntries extends React.Component {
                     }
 
 
-                    return <Entry
-                        key                 = {entryId}
-                        component           = 'li'
+                    return (
+                        <Entry
+                            component           = 'li'
+                            key                 = {entryId}
 
-                        triggerNotification = {props.triggerNotification}
-                        mapFilter           = {props.mapFilter}
-                        eventFilter         = {props.eventFilter}
-
-                        lang                = {props.lang}
-
-                        guildId             = {guildId}
-                        entry               = {entry}
-                        guild               = {guild}
-                    />;
+                            entry               = {entry}
+                            eventFilter         = {props.eventFilter}
+                            guild               = {guild}
+                            guildId             = {guildId}
+                            lang                = {props.lang}
+                            mapFilter           = {props.mapFilter}
+                            triggerNotification = {props.triggerNotification}
+                        />
+                    );
                 })}
             </ul>
         );
@@ -110,6 +114,4 @@ class LogEntries extends React.Component {
 *
 */
 
-LogEntries.defaultProps = defaultProps;
-LogEntries.propTypes    = propTypes;
-module.exports          = LogEntries;
+module.exports = LogEntries;

@@ -469,5 +469,10 @@ body {
   padding: 0 0 .25em;
   border-bottom: 1px solid #eee;
 }
+#tracker #AppLoading {
+  text-align: center;
+  font-size: 10vmax;
+  opacity: .5;
+}
 
 /*# sourceMappingURL=app.css.map */

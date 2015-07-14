@@ -18,12 +18,14 @@ const React = require('react');
  *
  */
 
-const propTypes = {
-    type : React.PropTypes.string.isRequired,
-    color: React.PropTypes.string.isRequired,
-};
-
 class Sprite extends React.Component {
+    static propTypes = {
+        color: React.PropTypes.string.isRequired,
+        type : React.PropTypes.string.isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newType      = (this.props.type !== nextProps.type);
         const newColor     = (this.props.color !== nextProps.color);
@@ -48,5 +50,4 @@ class Sprite extends React.Component {
  *
  */
 
-Sprite.propTypes = propTypes;
 module.exports   = Sprite;

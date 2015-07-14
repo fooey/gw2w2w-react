@@ -21,12 +21,15 @@ const moment    = require('moment');
 *
 */
 
-const propTypes = {
-    isEnabled: React.PropTypes.bool.isRequired,
-    timestamp: React.PropTypes.number.isRequired,
-};
 
 class Timestamp extends React.Component {
+    static propTypes = {
+        isEnabled: React.PropTypes.bool.isRequired,
+        timestamp: React.PropTypes.number.isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newTimestamp = !Immutable.is(this.props.timestamp, nextProps.timestamp);
         const shouldUpdate = (newTimestamp);
@@ -41,9 +44,11 @@ class Timestamp extends React.Component {
             return null;
         }
         else {
-            return <div className="objective-timestamp">
-                {moment((this.props.timestamp) * 1000).format('hh:mm:ss')}
-            </div>;
+            return (
+                <div className='objective-timestamp'>
+                    {moment((this.props.timestamp) * 1000).format('hh:mm:ss')}
+                </div>
+            );
         }
     }
 }
@@ -57,5 +62,4 @@ class Timestamp extends React.Component {
 *
 */
 
-Timestamp.propTypes = propTypes;
-module.exports      = Timestamp;
+module.exports = Timestamp;

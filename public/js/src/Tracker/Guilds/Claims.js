@@ -47,12 +47,15 @@ const objectiveCols = {
 *
 */
 
-const propTypes = {
-    lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    guild: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-};
 
 class GuildClaims extends React.Component {
+    static propTypes = {
+        guild: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    }
+
+
+
     shouldComponentUpdate(nextProps) {
         const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
         const newClaims    = !Immutable.is(this.props.guild.get('claims'), nextProps.guild.get('claims'));
@@ -70,19 +73,17 @@ class GuildClaims extends React.Component {
 
 
         return (
-            <ul className="list-unstyled">
+            <ul className='list-unstyled'>
                 {claims.map(entry =>
                     <li key={entry.get('id')}>
                         <Objective
                             cols        = {objectiveCols}
-
-                            lang        = {this.props.lang}
-                            guildId     = {guildId}
                             guild       = {this.props.guild}
-
+                            guildId     = {guildId}
+                            lang        = {this.props.lang}
                             objectiveId = {entry.get('objectiveId')}
-                            worldColor  = {entry.get('world')}
                             timestamp   = {entry.get('timestamp')}
+                            worldColor  = {entry.get('world')}
                         />
                     </li>
                 )}
@@ -101,6 +102,5 @@ class GuildClaims extends React.Component {
 *
 */
 
-GuildClaims.propTypes = propTypes;
 module.exports        = GuildClaims;
 
