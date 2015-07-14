@@ -65,4 +65,4 @@ class Label extends React.Component {
 *
 */
 
-module.exports  = Label;
+module.exports = Label;

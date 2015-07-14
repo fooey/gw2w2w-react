@@ -65,4 +65,4 @@ class MapScores extends React.Component {
 *
 */
 
-module.exports      = MapScores;
+module.exports = MapScores;

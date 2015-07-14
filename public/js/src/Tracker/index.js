@@ -343,4 +343,4 @@ function setPageTitle(lang, world) {
 *
 */
 
-module.exports    = Tracker;
+module.exports = Tracker;

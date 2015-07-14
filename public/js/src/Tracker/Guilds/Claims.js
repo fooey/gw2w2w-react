@@ -102,5 +102,5 @@ class GuildClaims extends React.Component {
 *
 */
 
-module.exports        = GuildClaims;
+module.exports = GuildClaims;
 

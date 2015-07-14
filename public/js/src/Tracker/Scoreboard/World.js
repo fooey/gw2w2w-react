@@ -99,4 +99,4 @@ class World extends React.Component {
 *
 */
 
-module.exports  = World;
+module.exports = World;

@@ -168,4 +168,4 @@ class Objective extends React.Component {
 *
 */
 
-module.exports      = Objective;
+module.exports = Objective;

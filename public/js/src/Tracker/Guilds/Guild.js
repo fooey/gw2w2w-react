@@ -129,4 +129,4 @@ function slugify(str) {
 *
 */
 
-module.exports  = Guild;
+module.exports = Guild;

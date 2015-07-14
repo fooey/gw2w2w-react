@@ -76,4 +76,4 @@ class Worlds extends React.Component {
 *
 */
 
-module.exports   = Worlds;
+module.exports = Worlds;

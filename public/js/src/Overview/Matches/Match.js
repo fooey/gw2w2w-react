@@ -92,4 +92,4 @@ class Match extends React.Component {
 *
 */
 
-module.exports  = Match;
+module.exports = Match;

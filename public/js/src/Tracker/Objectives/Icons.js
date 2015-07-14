@@ -86,4 +86,4 @@ class Icons extends React.Component {
 *
 */
 
-module.exports  = Icons;
+module.exports = Icons;

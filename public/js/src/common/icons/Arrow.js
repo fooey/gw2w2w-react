@@ -92,4 +92,4 @@ function getArrowSrc(meta) {
  *
  */
 
-module.exports  = Arrow;
+module.exports = Arrow;

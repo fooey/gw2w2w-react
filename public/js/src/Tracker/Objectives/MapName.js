@@ -64,4 +64,4 @@ class MapName extends React.Component {
 *
 */
 
-module.exports    = MapName;
+module.exports = MapName;

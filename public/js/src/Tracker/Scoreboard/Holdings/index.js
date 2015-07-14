@@ -68,4 +68,4 @@ class Holdings extends React.Component {
 *
 */
 
-module.exports     = Holdings;
+module.exports = Holdings;

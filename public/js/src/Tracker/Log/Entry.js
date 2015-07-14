@@ -139,4 +139,4 @@ class Entry extends React.Component {
 *
 */
 
-module.exports  = Entry;
+module.exports = Entry;

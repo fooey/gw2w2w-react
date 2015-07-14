@@ -78,4 +78,4 @@ class Scoreboard extends React.Component {
 *
 */
 
-module.exports       = Scoreboard;
+module.exports = Scoreboard;

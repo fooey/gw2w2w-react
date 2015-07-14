@@ -96,4 +96,4 @@ class Guild extends React.Component {
 *
 */
 
-module.exports  = Guild;
+module.exports = Guild;

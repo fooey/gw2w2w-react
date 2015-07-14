@@ -60,4 +60,4 @@ class Langs extends React.Component {
  *
  */
 
-module.exports  = Langs;
+module.exports = Langs;

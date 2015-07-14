@@ -56,4 +56,4 @@ class MapFilters extends React.Component {
 *
 */
 
-module.exports       = MapFilters;
+module.exports = MapFilters;

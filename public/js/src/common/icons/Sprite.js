@@ -50,4 +50,4 @@ class Sprite extends React.Component {
  *
  */
 
-module.exports   = Sprite;
+module.exports = Sprite;

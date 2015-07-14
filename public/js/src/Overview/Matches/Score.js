@@ -128,4 +128,4 @@ function getScoreText(score) {
 *
 */
 
-module.exports  = Score;
+module.exports = Score;

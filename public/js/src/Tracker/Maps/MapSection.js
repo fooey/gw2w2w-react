@@ -168,4 +168,4 @@ function getSectionClass(mapKey, sectionLabel) {
 *
 */
 
-module.exports       = MapSection;
+module.exports = MapSection;
