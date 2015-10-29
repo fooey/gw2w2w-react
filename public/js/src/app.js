@@ -120,6 +120,9 @@ class App extends React.Component {
                     </div>
                 </nav>
 
+
+                <h1 style={{textAlign: 'center'}}>App update for HoT in progress</h1>
+
                 <div id='content' className='container'>
                     {/*<Handler lang={lang} world={world} />*/}
                     <Overview lang={lang} world={world} />

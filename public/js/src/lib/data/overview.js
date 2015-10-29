@@ -68,6 +68,16 @@ export default class OverviewDataProvider {
 
 
 
+    __onMatchData(res) {
+        // console.log('lib::data::overview::__onMatchData()', textStatus, jqXHR, data);
+
+        if (res.body && !_.isEmpty(res.body)) {
+            (this.__listeners.onMatchData || _.noop)(res.body);
+        }
+    }
+
+
+
     __setDataTimeout() {
         const interval = getInterval();
 
@@ -78,16 +88,6 @@ export default class OverviewDataProvider {
             interval
         );
 
-    }
-
-
-
-    __onMatchData(res) {
-        // console.log('lib::data::overview::__onMatchData()', textStatus, jqXHR, data);
-
-        if (res.body && !_.isEmpty(res.body)) {
-            (this.__listeners.onMatchData || _.noop)(res.body);
-        }
     }
 }
 
