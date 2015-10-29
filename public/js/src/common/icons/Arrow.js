@@ -1,52 +1,22 @@
-'use strict';
 
-/*
- *
- * Dependencies
- *
- */
-
-const React     = require('react');
-const Immutable = require('Immutable');
+import React from'react';
 
 
 
 
 
-/*
- *
- * Component Definition
- *
- */
+export default ({oMeta}) => {
+    const imgSrc = getArrowSrc(oMeta);
 
-class Arrow extends React.Component {
-    static propTypes = {
-        oMeta: React.PropTypes.object.isRequired,
-    }
-
-
-
-    shouldComponentUpdate(nextProps) {
-        const newObjectiveMeta = !Immutable.is(this.props.oMeta, nextProps.oMeta);
-        const shouldUpdate = (newObjectiveMeta);
-
-        return shouldUpdate;
-    }
-
-    render() {
-        const imgSrc = getArrowSrc(this.props.oMeta);
-
-        return (
-            <span className = 'direction'>
-                {(imgSrc)
-                    ? <img src = {imgSrc} />
-                    : null
-                }
-            </span>
-        );
-    }
-}
-
+    return (
+        <span className = 'direction'>
+            {(imgSrc)
+                ? <img src = {imgSrc} />
+                : null
+            }
+        </span>
+    );
+};
 
 
 

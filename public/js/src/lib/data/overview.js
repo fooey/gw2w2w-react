@@ -1,9 +1,9 @@
 'use strict';
 
 import _ from 'lodash';
-import request from'superagent';
+import $ from 'jQuery';
 
-import STATIC from 'lib/static';
+// import STATIC from 'lib/static';
 
 
 const URL_API_MATCHES = `http://state.gw2w2w.com/matches`;
@@ -53,26 +53,21 @@ export default class OverviewDataProvider {
 
         // api.getMatches(this.__onMatchData.bind(this));
 
-        request
-            .get(URL_API_MATCHES)
-            .end((err, res) => {
-                if (this.__mounted) {
-                    this.__setDataTimeout();
-
-                    if (!err) {
-                        this.__onMatchData(res);
-                    }
-                }
-            });
+        $.ajax({
+            url: URL_API_MATCHES,
+            cache: false,
+            success: this.__onMatchData.bind(this),
+            complete: this.__setDataTimeout.bind(this),
+        });
     }
 
 
 
-    __onMatchData(res) {
+    __onMatchData(data) {
         // console.log('lib::data::overview::__onMatchData()', textStatus, jqXHR, data);
 
-        if (res.body && !_.isEmpty(res.body)) {
-            (this.__listeners.onMatchData || _.noop)(res.body);
+        if (data && !_.isEmpty(data)) {
+            (this.__listeners.onMatchData || _.noop)(data);
         }
     }
 

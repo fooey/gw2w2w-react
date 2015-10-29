@@ -6,9 +6,8 @@
 *
 */
 
-const React     = require('react');
-const Immutable = require('Immutable');
-const _         = require('lodash');
+import React from'react';
+import _ from'lodash';
 
 
 
@@ -16,8 +15,8 @@ const _         = require('lodash');
  *   libs
  */
 
-const libDate       = require('lib/date');
-const trackerTimers = require('lib/trackerTimers');
+import libDate from 'lib/date';
+import trackerTimers from 'lib/trackerTimers';
 
 
 
@@ -25,7 +24,7 @@ const trackerTimers = require('lib/trackerTimers');
  *   Data
  */
 
-const DAO = require('lib/data/tracker');
+import DAO from 'lib/data/tracker';
 
 
 
@@ -33,9 +32,9 @@ const DAO = require('lib/data/tracker');
  * React Components
  */
 
-const Scoreboard = require('./Scoreboard');
-const Maps       = require('./Maps');
-const Guilds     = require('./Guilds');
+import Scoreboard from './Scoreboard';
+import Maps from './Maps';
+import Guilds from './Guilds';
 
 
 

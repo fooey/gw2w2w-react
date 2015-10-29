@@ -51,8 +51,6 @@
     "postcss-assets": "^3.0.2",
     "postcss-focus": "^1.0.0",
     "postcss-reporter": "^1.3.0",
-    "superagent": "^1.4.0",
-    "superagent-no-cache": "^0.1.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.4.0"
@@ -72,7 +70,6 @@
     "_": "global:_",
     "lodash": "global:_",
     "async": "global:async",
-    "superagent": "global:superagent",
     "classnames": "global:classNames",
     "jQuery": "global:jQuery",
     "moment": "global:moment",
