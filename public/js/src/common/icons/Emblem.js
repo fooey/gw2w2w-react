@@ -27,47 +27,60 @@ const imgPlaceholder = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/20
  *
  */
 
-class Emblem extends React.Component {
-    static propTypes = {
-        guildName: React.PropTypes.string,
-        size     : React.PropTypes.number.isRequired,
-    }
+const Emblem = ({
+    guildName,
+    size = 256,
+}) => {
+    return (
+        <img
+            className = 'emblem'
+
+            src       = {getEmblemSrc(guildName)}
+            width     = {size}
+            height    = {size}
+
+            onError   = {imgOnError}
+        />
+    );
+};
+
+// class Emblem extends React.Component {
+//     static propTypes = {
+//         guildName: React.PropTypes.string,
+//         size     : React.PropTypes.number.isRequired,
+//     }
 
 
 
-    static defaultProps = {
-        size     : 256,
-        guildName: undefined,
-    }
+//     static defaultProps = {
+//         size     : 256,
+//         guildName: undefined,
+//     }
 
 
 
-    shouldComponentUpdate(nextProps) {
-        const newName      = (this.props.guildName !== nextProps.guildName); // changes when defined
-        const newSize      = (this.props.size !== nextProps.size);
-        const shouldUpdate = (newSize || newName);
+//     shouldComponentUpdate(nextProps) {
+//         const newName      = (this.props.guildName !== nextProps.guildName); // changes when defined
+//         const newSize      = (this.props.size !== nextProps.size);
+//         const shouldUpdate = (newSize || newName);
 
-        return shouldUpdate;
-    }
+//         return shouldUpdate;
+//     }
 
-    render() {
-        const emblemSrc = getEmblemSrc(this.props.guildName);
+//     render() {
+//         return (
+//             <img
+//                 className = 'emblem'
 
-        // console.log('emblem', this.props.guildName, emblemSrc);
+//                 src       = {getEmblemSrc(this.props.guildName)}
+//                 width     = {this.props.size}
+//                 height    = {this.props.size}
 
-        return (
-            <img
-                className = 'emblem'
-
-                src       = {emblemSrc}
-                width     = {this.props.size}
-                height    = {this.props.size}
-
-                onError   = {imgOnError}
-            />
-        );
-    }
-}
+//                 onError   = {imgOnError}
+//             />
+//         );
+//     }
+// }
 
 
 

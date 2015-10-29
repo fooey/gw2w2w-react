@@ -1,6 +1,7 @@
 'use strict';
 
-require('babel/polyfill');
+// require('babel/polyfill');
+console.clear();
 
 /*
 *
@@ -8,11 +9,12 @@ require('babel/polyfill');
 *
 */
 
-const React     = require('react');
-const Immutable = require('Immutable');
-const page      = require('page');
+import React from 'react';
+import ReactDOM from 'react-dom';
+// import Immutable from 'Immutable';
+import page from 'page';
 
-const STATIC    = require('lib/static');
+import STATIC from 'lib/static';
 
 
 
@@ -20,9 +22,11 @@ const STATIC    = require('lib/static');
 * React Components
 */
 
-const Langs     = require('common/Langs');
-const Overview  = require('Overview');
-const Tracker   = require('Tracker');
+import Langs from 'common/Langs';
+import NavbarHeader from 'common/layout/NavbarHeader';
+
+import Overview from 'Overview';
+// import Tracker from 'Tracker';
 
 
 
@@ -53,7 +57,7 @@ function attachRoutes() {
     page('/', redirectPage.bind(null, '/en'));
 
     page('/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)?', function(ctx) {
-        React.render(
+        ReactDOM.render(
             <App {...ctx.params} />,
             document.getElementById('react-app')
         );
@@ -79,6 +83,8 @@ function attachRoutes() {
 *
 */
 
+
+
 class App extends React.Component {
     static propTypes = {
         langSlug : React.PropTypes.string.isRequired,
@@ -93,41 +99,30 @@ class App extends React.Component {
         const langSlug  = this.props.langSlug;
         const worldSlug = this.props.worldSlug;
 
-        const lang      = STATIC.langs.get(langSlug);
+        const lang      = STATIC.langs[langSlug];
         const world     = getWorldFromSlug(langSlug, worldSlug);
 
-        const hasWorld  = (world && Immutable.Map.isMap(world) && !world.isEmpty());
+        const hasWorld  = (world && !_.isEmpty(world));
 
-        const Handler   = (hasWorld) ? Tracker : Overview;
+        // const Handler   = (hasWorld) ? Tracker : Overview;
 
         // console.log('Langs::render()', this.props.lang.toJS());
-
-
-        const navbarHeader = (
-            <div className='navbar-header'>
-                <a className='navbar-brand' href='/'>
-                    <img src='/img/logo/logo-96x36.png' />
-                </a>
-            </div>
-        );
 
 
         return (
             <div>
                 <nav className='navbar navbar-default'>
                     <div className='container'>
-
-                        {navbarHeader}
-
+                        <NavbarHeader />
                         <div id='nav-langs' className='pull-right'>
                             <Langs lang={lang} world={world} />
                         </div>
-
                     </div>
                 </nav>
 
                 <div id='content' className='container'>
-                    <Handler lang={lang} world={world} />
+                    {/*<Handler lang={lang} world={world} />*/}
+                    <Overview lang={lang} world={world} />
                 </div>
             </div>
         );
@@ -149,8 +144,10 @@ function redirectPage(destination) {
 
 
 function getWorldFromSlug(langSlug, worldSlug) {
-    return STATIC.worlds
-        .find(world => world.getIn([langSlug, 'slug']) === worldSlug);
+    return _.find(
+        STATIC.worlds,
+        world => world[langSlug].slug === worldSlug
+    );
 }
 
 

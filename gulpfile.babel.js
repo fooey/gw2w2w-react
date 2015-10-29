@@ -1,10 +1,9 @@
 'use strict';
 
-// jscs:disable esnext
-// jscs:disable disallowKeywords
 
-var gulp       = require('gulp');
-var livereload = require('gulp-livereload');
+import gulp from  'gulp';
+import livereload from  'gulp-livereload';
+import server from 'gulp-develop-server';
 
 
 
@@ -16,7 +15,7 @@ var livereload = require('gulp-livereload');
 *
 */
 
-var paths      = {};
+let paths      = {};
 paths.public   = './public';
 
 paths.css      = {};
@@ -39,10 +38,11 @@ paths.js.dist  = paths.js.base + '/dist';
 *
 */
 
-gulp = require('./gulp/css')(gulp, paths);
-gulp = require('./gulp/javascript')(gulp, paths);
-gulp = require('./gulp/watch')(gulp, livereload, paths);
-gulp = require('./gulp/nodemon')(gulp, livereload);
+require('./gulp/css')(gulp, paths);
+require('./gulp/javascript')(gulp, paths);
+require('./gulp/nodemon')(gulp, server, livereload);
+
+require('./gulp/watch')(gulp, livereload, server, paths);
 
 
 
@@ -60,7 +60,7 @@ gulp.task('compile', ['js-compile', 'css-compile'], function(cb) {
 });
 
 
-gulp.task('default', ['watch', 'compile', 'nodemon'], function(cb) {
+gulp.task('default', ['watch', 'compile', 'server'], function(cb) {
     cb();
 });
 

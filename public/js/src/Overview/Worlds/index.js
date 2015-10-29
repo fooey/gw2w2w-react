@@ -1,21 +1,7 @@
-'use strict';
 
-/*
-*
-* Dependencies
-*
-*/
+import React from 'react';
 
-const React     = require('react');
-const Immutable = require('Immutable');
-
-
-
-/*
-* React Components
-*/
-
-const World     = require('./World');
+import {worlds} from 'lib/static';
 
 
 
@@ -26,54 +12,20 @@ const World     = require('./World');
 *
 */
 
-class Worlds extends React.Component {
-    static propTypes = {
-        region: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        worlds: React.PropTypes.instanceOf(Immutable.Seq).isRequired,
-    }
-
-
-    shouldComponentUpdate(nextProps) {
-        const newLang      = !Immutable.is(this.props.worlds, nextProps.worlds);
-        const newRegion    = !Immutable.is(this.props.region.get('worlds'), nextProps.region.get('worlds'));
-        const shouldUpdate = (newLang || newRegion);
-
-        // console.log('overview::RegionWorlds::shouldComponentUpdate()', shouldUpdate, newLang, newRegion);
-
-        return shouldUpdate;
-    }
-
-
-
-    render() {
-        const props = this.props;
-
-        // console.log('overview::Worlds::render()', props.region.get('label'), props.region.get('worlds').toJS());
-
-        return (
-            <div className='RegionWorlds'>
-                <h2>{props.region.get('label')} Worlds</h2>
-                <ul className='list-unstyled'>
-                    {props.worlds.map(world =>
-                        <World
-                            key   = {world.get('id')}
-                            world = {world}
-                        />
-                    )}
-                </ul>
-            </div>
-        );
-    }
-}
-
-
-
-
-
-/*
-*
-* Export Module
-*
-*/
-
-module.exports = Worlds;
+export default ({
+    lang,
+    region,
+}) => (
+    <div className='RegionWorlds'>
+        <h2>{region.label} Worlds</h2>
+        <ul className='list-unstyled'>
+            {_.chain(worlds)
+                .filter(world => world.region === region.id)
+                .map(world => world[lang.slug])
+                .sortBy('name')
+                .map(world => <li key={world.slug}><a href={world.link}>{world.name}</a></li>)
+                .value()
+            }
+        </ul>
+    </div>
+);

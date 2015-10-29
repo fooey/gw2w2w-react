@@ -1,13 +1,15 @@
 'use strict';
 
-const Immutable = require('Immutable');
-const _         = require('lodash');
+import _ from 'lodash';
+import request from'superagent';
 
-const api       = require('lib/api');
-const STATIC    = require('lib/static');
+import STATIC from 'lib/static';
 
 
-class OverviewDataProvider {
+const URL_API_MATCHES = `http://state.gw2w2w.com/matches`;
+
+
+export default class OverviewDataProvider {
 
     constructor(listeners) {
         // console.log('lib::data::overview::constructor()');
@@ -40,24 +42,6 @@ class OverviewDataProvider {
     }
 
 
-
-    getWorldsByRegion(lang) {
-        return Immutable
-            .Seq(STATIC.worlds)
-            .map(world     => getWorldByLang(lang, world))
-            .sortBy(world  => world.get('name'))
-            .groupBy(world => world.get('region'));
-    }
-
-
-
-    getMatchesByRegion(matchData) {
-        return Immutable
-            .Seq(matchData)
-            .groupBy(match => match.get('region').toString());
-    }
-
-
     /*
     *
     *   Private Methods
@@ -66,7 +50,20 @@ class OverviewDataProvider {
 
     __getData() {
         // console.log('lib::data::overview::__getData()');
-        api.getMatches(this.__onMatchData.bind(this));
+
+        // api.getMatches(this.__onMatchData.bind(this));
+
+        request
+            .get(URL_API_MATCHES)
+            .end((err, res) => {
+                if (this.__mounted) {
+                    this.__setDataTimeout();
+
+                    if (!err) {
+                        this.__onMatchData(res);
+                    }
+                }
+            });
     }
 
 
@@ -80,48 +77,18 @@ class OverviewDataProvider {
             this.__getData.bind(this),
             interval
         );
+
     }
 
 
 
-    __onMatchData(err, data) {
-        // console.log('lib::data::overview::__onMatchData()', data);
+    __onMatchData(res) {
+        // console.log('lib::data::overview::__onMatchData()', textStatus, jqXHR, data);
 
-        if (!this.__mounted) {
-            return;
+        if (res.body && !_.isEmpty(res.body)) {
+            (this.__listeners.onMatchData || _.noop)(res.body);
         }
-
-        const matchData = Immutable.fromJS(data);
-
-        if (!err && matchData && !matchData.isEmpty()) {
-            (this.__listeners.onMatchData || _.noop)(matchData);
-        }
-
-        this.__setDataTimeout();
     }
-}
-
-
-
-/*
- * Data - Worlds
- */
-
-function getWorldByLang(lang, world) {
-    const langSlug    = lang.get('slug');
-    const worldByLang = world.get(langSlug);
-
-    const region      = world.get('region');
-    const link        = getWorldLink(langSlug, worldByLang);
-
-    return worldByLang.merge({
-        link,
-        region,
-    });
-}
-
-function getWorldLink(langSlug, world) {
-    return ['', langSlug, world.get('slug')].join('/');
 }
 
 
@@ -130,9 +97,5 @@ function getWorldLink(langSlug, world) {
 
 
 function getInterval() {
-    return _.random(2000, 4000);
+    return _.random(4000, 8000);
 }
-
-
-
-module.exports = OverviewDataProvider;

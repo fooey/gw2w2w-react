@@ -8,6 +8,8 @@ const GuildsDAO = require('./guilds');
 const api       = require('lib/api');
 const STATIC    = require('lib/static');
 
+const URL_API_MATCHES = `http://state.gw2w2w.com/world`;
+
 
 class OverviewDataProvider {
 

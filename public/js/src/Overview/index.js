@@ -6,25 +6,38 @@
 *
 */
 
-const React     = require('react');
-const Immutable = require('Immutable');
+import React from'react';
 
 
 /*
 *   Data
 */
 
-const DAO = require('lib/data/overview');
+import DAO from 'lib/data/overview';
 
 
 /*
 *   React Components
 */
 
-const Matches = require('./Matches');
-const Worlds  = require('./Worlds');
+import Matches from './Matches';
+import Worlds from './Worlds';
 
 
+
+
+
+/*
+*
+*   Component Globals
+*
+*/
+
+
+const REGIONS = {
+    1: {label: 'NA', id: '1'},
+    2: {label: 'EU', id: '2'},
+};
 
 
 
@@ -36,7 +49,7 @@ const Worlds  = require('./Worlds');
 
 class Overview extends React.Component {
     static propTypes = {
-        lang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        lang: React.PropTypes.object.isRequired,
     }
 
 
@@ -50,32 +63,31 @@ class Overview extends React.Component {
 
 
         this.state = {
-            regions: Immutable.fromJS({
-                1: {label: 'NA', id: '1'},
-                2: {label: 'EU', id: '2'},
-            }),
-            matchesByRegion: Immutable.fromJS({1: {}, 2: {}}),
-            worldsByRegion : this.dao.getWorldsByRegion(props.lang), // Immutable.fromJS({'1': {}, '2': {}})
+            matchData: {},
         };
     }
 
 
 
     shouldComponentUpdate(nextProps, nextState) {
-        const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
-        const newMatchData = !Immutable.is(this.state.matchesByRegion, nextState.matchesByRegion);
-        const shouldUpdate = (newLang || newMatchData);
+        return (
+            this.isNewMatchData(nextState)
+            || this.isNewLang(nextProps)
+        );
+    }
 
-        // console.log('overview::shouldComponentUpdate()', {shouldUpdate, newLang, newMatchData});
+    isNewMatchData(nextState) {
+        return getLastmod(this.state.matchData) !== getLastmod(nextState.matchData);
+    }
 
-        return shouldUpdate;
+    isNewLang(nextProps) {
+        return (this.props.lang.name !== nextProps.lang.name);
     }
 
 
 
     componentWillMount() {
         setPageTitle(this.props.lang);
-        // setWorlds.call(this, this.props.lang);
     }
 
 
@@ -87,11 +99,7 @@ class Overview extends React.Component {
 
 
     componentWillReceiveProps(nextProps) {
-        if (!Immutable.is(nextProps.lang, this.props.lang)) {
-            const worldsByRegion = this.dao.getWorldsByRegion(nextProps.lang);
-
-            this.setState({worldsByRegion});
-
+        if (this.props.lang.name !== nextProps.lang.name) {
             setPageTitle(nextProps.lang);
         }
     }
@@ -109,12 +117,12 @@ class Overview extends React.Component {
             <div id='overview'>
 
                 <div className='row'>
-                    {this.state.regions.map((region, regionId) =>
+                    {_.map(REGIONS, (region, regionId) =>
                         <div className='col-sm-12' key={regionId}>
                             <Matches
-                                matches = {this.state.matchesByRegion.get(regionId)}
-                                region  = {region}
-                                worlds  = {this.state.worldsByRegion.get(regionId)}
+                                lang={this.props.lang}
+                                matches={_.filter(this.state.matchData, match => match.region === regionId)}
+                                region={region}
                             />
                         </div>
                     )}
@@ -123,11 +131,11 @@ class Overview extends React.Component {
                 <hr />
 
                 <div className='row'>
-                    {this.state.regions.map((region, regionId) =>
+                    {_.map(REGIONS, (region, regionId) =>
                         <div className='col-sm-12' key={regionId}>
                             <Worlds
-                                region = {region}
-                                worlds = {this.state.worldsByRegion.get(regionId)}
+                                lang={this.props.lang}
+                                region={region}
                             />
                         </div>
                     )}
@@ -146,12 +154,17 @@ class Overview extends React.Component {
     */
 
     onMatchData(matchData) {
-        const newMatchesByRegion = this.dao.getMatchesByRegion(matchData);
-
-        this.setState(state => ({
-            matchesByRegion: state.matchesByRegion.mergeDeep(newMatchesByRegion),
-        }));
+        this.setState({matchData});
     }
+}
+
+
+function getLastmod(matchData) {
+    return _.reduce(
+        matchData,
+        (acc, match) => Math.max(match.lastmod),
+        0
+    );
 }
 
 
@@ -167,11 +180,11 @@ class Overview extends React.Component {
 function setPageTitle(lang) {
     let title = ['gw2w2w.com'];
 
-    if (lang.get('slug') !== 'en') {
-        title.push(lang.get('name'));
+    if (lang.slug !== 'en') {
+        title.push(lang.name);
     }
 
-    $('title').text(title.join(' - '));
+    document.title = title.join(' - ');
 }
 
 

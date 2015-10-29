@@ -1,15 +1,5 @@
-'use strict';
 
-/*
- *
- * Dependencies
- *
- */
-
-const React     = require('react');
-const Immutable = require('Immutable');
-
-
+import React from 'react';
 
 
 /*
@@ -22,63 +12,16 @@ const INSTANCE = {
 };
 
 
+export default ({scores}) => (
+    <img
+        src = {getImageSource(scores)}
 
+        width = {INSTANCE.size}
+        height = {INSTANCE.size}
+    />
+);
 
-/*
- *
- * Component Definition
- *
- */
-
-class Pie extends React.Component {
-    static propTypes = {
-        scores: React.PropTypes.instanceOf(Immutable.List).isRequired,
-    }
-
-
-
-    shouldComponentUpdate(nextProps) {
-        return !Immutable.is(this.props.scores, nextProps.scores);
-    }
-
-    render() {
-        const props = this.props;
-
-        // console.log('Pie::render', props.scores.toArray());
-
-        return (
-            <img
-                src = {getImageSource(props.scores.toArray())}
-
-                width = {INSTANCE.size}
-                height = {INSTANCE.size}
-            />
-        );
-    }
-}
-
-
-
-
-
-/*
- *
- * Private Methods
- *
- */
 
 function getImageSource(scores) {
-    return `http:\/\/www.piely.net\/${INSTANCE.size}\/${scores.join(',')}?strokeWidth=${INSTANCE.stroke}`;
+    return `http:\/\/www.piely.net\/${INSTANCE.size}\/${scores.red},${scores.blue},${scores.green}?strokeWidth=${INSTANCE.stroke}`;
 }
-
-
-
-
-
-/*
- *
- * Export Module
- *
- */
-
-module.exports = Pie;

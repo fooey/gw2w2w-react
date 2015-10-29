@@ -1,5 +1,10 @@
 'use strict';
 
+
+import favicon from 'serve-favicon';
+import serveStatic from 'serve-static';
+
+
 module.exports = function(app, express) {
 
     /*
@@ -37,7 +42,6 @@ module.exports = function(app, express) {
     *
     */
 
-    const favicon = require('serve-favicon');
     app.use(favicon('./public/img/logo/gw2-dragon-32.png'));
 
 
@@ -50,8 +54,6 @@ module.exports = function(app, express) {
     * Static Routes
     *
     */
-
-    const serveStatic = require('serve-static');
 
     const staticOptions = {
         dotfiles   : 'deny',

@@ -1,77 +1,39 @@
-'use strict';
 
-/*
- *
- * Dependencies
- *
- */
-
-const React     = require('react');
-const Immutable = require('Immutable');
+import React from 'react';
+import classnames from 'classnames';
 
 
-
-
-/*
- *
- * Exported Component
- *
- */
-
-class LangLink extends React.Component {
-    static propTypes = {
-        lang    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        linkLang: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        world   : React.PropTypes.instanceOf(Immutable.Map),
-    }
+export default ({
+    lang,
+    linkLang,
+    world,
+}) =>  (
+    <li
+        className={getClassname(lang, linkLang)}
+        title={linkLang.name}
+    >
+        <a href={getLink(linkLang, world)}>{linkLang.label}</a>
+    </li>
+);
 
 
 
-    render() {
-        const isActive  = Immutable.is(this.props.lang, this.props.linkLang);
-        const listClass = isActive ? 'active' : '';
-
-        const title     = this.props.linkLang.get('name');
-        const label     = this.props.linkLang.get('label');
-        const link      = getLink(this.props.linkLang, this.props.world);
-
-        return (
-            <li className = {listClass} title = {title}>
-                <a href = {link}>{label}</a>
-            </li>
-        );
-    }
+function getClassname(lang, linkLang) {
+    return classnames({
+        active: lang.label === linkLang.label,
+    });
 }
 
-
-
-/*
- *
- * Private Methods
- *
- */
-
 function getLink(lang, world) {
-    const langSlug = lang.get('slug');
+    const langSlug = lang.slug;
 
     let link = `/${langSlug}`;
 
     if (world) {
-        const worldSlug = world.getIn([langSlug, 'slug']);
+        const worldSlug = world[langSlug].slug;
 
         link += `/${worldSlug}`;
     }
 
     return link;
 }
-
-
-
-
-/*
- *
- * Export Module
- *
- */
-
-module.exports = LangLink;

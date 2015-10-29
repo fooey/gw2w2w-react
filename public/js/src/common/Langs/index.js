@@ -1,63 +1,29 @@
-'use strict';
 
-/*
- *
- * Dependencies
- *
- */
 
-const React     = require('react');
-const Immutable = require('Immutable');
+import React from 'react';
 
-const STATIC    = require('lib/static');
+import STATIC from 'lib/static';
 
-const LangLink  = require('./LangLink');
+import LangLink from './LangLink';
 
 
 
 
 
-/*
- *
- * Exported Component
- *
- */
 
-class Langs extends React.Component {
-    static propTypes = {
-        lang : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        world: React.PropTypes.instanceOf(Immutable.Map),
-    }
+export default ({
+    lang,
+    world,
+}) => (
+    <ul className = 'nav navbar-nav'>
+        {_.map(STATIC.langs, (linkLang, key) =>
+            <LangLink
+                key = {key}
 
-
-
-    render() {
-
-        // console.log('Langs::render()', this.props.lang.toJS());
-
-        return (
-            <ul className = 'nav navbar-nav'>
-                {STATIC.langs.map((linkLang, key) =>
-                    <LangLink
-                        key = {key}
-
-                        lang = {this.props.lang}
-                        linkLang = {linkLang}
-                        world = {this.props.world}
-                    />
-                )}
-            </ul>
-        );
-    }
-}
-
-
-
-
-/*
- *
- * Export Module
- *
- */
-
-module.exports = Langs;
+                lang = {lang}
+                linkLang = {linkLang}
+                world = {world}
+            />
+        )}
+    </ul>
+);

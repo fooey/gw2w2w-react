@@ -6,9 +6,22 @@
 
 
 
-function gulpTasks(gulp, livereload, paths) {
+function gulpTasks(gulp, livereload, server, paths) {
 
-    gulp.task('watch', ['compile'], function(cb) {
+    gulp.task('watch', ['compile', 'server'], function(cb) {
+
+
+        /*
+        *   Server
+        */
+
+        gulp.watch([
+            './server.js',
+            './config/**',
+            './routes/**',
+            './views/**',
+        ], ['server-restart']);
+
 
         /*
         *   CSS Source
@@ -20,7 +33,7 @@ function gulpTasks(gulp, livereload, paths) {
         ], ['css-compile-custom']);
 
         gulp.watch([
-            paths.css.src + '//bootstrap.less',
+            paths.css.src + '/bootstrap.less',
         ], ['css-compile-bootstrap']);
 
 

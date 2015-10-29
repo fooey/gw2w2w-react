@@ -12,14 +12,14 @@ var sourcemaps   = require('gulp-sourcemaps');
 var less         = require('gulp-less');
 
 var postcss      = require('gulp-postcss');
-var postcssLog   = require('postcss-log-warnings');
+var postcssLog   = require('postcss-reporter');
 
 var cssAssets    = require('postcss-assets');
-var autoprefixer = require('autoprefixer-core');
+// var autoprefixer = require('autoprefixer-core');
 var postcssFocus = require('postcss-focus');
 
 var cssnano      = require('cssnano');
-var csswring     = require('csswring');
+// var csswring     = require('csswring');
 
 
 
@@ -53,7 +53,7 @@ function gulpTasks(gulp, paths) {
                     };
                 },
             }),
-            autoprefixer({browsers: ['last 2 versions', 'ie >= 8']}),
+            // autoprefixer({browsers: ['last 2 versions', 'ie >= 8']}),
             postcssFocus(),
             postcssLog(),
         ];
@@ -80,7 +80,7 @@ function gulpTasks(gulp, paths) {
 
         var postcssProd = [
             cssnano({urls: false}),
-            csswring({removeAllComments: true}),
+            // csswring({removeAllComments: true}),
             postcssLog(),
         ];
 
@@ -108,10 +108,10 @@ function gulpTasks(gulp, paths) {
             .src(src)
             .pipe(sourcemaps.init({debug: true, loadMaps: true}))
             .pipe(less())
-            .pipe(postcss([
-                csswring({removeAllComments: true}),
-                postcssLog(),
-            ]))
+            // .pipe(postcss([
+            //     csswring({removeAllComments: true}),
+            //     postcssLog(),
+            // ]))
             .pipe(rename({suffix: '.min'}))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(dest));

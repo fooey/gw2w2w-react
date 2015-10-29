@@ -77,13 +77,13 @@ body {
   color: #3c763d;
 }
 .team-bg.red {
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .team-bg.blue {
-  background-color: #d9edf7;
+  background-color: #D9EDF7;
 }
 .team-bg.green {
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 #overview .RegionMatches,
 #overview .RegionWorlds {
@@ -393,7 +393,7 @@ body {
   margin: 0 .5em;
   height: 250px;
   overflow-y: scroll;
-  background: #ffffff repeat url('/img/rows-bg.~14beb044d7d~.png');
+  background: #fff repeat url('/img/rows-bg.~14beb044d7d~.png');
 }
 #tracker #log-container #log li {
   transition: all 200ms ease-in;

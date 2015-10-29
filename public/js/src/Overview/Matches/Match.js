@@ -1,78 +1,57 @@
-'use strict';
+
+import React from 'react';
+
+import MatchWorld from './MatchWorld';
+
+import {worlds} from 'lib/static';
+const WORLD_COLORS = ['red', 'blue', 'green'];
 
 
-/*
-*
-* Dependencies
-*
-*/
-
-const React      = require('react');
-const Immutable  = require('Immutable');
-
-
-/*
-* React Components
-*/
-
-const MatchWorld = require('./MatchWorld');
-
-
-
-
-
-/*
-*
-* Component Export
-*
-*/
-
-
-class Match extends React.Component {
+export default class Match extends React.Component {
     static propTypes = {
-        match : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        worlds: React.PropTypes.instanceOf(Immutable.Seq).isRequired,
+        lang: React.PropTypes.object.isRequired,
+        match: React.PropTypes.object.isRequired,
     }
 
 
 
     shouldComponentUpdate(nextProps) {
-        const newScores    = !Immutable.is(this.props.match.get('scores'), nextProps.match.get('scores'));
-        const newMatch     = !Immutable.is(this.props.match.get('startTime'), nextProps.match.get('startTime'));
-        const newWorlds    = !Immutable.is(this.props.worlds, nextProps.worlds);
-        const shouldUpdate = (newScores || newMatch || newWorlds);
+        return (
+            this.isNewMatchData(nextProps)
+            || this.isNewLang(nextProps)
+        );
+    }
 
-        return shouldUpdate;
+    isNewMatchData(nextProps) {
+        return (this.props.match.lastmod !== nextProps.match.lastmod);
+    }
+
+    isNewLang(nextProps) {
+        return (this.props.lang.name !== nextProps.lang.name);
     }
 
 
 
     render() {
-        const props = this.props;
-
-        // console.log('overview::Match::render()', props.match.toJS());
-
-        const worldColors = ['red', 'blue', 'green'];
+        const {lang, match} = this.props;
 
         return (
             <div className='matchContainer'>
                 <table className='match'><tbody>
-                    {worldColors.map((color, ixColor) => {
-                        const worldKey = color + 'Id';
-                        const worldId  = props.match.get(worldKey).toString();
-                        const world    = props.worlds.get(worldId);
-                        const scores   = props.match.get('scores');
+                    {_.map(WORLD_COLORS, (color) => {
+                        const worldKey = color;
+                        const worldId  = match.worlds[worldKey];
+                        const world = worlds[worldId][lang.slug];
 
                         return (
                             <MatchWorld
                                 component = 'tr'
-                                key       = {worldId}
+                                key = {worldId}
 
-                                color     = {color}
-                                ixColor   = {ixColor}
-                                scores    = {scores}
-                                showPie   = {ixColor === 0}
-                                world     = {world}
+                                color = {color}
+                                match = {match}
+                                showPie = {color === 'red'}
+                                world = {world}
                             />
                         );
                     })}
@@ -81,15 +60,3 @@ class Match extends React.Component {
         );
     }
 }
-
-
-
-
-
-/*
-*
-* Export Module
-*
-*/
-
-module.exports = Match;
