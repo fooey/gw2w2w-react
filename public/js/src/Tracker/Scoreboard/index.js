@@ -1,21 +1,8 @@
-'use strict';
 
-/*
-*
-* Dependencies
-*
-*/
+import React from 'react';
+import _ from 'lodash';
 
-const React     = require('react');
-const Immutable = require('Immutable');
-
-
-
-/*
-* React Components
-*/
-
-const World     = require('./World');
+import World from './World';
 
 
 
@@ -27,55 +14,42 @@ const World     = require('./World');
 *
 */
 
-class Scoreboard extends React.Component {
-    static propTypes = {
-        match      : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        matchWorlds: React.PropTypes.instanceOf(Immutable.List).isRequired,
-    };
+export default ({
+    match,
+    lang,
+}) =>  {
+    const worldsProps = getWorldsProps(match, lang);
+
+    return (
+        <section className='row' id='scoreboards'>
+            {_.map(
+                worldsProps,
+                (worldProps) =>
+                <div className='col-sm-8' key={worldProps.id}>
+                    <World {...worldProps} />
+                </div>
+            )}
+        </section>
+    );
+};
 
 
-
-    shouldComponentUpdate(nextProps) {
-        const newWorlds    = !Immutable.is(this.props.matchWorlds, nextProps.matchWorlds);
-        const newScores    = !Immutable.is(this.props.match.get('scores'), nextProps.match.get('scores'));
-        const newTicks     = !Immutable.is(this.props.match.get('ticks'), nextProps.match.get('ticks'));
-        const newHoldings  = !Immutable.is(this.props.match.get('holdings'), nextProps.match.get('holdings'));
-        const shouldUpdate = (newWorlds || newScores || newTicks || newHoldings);
-
-        return shouldUpdate;
-    }
-
-
-
-    render() {
-        const scores   = this.props.match.get('scores');
-        const ticks    = this.props.match.get('ticks');
-        const holdings = this.props.match.get('holdings');
-
-        return (
-            <section className='row' id='scoreboards'>
-                {this.props.matchWorlds.map((world, ixWorld) =>
-                    <div className='col-sm-8' key = {ixWorld}>
-                        <World
-                            world    = {world}
-                            score    = {scores.get(ixWorld) || 0}
-                            tick     = {ticks.get(ixWorld) || 0}
-                            holdings = {holdings.get(ixWorld)}
-                        />
-                    </div>
-                )}
-            </section>
-        );
-    }
+function getWorldsProps(match, lang) {
+    return _.reduce(
+        match.worlds,
+        (acc, worldId, color) => {
+            acc[color] = {
+                color,
+                lang,
+                id: worldId,
+                score: _.get(match, ['scores', color], 0),
+                deaths: _.get(match, ['deaths', color], 0),
+                kills: _.get(match, ['kills', color], 0),
+                tick: _.get(match, ['ticks', color], 0),
+                holdings: _.get(match, ['holdings', color], []),
+            };
+            return acc;
+        },
+        {red: {}, blue: {}, green: {}}
+    );
 }
-
-
-
-
-/*
-*
-* Export Module
-*
-*/
-
-module.exports = Scoreboard;

@@ -313,14 +313,28 @@ body {
   margin: .25em 0 .75em 0;
   padding: 0;
 }
+#tracker #scoreboards .scoreboard h2 .sub-stats {
+  font-size: 10pt;
+  padding-top: .25em;
+}
 #tracker #scoreboards .scoreboard ul {
   margin: 0;
+  display: flex;
+  justify-content: center;
+  align-content: middle;
+  flex-flow: row nowrap;
 }
 #tracker #scoreboards .scoreboard li {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+#tracker #scoreboards .scoreboard li > span {
   display: inline-block;
-  line-height: 20px;
-  height: 20px;
-  font-size: 10pt;
+}
+#tracker #scoreboards .scoreboard li > span.quantity {
+  font-size: 11pt;
+  padding-left: .25em;
 }
 #tracker #maps .map {
   padding: 1em .25em;
@@ -367,62 +381,117 @@ body {
   margin: 0;
   padding: 0;
 }
-#tracker #log-container .log-tabs {
-  border-bottom: 1px solid #eeeeee;
-  padding-bottom: 4px;
-  margin-bottom: 8px;
+#tracker #log-container {
+  margin: .5em 0;
 }
-#tracker #log-container .log-tabs li {
-  margin: 0;
-  padding: 0;
+#tracker #log-tabs {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-end;
+  height: 40px;
+  border-bottom: 1px solid #ccc;
 }
-#tracker #log-container .log-tabs a {
-  margin: 0;
-  padding: .2em .5em;
-  font-size: 8pt;
+#tracker #log-tabs a.tab {
+  display: inline-block;
+  padding: 0 1em;
+  margin: 0 .1em;
   cursor: pointer;
+  border: 1px solid #eee;
+  border-bottom: 0;
+  border-top-left-radius: .2em;
+  border-top-right-radius: .2em;
+  font-size: 9pt;
+  background-color: #f9f9f9;
+  height: 30px;
+  line-height: 30px;
 }
-#tracker #log-container .log-tabs #log-event-filters {
-  margin-right: 2em;
+#tracker #log-tabs a.tab.active {
+  background-color: #fff;
+  border-color: #ccc;
+  font-size: 12pt;
+  height: 36px;
+  line-height: 36px;
+  font-weight: bold;
 }
-#tracker #log-container .log-tabs #log-event-filters li {
-  float: right;
+#tracker #log-tabs a.tab:hover, #tracker #log-tabs a.tab:focus {
+  border-color: #ccc;
 }
-#tracker #log-container #log {
-  padding: 0;
-  margin: 0 .5em;
-  height: 250px;
+#tracker #log-tabs a.check {
+  display: flex;
+  align-self: flex-end;
+  cursor: pointer;
+  border: 1px solid #eee;
+  border-radius: .2em;
+  background-color: #f9f9f9;
+  margin: 2px .1em;
+  padding: 4px 8px;
+}
+#tracker #log-tabs a.check.first {
+  margin-left: 1em;
+}
+#tracker #log-tabs a.check.active {
+  background-color: #fff;
+  border-color: #ccc;
+  font-size: 12pt;
+  font-weight: bold;
+}
+#tracker #log-tabs a.check:hover, #tracker #log-tabs a.check:focus {
+  border-color: #ccc;
+}
+#tracker #log {
+  margin: .25em 0;
+  height: 25em;
   overflow-y: scroll;
-  background: #fff repeat url('/img/rows-bg.~14beb044d7d~.png');
 }
-#tracker #log-container #log li {
-  transition: all 200ms ease-in;
-  opacity: 1;
+#tracker #log > li {
+  padding: .1em 0;
+  transition: all 150ms ease-in;
+}
+#tracker #log > li:nth-child(even) {
+  background-color: #f9f9f9;
+}
+#tracker #log > li:hover, #tracker #log > li:focus {
+  font-weight: bold;
+  background-color: #ffe;
+}
+#tracker #log .log-objective {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+#tracker #log .log-objective img {
+  width: 20px;
+  height: 20px;
+}
+#tracker #log .log-objective > li {
+  display: inline-block;
   white-space: nowrap;
   overflow: hidden;
-  display: block;
+  text-overflow: ellipsis;
   font-size: 9pt;
-  line-height: 20px;
-  max-height: 20px;
+  text-align: left;
 }
-#tracker #log-container #log li.hide-entry {
-  max-height: 0;
-  opacity: 0;
+#tracker #log .log-objective > li.log-sprite {
+  width: 30px;
+  text-align: center;
 }
-#tracker #log-container #log li:hover, #tracker #log-container #log li:focus {
-  background-color: rgba(255, 255, 0, 0.1);
+#tracker #log .log-objective > li.log-time {
+  width: 6em;
+  text-align: center;
 }
-#tracker #log-container #log li .objective {
-  font-size: 9pt;
+#tracker #log .log-objective > li.log-expire {
+  width: 3em;
+  text-align: center;
 }
-#tracker #log-container #log .objective-relative,
-#tracker #log-container #log .objective-timestamp,
-#tracker #log-container #log .objective-map,
-#tracker #log-container #log .objective-guild {
-  font-size: 9pt;
+#tracker #log .log-objective > li.log-name {
+  width: 15em;
 }
-#tracker #log-container #log .objective-event {
-  font-size: 7pt;
+#tracker #log .log-objective > li.log-claimed {
+  width: 6em;
+}
+#tracker #log .log-objective > li.log-guild {
+  width: 15em;
 }
 #tracker #options {
   transition: all 400ms ease-in;

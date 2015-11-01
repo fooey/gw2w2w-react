@@ -1,17 +1,16 @@
 'use strict';
 
-const Immutable = require('Immutable');
-const _         = require('lodash');
+import _ from 'lodash';
 
-const GuildsDAO = require('./guilds');
+import GuildsDAO from './guilds';
+import api from 'lib/api';
 
-const api       = require('lib/api');
-const STATIC    = require('lib/static');
+import STATIC from 'lib/static';
 
 const URL_API_MATCHES = `http://state.gw2w2w.com/world`;
 
 
-class OverviewDataProvider {
+export default class OverviewDataProvider {
 
     constructor(listeners) {
         // console.log('lib::data::tracker::constructor()');
@@ -31,15 +30,17 @@ class OverviewDataProvider {
 
 
 
-    init(lang, world) {
-        // console.log('lib::data::tracker::init()');
+    init(world) {
+        // console.log('lib::data::tracker::init()', lang, world);
 
-        this.__langSlug  = lang.get('slug');
-        this.__worldSlug = world.getIn([this.__langSlug, 'slug']);
-
+        this.setWorld(world);
 
         this.__mounted = true;
         this.__getData();
+    }
+
+    setWorld(world) {
+        this.__worldId = world.id;
     }
 
 
@@ -55,10 +56,11 @@ class OverviewDataProvider {
 
 
 
-    getMatchWorlds(lang, match) {
-        return Immutable
-            .List(['red', 'blue', 'green'])
-            .map(getMatchWorld.bind(null, lang, match));
+    getMatchWorlds(match) {
+        return _.map(
+            {red: {}, blue: {}, green: {}},
+            (j, color) => getMatchWorld(match, color)
+        );
     }
 
 
@@ -71,15 +73,22 @@ class OverviewDataProvider {
     __getData() {
         // console.log('lib::data::tracker::__getData()');
 
-        api.getMatchDetailsByWorld(
-            this.__worldSlug,
-            this.__onMatchDetails.bind(this)
-        );
+
+        // api.getMatchByWorldSlug({
+        //     worldSlug: this.__worldSlug,
+        //     success: (data) => this.__onMatchDetails(data),
+        //     complete: () => this.__rescheduleDataUpdate(),
+        // });
+        api.getMatchByWorldId({
+            worldId: this.__worldId,
+            success: (data) => this.__onMatchDetails(data),
+            complete: () => this.__rescheduleDataUpdate(),
+        });
     }
 
 
 
-    __onMatchDetails(err, data) {
+    __onMatchDetails(data) {
         // console.log('lib::data::tracker::__onMatchData()', data);
 
         if (!this.__mounted) {
@@ -87,22 +96,17 @@ class OverviewDataProvider {
         }
 
 
-        if (!err && data && data.match && data.details) {
-            const timeRemote  = Immutable.fromJS(data.now);
-            const matchData   = Immutable.fromJS(data.match);
-            const detailsData = Immutable.fromJS(data.details);
-
-            this.__listeners.onMatchDetails(timeRemote, matchData, detailsData);
+        if (data && !_.isEmpty(data)) {
+            this.__listeners.onMatchDetails(data);
         }
-
-
-        this.__rescheduleDataUpdate.call(this);
     }
 
 
 
     __rescheduleDataUpdate() {
-        const refreshTime = _.random(1000 * 2, 1000 * 4);
+        const refreshTime = _.random(1000 * 4, 1000 * 8);
+
+        // console.log('data refresh: ', refreshTime);
 
         this.__timeouts.data = setTimeout(this.__getData.bind(this), refreshTime);
     }
@@ -115,23 +119,13 @@ class OverviewDataProvider {
 *   Worlds
 */
 
-function getMatchWorld(lang, match, color) {
-    const langSlug    = lang.get('slug');
-    const worldKey    = color + 'Id';
-    const worldId     = match.getIn([worldKey]).toString();
-    const worldByLang = STATIC.worlds.getIn([worldId, langSlug]);
+function getMatchWorld(match, color) {
+    const worldId = match.worlds[color].toString();
 
-    return worldByLang
-        .set('color', color)
-        .set('link', getWorldLink(langSlug, worldByLang));
+    const world = _.merge(
+        {color: color},
+        STATIC.worlds[worldId]
+    );
+
+    return world;
 }
-
-
-
-function getWorldLink(langSlug, world) {
-    return ['', langSlug, world.get('slug')].join('/');
-}
-
-
-
-module.exports = OverviewDataProvider;

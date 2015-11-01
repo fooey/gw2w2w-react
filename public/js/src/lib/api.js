@@ -1,29 +1,61 @@
-'use strict';
-/*eslint camelcase: 0 */
+
+import $ from 'jQuery';
+import _ from 'lodash';
 
 
-const gw2api = require('gw2api');
-
-
-module.exports = {
-    getGuildDetails       : getGuildDetails,
-    getMatches            : getMatches,
-    getMatchDetailsByWorld: getMatchDetailsByWorld,
-    // getMatchDetails    : getMatchDetails,
+export default {
+    // getMatches: getMatches,
+    getMatchByWorldSlug: getMatchByWorldSlug,
+    getMatchByWorldId: getMatchByWorldId,
+    getGuildById : getGuildById,
 };
 
 
 
-function getMatches(callback) {
-    gw2api.getMatchesState(callback);
+function getMatchByWorldSlug({
+    worldSlug,
+    success = _.noop,
+    error = _.noop,
+    complete = _.noop,
+}) {
+    $.ajax({
+        url: `http://state.gw2w2w.com/world/${worldSlug}`,
+        success,
+        error,
+        complete,
+    });
 }
 
 
 
-function getGuildDetails(guildId, callback) {
-    gw2api.getGuildDetails({
-        guild_id: guildId,
-    }, callback);
+function getMatchByWorldId({
+    worldId,
+    success = _.noop,
+    error = _.noop,
+    complete = _.noop,
+}) {
+    $.ajax({
+        url: `http://state.gw2w2w.com/world/${worldId}`,
+        success,
+        error,
+        complete,
+    });
+}
+
+
+
+export function getGuildById({
+    guildId,
+    success = _.noop,
+    error = _.noop,
+    complete = _.noop,
+}) {
+    $.ajax({
+        url: `https://api.guildwars2.com/v1/guild_details.json?guild_id=${guildId}`,
+        success,
+        error,
+        complete,
+    });
 }
 
 

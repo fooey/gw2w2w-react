@@ -25,7 +25,7 @@ import Langs from 'common/Langs';
 import NavbarHeader from 'common/layout/NavbarHeader';
 
 import Overview from 'Overview';
-// import Tracker from 'Tracker';
+import Tracker from 'Tracker';
 
 
 
@@ -102,7 +102,7 @@ class App extends React.Component {
         const world     = getWorldFromSlug(langSlug, worldSlug);
 
         const hasWorld  = (world && !_.isEmpty(world));
-        // const Handler   = (hasWorld) ? Tracker : Overview;
+        const Handler   = (hasWorld) ? Tracker : Overview;
 
 
         return (
@@ -120,7 +120,7 @@ class App extends React.Component {
                 <h1 style={{textAlign: 'center'}}>App update for HoT in progress</h1>
 
                 <div id='content' className='container'>
-                    <Overview lang={lang} world={world} />
+                    <Handler lang={lang} world={world} />
                 </div>
             </div>
         );

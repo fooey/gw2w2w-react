@@ -55,7 +55,6 @@ export default class OverviewDataProvider {
 
         $.ajax({
             url: URL_API_MATCHES,
-            cache: false,
             success: this.__onMatchData.bind(this),
             complete: this.__setDataTimeout.bind(this),
         });

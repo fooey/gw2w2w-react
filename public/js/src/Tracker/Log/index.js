@@ -1,41 +1,17 @@
-'use strict';
 
-/*
-*
-* Dependencies
-*
-*/
-
-const React        = require('react');
-const Immutable    = require('Immutable');
-
-// const STATIC       = require('gw2w2w-static');
+import React from'react';
 
 
-
-/*
-* React Components
-*/
-
-const MapFilters   = require('./MapFilters');
-const EventFilters = require('./EventFilters');
-const LogEntries   = require('./LogEntries');
+import Entries from './Entries';
+import Tabs from './Tabs';
 
 
-
-
-/*
-*
-* Component Definition
-*
-*/
-
-
-class Log extends React.Component {
+export default class LogContainer extends React.Component {
     static propTypes = {
-        details: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        guilds : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        lang   : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+        lang: React.PropTypes.object.isRequired,
+        log: React.PropTypes.array.isRequired,
+        guilds: React.PropTypes.object.isRequired,
+        match: React.PropTypes.object.isRequired,
     }
 
 
@@ -44,119 +20,51 @@ class Log extends React.Component {
         super(props);
 
         this.state = {
-            mapFilter          : 'all',
-            eventFilter        : 'all',
-            triggerNotification: false,
+            mapFilter: '',
+            typeFilter: {
+                castle: true,
+                keep: true,
+                tower: true,
+                camp: true,
+            },
         };
     }
 
 
 
-    shouldComponentUpdate(nextProps, nextState) {
-        const newLang        = !Immutable.is(this.props.lang, nextProps.lang);
-
-        const newGuilds      = !Immutable.is(this.props.guilds, nextProps.guilds);
-        const newHistory     = !Immutable.is(this.props.details.get('history'), nextProps.details.get('history'));
-        const newData        = (newGuilds || newHistory);
-
-        const newMapFilter   = !Immutable.is(this.state.mapFilter, nextState.mapFilter);
-        const newEventFilter = !Immutable.is(this.state.eventFilter, nextState.eventFilter);
-        const newFilters     = (newMapFilter || newEventFilter);
-
-        const shouldUpdate   = (newLang || newData || newFilters);
-
-        // console.log('Tracker::Logs::shouldComponentUpdate()', shouldUpdate, newData, newFilters);
-
-        return shouldUpdate;
-    }
-
-
-
-    componentDidMount() {
-        this.setState({triggerNotification: true});
-    }
-
-
-
-    componentDidUpdate() {
-        if (!this.state.triggerNotification) {
-            this.setState({triggerNotification: true});
-        }
-    }
-
-
-
     render() {
-
-        const eventHistory = this.props.details.get('history');
-
         return (
             <div id='log-container'>
+                <Tabs
+                    maps={this.props.match.maps}
+                    mapFilter={this.state.mapFilter}
+                    typeFilter={this.state.typeFilter}
 
-                <div className='log-tabs'>
-                    <div className='row'>
-                        <div className='col-sm-16'>
-                            <MapFilters
-                                mapFilter = {this.state.mapFilter}
-                                setWorld  = {this.__setWorld.bind(this)}
-                            />
-                        </div>
-                        <div className='col-sm-8'>
-                            <EventFilters
-                                eventFilter = {this.state.eventFilter}
-                                setEvent    = {this.__setEvent.bind(this)}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                {(!eventHistory.isEmpty())
-                    ? <LogEntries
-                        eventFilter         = {this.state.eventFilter}
-                        eventHistory        = {eventHistory}
-                        guilds              = {this.props.guilds}
-                        lang                = {this.props.lang}
-                        mapFilter           = {this.state.mapFilter}
-                        triggerNotification = {this.state.triggerNotification}
-                    />
-                    : null
-                }
-
+                    handleMapFilterClick={this.handleMapFilterClick.bind(this)}
+                    handleTypeFilterClick={this.handleTypeFilterClick.bind(this)}
+                />
+                <Entries
+                    guilds={this.props.guilds}
+                    lang={this.props.lang}
+                    log={this.props.log}
+                    now={this.props.now}
+                    mapFilter={this.state.mapFilter}
+                    typeFilter={this.state.typeFilter}
+                />
             </div>
         );
     }
 
 
 
-    __setWorld(e) {
-        const filter = e.target.getAttribute('data-filter');
-
-        this.setState({
-            mapFilter: filter,
-            triggerNotification: true,
-        });
+    handleMapFilterClick(mapFilter) {
+        this.setState({mapFilter});
     }
 
-
-
-    __setEvent(e) {
-        const filter = e.target.getAttribute('data-filter');
-
-        this.setState({
-            eventFilter: filter,
-            triggerNotification: true,
+    handleTypeFilterClick(toggleType) {
+        this.setState(state => {
+            state.typeFilter[toggleType] = !state.typeFilter[toggleType];
+            return state;
         });
     }
 }
-
-
-
-
-
-/*
-*
-* Export Module
-*
-*/
-
-module.exports = Log;

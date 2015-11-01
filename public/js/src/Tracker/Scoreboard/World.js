@@ -1,29 +1,15 @@
-'use strict';
 
-/*
-*
-* Dependencies
-*
-*/
+import React from 'react';
+import _ from 'lodash';
+import numeral from 'numeral';
 
-const React     = require('react');
-const Immutable = require('Immutable');
-const numeral   = require('numeral');
+import Holdings from './Holdings';
 
 
-/*
-* React Components
-*/
-
-const Holdings  = require('./Holdings');
+import {worlds as WORLDS} from 'lib/static';
 
 
-
-/*
-* Component Globals
-*/
-
-const loadingHtml = (
+const Loading = () => (
     <h1 style={{height: '90px', fontSize: '32pt', lineHeight: '90px'}}>
         <i className='fa fa-spinner fa-spin'></i>
     </h1>
@@ -32,71 +18,45 @@ const loadingHtml = (
 
 
 
-/*
-*
-* Component Definition
-*
-*/
+export default ({
+    color,
+    deaths,
+    id,
+    holdings,
+    kills,
+    lang,
+    score,
+    tick,
+}) => {
+    const world = WORLDS[id][lang.slug];
 
-
-class World extends React.Component {
-    static propTypes = {
-        holdings: React.PropTypes.instanceOf(Immutable.List).isRequired,
-        score   : React.PropTypes.number.isRequired,
-        tick    : React.PropTypes.number.isRequired,
-        world   : React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    if (!world && _.isEmpty(world)) {
+        return <Loading />;
     }
 
-
-
-    shouldComponentUpdate(nextProps) {
-        const newWorld     = !Immutable.is(this.props.world, nextProps.world);
-        const newScore     = (this.props.score !== nextProps.score);
-        const newTick      = (this.props.tick !== nextProps.tick);
-        const newHoldings  = !Immutable.is(this.props.holdings, nextProps.holdings);
-
-        const shouldUpdate = (newWorld || newScore || newTick || newHoldings);
-
-        return shouldUpdate;
-    }
-
-
-
-    render() {
-        const color = this.props.world.get('color');
-
-        return (
-            <div className={`scoreboard team-bg team text-center ${color}`}>
-                {(this.props.world && Immutable.Map.isMap(this.props.world))
-                    ?  <div>
-                        <h1><a href={this.props.world.get('link')}>
-                            {this.props.world.get('name')}
-                        </a></h1>
-                        <h2>
-                            {numeral(this.props.score).format('0,0')}
-                            {' '}
-                            {numeral(this.props.tick).format('+0,0')}
-                        </h2>
-
-                        <Holdings
-                            color    = {color}
-                            holdings = {this.props.holdings}
-                        />
+    return (
+        <div className={`scoreboard team-bg team text-center ${color}`}>
+            <h1><a href={world.link}>{world.name}</a></h1>
+            <h2>
+                <div className='stats'>
+                    <span title='Total Score'>{numeral(score).format('0,0')}</span>
+                    {' '}
+                    <span title='Total Tick'>{numeral(tick).format('+0,0')}</span>
+                </div>
+                {kills
+                    ? <div className='sub-stats'>
+                        <span title='Total Kills'>{numeral(kills).format('0,0')}k</span>
+                        {' '}
+                        <span title='Total Deaths'>{numeral(deaths).format('0,0')}d</span>
                     </div>
-                    : loadingHtml
+                    : null
                 }
-            </div>
-        );
-    }
-}
+            </h2>
 
-
-
-
-/*
-*
-* Export Module
-*
-*/
-
-module.exports = World;
+            <Holdings
+                color={color}
+                holdings={holdings}
+            />
+        </div>
+    );
+};

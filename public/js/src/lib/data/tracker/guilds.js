@@ -1,15 +1,11 @@
-'use strict';
 
-/*
- *
- * Dependencies
- *
- */
+import $ from 'jQuery';
+import _ from 'lodash';
+import async from 'async';
 
-const Immutable = require('Immutable');
-const async     = require('async');
+import * as api from 'lib/api';
 
-const api       = require('lib/api');
+const URL_API_GUILDS = `https://api.guildwars2.com/v1/guild_details.json`;
 
 
 
@@ -21,14 +17,7 @@ const api       = require('lib/api');
  *
  */
 
-const guildDefault = Immutable.Map({
-    loaded    : false,
-    lastClaim : 0,
-    claims    : Immutable.Map(),
-});
-
-
-const numQueueConcurrent = 8;
+const NUM_QUEUE_CONCURRENT = 4;
 
 
 
@@ -39,113 +28,30 @@ const numQueueConcurrent = 8;
  *
  */
 
-class LibGuilds {
+export default class LibGuilds {
     constructor() {
         // this.component = component;
 
         this.__asyncGuildQueue = async.queue(
-            getGuildDetails,
-            numQueueConcurrent
+            getGuildDetailsFromQueue,
+            NUM_QUEUE_CONCURRENT
         );
     }
 
 
-    getGuildDefault() {
-        return guildDefault;
-    }
-
-
-
-    getEventsByType(matchDetails, eventType) {
-        return matchDetails
-            .get('history')
-            .filter(entry => entry.get('type') === eventType);
-        // .sortBy(entry => -entry.get('timestamp'));
-    }
-
-
-    getUnknownGuilds(stateGuilds, matchDetails) {
-        const claimEvents       = this.getEventsByType(matchDetails, 'claim');
-        const objectiveClaimers = matchDetails.getIn(['objectives', 'claimers']);
-
-        const knownGuilds = stateGuilds
-            .map(entry => entry.get('guild_id'))
-            .toSet();
-
-
-        const guildsWithCurrentClaims = objectiveClaimers
-            .map(entry => entry.get('guild'))
-            .toSet();
-
-        const guildsWithPreviousClaims = claimEvents
-            .map(entry => entry.get('guild'))
-            .toSet();
-
-        const guildClaims = guildsWithCurrentClaims
-            .union(guildsWithPreviousClaims);
-
-
-
-        const unknownGuilds = guildClaims
-            .subtract(knownGuilds);
-
-
-        // console.log('guildClaims', guildClaims.toArray());
-        // console.log('knownGuilds', knownGuilds.toArray());
-        // console.log('unknownGuilds', unknownGuilds.toArray());
-
-        return unknownGuilds;
-    }
-
-
-
-    lookup(knownGuilds, matchDetails, listener) {
-        const unknownGuilds = this.getUnknownGuilds(knownGuilds, matchDetails);
-        const defaultGuild = this.getGuildDefault();
-
-        unknownGuilds.forEach(guildId => {
-
-            // initialize
-            const guild = defaultGuild.set('guild_id', guildId);
-
-            listener(guild, guildId);
-
-            // get from remote
-            this.__asyncGuildQueue.push({
+    lookup(guilds, onDataListener) {
+        const toQueue = _.map(
+            guilds,
+            guildId => ({
                 guildId,
-                listener,
-            });
+                onData: onDataListener,
+            })
+        );
 
-        });
+
+        this.__asyncGuildQueue.push(toQueue);
     }
 
-
-
-    attachClaims(claimEvents, guild) {
-        const guildId = guild.get('guild_id');
-        const incClaims = claimEvents
-            .filter(entry => entry.get('guild') === guildId)
-            .toMap();
-
-        const hasClaims      = guild.get('claims') && !guild.get('claims').isEmpty();
-        const newestClaim    = hasClaims ? guild.get('claims').first() : null;
-        const incHasClaims   = !incClaims.isEmpty();
-        const incNewestClaim = incHasClaims ? incClaims.first() : null;
-
-        const hasNewClaims   = (!Immutable.is(newestClaim, incNewestClaim));
-
-
-        if (hasNewClaims) {
-            const lastClaim = incHasClaims ? incNewestClaim.get('timestamp') : 0;
-
-            // console.log('claims altered', guildId, hasNewClaims, lastClaim);
-
-            guild = guild.set('claims', incClaims);
-            guild = guild.set('lastClaim', lastClaim);
-        }
-
-        return guild;
-    }
 }
 
 
@@ -162,39 +68,26 @@ class LibGuilds {
 
 
 
-function getGuildDetails(cargo, onComplete) {
-    api.getGuildDetails(
-        cargo.guildId,
-        onGuildData.bind(null, cargo)
-    );
+function getGuildDetailsFromQueue(cargo, onComplete) {
+    // console.log('getGuildDetailsFromQueue', cargo, cargo.guildId);
 
-    onComplete();
+    api.getGuildById({
+        guildId: cargo.guildId,
+        success: (data) => onGuildData(data, cargo),
+        complete: onComplete,
+    });
 }
 
 
 
-function onGuildData(cargo, err, data) {
-    if (!err && data) {
-        delete data.emblem;
-        data.loaded = true;
+function onGuildData(data, cargo) {
+    console.log('onGuildData', data);
 
-        const guildData = Immutable.fromJS(data);
-
-        cargo.listener(guildData, cargo.guildId);
+    if (data && !_.isEmpty(data)) {
+        cargo.onData({
+            id: data.guild_id,
+            name: data.guild_name,
+            tag: data.tag,
+        });
     }
 }
-
-
-
-
-
-
-
-
-/*
- *
- * Export Module
- *
- */
-
-module.exports = LibGuilds;

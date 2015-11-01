@@ -1,26 +1,12 @@
-'use strict';
 
-/*
-*
-* Dependencies
-*
-*/
+import React from'react';
 
+// import MapDetails from './MapDetails';
+import Log from 'Tracker/Log';
 
-const React      = require('react');
-const Immutable  = require('Immutable');
+import STATIC from 'lib/static';
 
-const STATIC     = require('lib/static');
-
-
-
-/*
-* React Components
-*/
-
-const MapDetails = require('./MapDetails');
-const Log        = require('Tracker/Log');
-
+const MapDetails = () => (<div />);
 
 
 
@@ -30,35 +16,38 @@ const Log        = require('Tracker/Log');
 *
 */
 
-class Maps extends React.Component {
+export default class Maps extends React.Component {
     static propTypes = {
-        details    : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        guilds     : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        lang       : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        matchWorlds: React.PropTypes.instanceOf(Immutable.List).isRequired,
+        match    : React.PropTypes.object.isRequired,
+        guilds     : React.PropTypes.object.isRequired,
+        lang       : React.PropTypes.object.isRequired,
     }
 
 
 
-    shouldComponentUpdate(nextProps) {
-        const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
+    // shouldComponentUpdate(nextProps) {
+    //     const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
 
-        const newGuilds    = !Immutable.is(this.props.guilds, nextProps.guilds);
-        const newDetails   = !Immutable.is(this.props.details, nextProps.details);
-        const newWorlds    = !Immutable.is(this.props.matchWorlds, nextProps.matchWorlds);
-        const newData      = (newGuilds || newDetails || newWorlds);
+    //     const newGuilds    = !Immutable.is(this.props.guilds, nextProps.guilds);
+    //     const newDetails   = !Immutable.is(this.props.details, nextProps.details);
+    //     const newData      = (newGuilds || newDetails);
 
-        const shouldUpdate = (newLang || newData);
+    //     const shouldUpdate = (newLang || newData);
 
-        return shouldUpdate;
-    }
+    //     return shouldUpdate;
+    // }
 
 
 
     render() {
-        const props = this.props;
+        const {
+            guilds,
+            lang,
+            log,
+            match,
+        } = this.props;
 
-        if (!props.details.has('initialized') || !props.details.get('initialized')) {
+        if (_.isEmpty(match)) {
             return null;
         }
 
@@ -67,19 +56,19 @@ class Maps extends React.Component {
             <section id='maps'>
                 <div className='row'>
 
-                    <div className='col-md-6'>{<MapDetails mapKey='Center' mapMeta={getMapMeta('Center')} {...props} />}</div>
+                    <div className='col-md-6'>{<MapDetails mapKey='Center' mapMeta={getMapMeta('Center')} {...this.props} />}</div>
 
                     <div className='col-md-18'>
 
                         <div className='row'>
-                            <div className='col-md-8'>{<MapDetails mapKey='RedHome' mapMeta={getMapMeta('RedHome')} {...props} />}</div>
-                            <div className='col-md-8'>{<MapDetails mapKey='BlueHome' mapMeta={getMapMeta('BlueHome')} {...props} />}</div>
-                            <div className='col-md-8'>{<MapDetails mapKey='GreenHome' mapMeta={getMapMeta('GreenHome')} {...props} />}</div>
+                            <div className='col-md-8'>{<MapDetails mapKey='RedHome' mapMeta={getMapMeta('RedHome')} {...this.props} />}</div>
+                            <div className='col-md-8'>{<MapDetails mapKey='BlueHome' mapMeta={getMapMeta('BlueHome')} {...this.props} />}</div>
+                            <div className='col-md-8'>{<MapDetails mapKey='GreenHome' mapMeta={getMapMeta('GreenHome')} {...this.props} />}</div>
                         </div>
 
                         <div className='row'>
                             <div className='col-md-24'>
-                                <Log {...props} />
+                                <Log {...this.props} />
                             </div>
                         </div>
 
@@ -92,16 +81,7 @@ class Maps extends React.Component {
 
 
 function getMapMeta(key) {
-    return STATIC.objective_map.find(mm => mm.get('key') === key);
+    // return STATIC.objective_map.find(mm => mm.get('key') === key);
+    return null;
 }
 
-
-
-
-/*
-*
-* Export Module
-*
-*/
-
-module.exports = Maps;

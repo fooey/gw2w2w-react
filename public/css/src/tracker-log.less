@@ -1,75 +1,114 @@
 #log-container {
-    .log-tabs {
-        border-bottom : 1px solid @gray-lighter;
-        padding-bottom: 4px;
-        margin-bottom : 8px;
+    margin: .5em 0;
+}
 
-        li{
-            margin : 0;
-            padding: 0;
+#log-tabs {
+    box-sizing: border-box;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: flex-end;
+    height: 40px;
+    border-bottom: 1px solid #ccc;
+    a.tab {
+        display: inline-block;
+        padding: 0 1em;
+        margin: 0 .1em;
+        cursor: pointer;
+        border: 1px solid #eee;
+        border-bottom: 0;
+        border-top-left-radius: .2em;
+        border-top-right-radius: .2em;
+        font-size: 9pt;
+        background-color: #f9f9f9;
+        height: 30px;
+        line-height: 30px;
+        &.active {
+            background-color: #fff;
+            border-color: #ccc;
+            font-size: 12pt;
+            height: 36px;
+            line-height: 36px;
+            font-weight: bold;
         }
-
-        a {
-            margin   : 0;
-            padding  : .2em .5em;
-            font-size: 8pt;
-            cursor   : pointer;
-        }
-
-        #log-event-filters {
-            margin-right: 2em;
-            li {
-                float: right;
-            }
+        &:hover {
+            border-color: #ccc;
         }
     }
+    a.check {
+        display: flex;
+        align-self: flex-end;
+        cursor: pointer;
+        border: 1px solid #eee;
+        border-radius: .2em;
+        background-color: #f9f9f9;
+        margin: 2px .1em;
+        padding: 4px 8px;
+        &.first {
+            margin-left: 1em;
+        }
+        &.active {
+            background-color: #fff;
+            border-color: #ccc;
+            font-size: 12pt;
+            font-weight: bold;
+        }
+        &:hover {
+            border-color: #ccc;
+        }
+    }
+}
 
-
-    @logLineHeight: 20px;
-    #log {
-        padding   : 0;
-        margin    : 0 .5em;
-        height    : (@logLineHeight * 12.5);
-        overflow-y: scroll;
-        background: #fff repeat resolve('/img/rows-bg.png');
-
-
-        li {
-            transition: all 200ms ease-in;
-            opacity: 1;
-
+#log {
+    margin: .25em 0;
+    height: 25em;
+    overflow-y: scroll;
+    > li {
+        &:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        padding: .1em 0;
+        transition: all 150ms ease-in;
+        &:hover {
+            font-weight: bold;
+            background-color: #ffe;
+        }
+    }
+    .log-objective {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        img {
+            width: 20px;
+            height: 20px;
+        }
+        > li {
+            display: inline-block;
             white-space: nowrap;
-            overflow   : hidden;
-            display    : block;
-
-            font-size  : 9pt;
-            line-height: @logLineHeight;
-            max-height : @logLineHeight;
-
-            &.hide-entry {
-                max-height: 0;
-                opacity   : 0;
-            }
-
-            &:hover {
-                background-color: rgba(255,255,0,.1);
-            }
-
-            .objective {
-                font-size: 9pt;
-            }
-
-        }
-
-
-        .objective-relative,
-        .objective-timestamp,
-        .objective-map,
-        .objective-guild {
+            overflow: hidden;
+            text-overflow: ellipsis;
             font-size: 9pt;
-        }
-        .objective-event {
-            font-size: 7pt;
+            text-align: left;
+            &.log-sprite {
+                width: 30px;
+                text-align: center;
+            }
+            &.log-time {
+                width: 6em;
+                text-align: center;
+            }
+            &.log-expire {
+                width: 3em;
+                text-align: center;
+            }
+            &.log-name {
+                width: 15em;
+            }
+            &.log-claimed {
+                width: 6em;
+            }
+            &.log-guild {
+                width: 15em;
+            }
         }
     }
 }

@@ -52,14 +52,3 @@ function getArrowSrc(meta) {
 
     return src.join('-') + '.svg';
 }
-
-
-
-
-/*
- *
- * Export Module
- *
- */
-
-module.exports = Arrow;
