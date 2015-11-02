@@ -166,11 +166,12 @@ const Objective = ({
             </li>
             <li className='right'>
                 {mo.guild
-                    ? <a className='track-guild' href={'#' + mo.guild}>
-                        {guilds[mo.guild]
-                            ? <img src={`http://guilds.gw2w2w.com/${mo.guild}.svg`} className='emblem' title={`${guilds[mo.guild].name} [${guilds[mo.guild].tag}]`} />
-                            : <img src={`http://guilds.gw2w2w.com/${mo.guild}.svg`} className='emblem' title='Loading...' />
-                        }
+                    ? <a
+                        className='track-guild'
+                        href={'#' + mo.guild}
+                        title={guilds[mo.guild] ? `${guilds[mo.guild].name} [${guilds[mo.guild].tag}]` : 'Loading...'}
+                    >
+                        <img src={`https://guilds.gw2w2w.com/${mo.guild}.svg`} className='emblem' />
 
                     </a>
                     : null

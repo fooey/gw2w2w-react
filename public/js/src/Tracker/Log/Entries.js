@@ -43,7 +43,7 @@ export default ({
                         <li className='log-guild'>{
                             entry.guild
                                 ? <a href={'#' + entry.guild}>
-                                    <img src={`http://guilds.gw2w2w.com/${entry.guild}.svg`} />
+                                    <img src={`https://guilds.gw2w2w.com/${entry.guild}.svg`} />
                                     {guilds[entry.guild]
                                         ? <span> {guilds[entry.guild].name} [{guilds[entry.guild].tag}] </span>
                                         : <i className='fa fa-spinner fa-spin'></i>

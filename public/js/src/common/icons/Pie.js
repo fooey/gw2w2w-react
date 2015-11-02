@@ -23,5 +23,5 @@ export default ({scores}) => (
 
 
 function getImageSource(scores) {
-    return `http:\/\/www.piely.net\/${INSTANCE.size}\/${scores.red},${scores.blue},${scores.green}?strokeWidth=${INSTANCE.stroke}`;
+    return `https:\/\/www.piely.net\/${INSTANCE.size}\/${scores.red},${scores.blue},${scores.green}?strokeWidth=${INSTANCE.stroke}`;
 }

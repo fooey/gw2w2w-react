@@ -25,7 +25,7 @@ export default ({
 
 function getEmblemSrc(guildName) {
     return (guildName)
-        ? `http:\/\/guilds.gw2w2w.com\/guilds\/${slugify(guildName)}\/256.svg`
+        ? `https:\/\/guilds.gw2w2w.com\/guilds\/${slugify(guildName)}\/256.svg`
         : imgPlaceholder;
 }
 
