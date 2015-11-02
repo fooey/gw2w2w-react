@@ -132,6 +132,13 @@ body {
   width: 60px;
   height: 60px;
 }
+#tracker .icon-objective-castle,
+#tracker .icon-objective-keep {
+  zoom: .8;
+}
+#tracker .icon-objective-tower {
+  zoom: .9;
+}
 #tracker .sprite {
   background-image: url('/img/sprite16.~149123b6766~.png');
   background-repeat: no-repeat;
@@ -339,31 +346,53 @@ body {
 #tracker #maps {
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   box-sizing: border-box;
   justify-content: space-between;
-  margin: 1em 0;
+  margin: 2em 0;
+}
+#tracker #maps h2 {
+  margin: 0;
+  padding: 0 0 0 1em;
+  font-size: 12pt;
+  font-weighT: 300;
+  border-bottom: 1px solid #eee;
 }
 @media (min-width: 768px) {
   #tracker #maps {
     flex-direction: row;
   }
-  #tracker #maps .map {
-    width: 25%;
-  }
 }
 #tracker #maps .map {
   display: inline-block;
   width: 100%;
-  max-width: 320px;
+  max-width: 25em;
   padding: 0 4px;
   margin: 0 auto;
+}
+@media (min-width: 768px) {
+  #tracker #maps .map {
+    width: 50%;
+  }
+}
+@media (min-width: 992px) {
+  #tracker #maps .map {
+    width: 25%;
+  }
 }
 #tracker #maps h1 {
   text-align: center;
 }
 #tracker #maps .map-section + .map-section {
   padding-top: 4px;
+}
+#tracker #maps .map-sections {
+  display: flex;
+  flex-direction: column;
+}
+#tracker #maps .icon-objective {
+  width: 18px;
+  height: 18px;
 }
 #tracker #maps .track-objective {
   display: flex;
@@ -393,9 +422,9 @@ body {
   height: 20px;
 }
 #tracker #maps .track-objective img.arrow {
-  width: 10px;
-  height: 10px;
-  opacity: .3;
+  width: 8px;
+  height: 8px;
+  opacity: .2;
 }
 #tracker #maps .track-objective > li {
   display: flex;
@@ -422,7 +451,7 @@ body {
   text-align: center;
 }
 #tracker #maps .track-objective .track-geo {
-  width: 12px;
+  width: 8px;
   text-align: center;
 }
 #tracker #maps .track-objective .track-expire {
@@ -514,8 +543,8 @@ body {
   align-items: center;
 }
 #tracker #log .log-objective img {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 #tracker #log .log-objective > li {
   display: inline-block;

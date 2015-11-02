@@ -5,6 +5,7 @@ import moment from'moment';
 import STATIC from 'lib/static';
 
 import Sprite from 'common/icons/Sprite';
+import ObjectiveIcon from 'common/icons/Objective';
 
 
 export default ({
@@ -27,7 +28,7 @@ export default ({
                             ? moment(entry.expires.diff(now, 'milliseconds')).format('m:ss')
                             : null
                         }</li>
-                        <li className='log-sprite'><Sprite color={entry.owner} type={entry.type} /></li>
+                        <li className='log-sprite'><ObjectiveIcon color={entry.owner} type={entry.type} /></li>
                         <li className='log-time'>{
                             (moment().diff(entry.lastFlipped, 'hours') < 4)
                                 ? entry.lastFlipped.format('hh:mm:ss')

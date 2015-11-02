@@ -4,7 +4,8 @@ import classnames from 'classnames';
 
 import STATIC from 'lib/static';
 
-import Sprite from 'common/icons/Sprite';
+import SpriteIcon from 'common/icons/Sprite';
+import ObjectiveIcon from 'common/icons/Objective';
 
 
 
@@ -108,16 +109,19 @@ const MapSections = ({
     <div className='map-sections'>
         {_.map(getMapGeo(matchMap.id),
         (section, ix) =>
-            <div className='map-section' key={ix}>
+            <div className={classnames({
+                'map-section': true,
+                solo: section.length === 1
+            })} key={ix}>
                 {_.map(
                     section,
-                    (geo, id) =>
+                    (geo) =>
                     <Objective
-                        key={id}
-                        id={id}
+                        key={geo.id}
+                        id={geo.id}
                         guilds={guilds}
                         lang={lang}
-                        geo={geo}
+                        direction={geo.direction}
                         matchMap={matchMap}
                         now={now}
                     />
@@ -132,7 +136,7 @@ const Objective = ({
     id,
     guilds,
     lang,
-    geo,
+    direction,
     matchMap,
     now,
 }) => {
@@ -153,10 +157,11 @@ const Objective = ({
             'fresh': now.diff(mo.lastFlipped, 'seconds') < 30,
             'expiring': mo.expires.isAfter(now) && mo.expires.diff(now, 'seconds') < 30,
             'expired': now.isAfter(mo.expires),
+            'active': now.isBefore(mo.expires),
         })}>
             <li className='left'>
-                <span className='track-geo'><Arrow direction={geo} /></span>
-                <span className='track-sprite'><Sprite color={mo.owner} type={mo.type} /></span>
+                <span className='track-geo'><Arrow direction={direction} /></span>
+                <span className='track-sprite'><ObjectiveIcon color={mo.owner} type={mo.type} /></span>
                 <span className='track-name'>{oMeta.name[lang.slug]}</span>
             </li>
             <li className='right'>

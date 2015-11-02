@@ -1,25 +1,37 @@
 #maps {
     display: flex;
     flex-direction: column;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     box-sizing: border-box;
     justify-content: space-between;
-    margin: 1em 0;
+    margin: 2em 0;
+
+    h2 {
+        margin: 0;
+        padding: 0 0 0 1em;
+        font-size: 12pt;
+        font-weighT: 300;
+        border-bottom: 1px solid #eee;
+    }
 
 
     @media(min-width: @screen-sm-min) {
         flex-direction: row;
-        .map {
-            width: 25%;
-        }
     }
 
     .map {
         display: inline-block;
         width: 100%;
-        max-width: 320px;
+        max-width: 25em;
         padding: 0 4px;
         margin: 0 auto;
+
+        @media(min-width: @screen-sm-min) {
+            width: 50%;
+        }
+        @media(min-width: @screen-md-min) {
+            width: 25%;
+        }
     }
 
     h1 {
@@ -28,6 +40,16 @@
 
     .map-section + .map-section {
         padding-top: 4px;
+    }
+
+    .map-sections {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .icon-objective {
+        width: 18px;
+        height: 18px;
     }
 
 
@@ -46,6 +68,8 @@
         }
 
 
+        &.active {
+        }
         &.fresh {
             .track-expire {
                 background-color: #ff9;
@@ -69,9 +93,9 @@
             height: 20px;
         }
         img.arrow {
-            width: 10px;
-            height: 10px;
-            opacity: .3;
+            width: 8px;
+            height: 8px;
+            opacity: .2;
         }
         > li {
             display: flex;
@@ -104,7 +128,7 @@
             text-align: center;
         }
         .track-geo {
-            width: 12px;
+            width: 8px;
             text-align: center;
         }
 
