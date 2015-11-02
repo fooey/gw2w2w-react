@@ -121,7 +121,7 @@ class App extends React.Component {
                     <Handler lang={lang} world={world} />
                 </div>
 
-                <h1 style={{textAlign: 'center'}}>App update for HoT in ongoing</h1>
+                <h1 style={{textAlign: 'center'}}>Updates for HoT expansion changes are ongoing</h1>
 
             </div>
         );
