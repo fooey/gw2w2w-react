@@ -35,6 +35,7 @@ import DAO from 'lib/data/tracker';
 
 import Scoreboard from './Scoreboard';
 import Maps from './Maps';
+import Log from './Log';
 // import Guilds from './Guilds';
 
 
@@ -187,12 +188,23 @@ export default class Tracker extends React.Component {
                     ? <Maps
                         guilds={this.state.guilds}
                         lang={this.props.lang}
-                        log={this.state.log}
                         match={this.state.match}
                         now={this.state.now}
                     />
                     : null
                 }
+
+                <div className='row'>
+                    <div className='col-md-24'>
+                        <Log
+                            guilds={this.state.guilds}
+                            lang={this.props.lang}
+                            log={this.state.log}
+                            match={this.state.match}
+                            now={this.state.now}
+                        />
+                    </div>
+                </div>
 
                 {/*(this.state.guilds && !this.state.guilds.isEmpty())
                     ? <div className='row'>

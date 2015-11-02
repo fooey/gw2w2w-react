@@ -1,50 +1,182 @@
 #maps {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    box-sizing: border-box;
+    justify-content: space-between;
+    margin: 1em 0;
+
+
+    @media(min-width: @screen-sm-min) {
+        flex-direction: row;
+        .map {
+            width: 25%;
+        }
+    }
+
     .map {
-        padding: 1em .25em;
-
-        h2 {
-            cursor: pointer;
-        }
-
-        &.map-blur {
-            scale  : .9;
-            blur   : 1;
-            opacity: .6;
-        }
+        display: inline-block;
+        width: 100%;
+        max-width: 320px;
+        padding: 0 4px;
+        margin: 0 auto;
     }
 
-    .mapScores {
+    h1 {
         text-align: center;
-        h2 {
-            font-size    : 14pt;
-            font-weight  : 400;
-            padding      : 0 0 .25em;
-            margin       : 0 0 .1em;
-            border-bottom: 1px solid rgba(0,0,0,.1)
-        }
-
-        li {
-            font-size: 9pt;
-        }
     }
 
-    .map-section {
-        margin : 0 0 20px 0;
-        padding: 0;
+    .map-section + .map-section {
+        padding-top: 4px;
+    }
 
-        @media(min-width: @screen-sm-min) and (max-width: @screen-sm-max) { padding: 0 .25em; }
 
-        ul, li {
-            margin : 0;
-            padding: 0;
+    .track-objective {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        margin: 1px 0;
+        padding: 0 4px;
+        font-size: 9pt;
+        line-height: 9pt;
+
+        &:hover {
+            font-weight: bold;
+            background-color: #ffc;
         }
 
-        .section-label {
-            font-size  : 10pt;
+
+        &.fresh {
+            .track-expire {
+                background-color: #ff9;
+            }
+        }
+        &.expiring {
+            .track-expire {
+                background-color: #f00;
+                color: #fff;
+            }
+        }
+        &.expired {
+            .track-expire {
+                width: 0;
+            }
+        }
+
+
+        img.emblem {
+            width: 20px;
+            height: 20px;
+        }
+        img.arrow {
+            width: 10px;
+            height: 10px;
+            opacity: .3;
+        }
+        > li {
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: center;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &.left {
+                width: 75%;
+            }
+            &.right {
+                width: 25%;
+                justify-content: flex-end;
+            }
+
+            > * {
+                display: inline-block;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+        }
+        .track-name {
+        }
+
+        .track-sprite {
+            width: 24px;
+            text-align: center;
+        }
+        .track-geo {
+            width: 12px;
+            text-align: center;
+        }
+
+        .track-expire {
+            transition: color 2000ms ease-in, background-color 2000ms ease-in, width 200ms ease-in;
+            width: 3em;
+            height: 20px;
             line-height: 20px;
-            font-weight: 700;
-            margin     : 0;
-            padding    : 0;
+            text-align: center;
+            margin-left: 4px;
+            font-size: 8pt;
+        }
+        .track-guild {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+// #maps {
+//     .map {
+//         padding: 1em .25em;
+
+//         h2 {
+//             cursor: pointer;
+//         }
+
+//         &.map-blur {
+//             scale  : .9;
+//             blur   : 1;
+//             opacity: .6;
+//         }
+//     }
+
+//     .mapScores {
+//         text-align: center;
+//         h2 {
+//             font-size    : 14pt;
+//             font-weight  : 400;
+//             padding      : 0 0 .25em;
+//             margin       : 0 0 .1em;
+//             border-bottom: 1px solid rgba(0,0,0,.1)
+//         }
+
+//         li {
+//             font-size: 9pt;
+//         }
+//     }
+
+//     .map-section {
+//         margin : 0 0 20px 0;
+//         padding: 0;
+
+//         @media(min-width: @screen-sm-min) and (max-width: @screen-sm-max) { padding: 0 .25em; }
+
+//         ul, li {
+//             margin : 0;
+//             padding: 0;
+//         }
+
+//         .section-label {
+//             font-size  : 10pt;
+//             line-height: 20px;
+//             font-weight: 700;
+//             margin     : 0;
+//             padding    : 0;
+//         }
+//     }
+// }

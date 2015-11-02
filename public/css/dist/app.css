@@ -336,50 +336,103 @@ body {
   font-size: 11pt;
   padding-left: .25em;
 }
-#tracker #maps .map {
-  padding: 1em .25em;
+#tracker #maps {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  box-sizing: border-box;
+  justify-content: space-between;
+  margin: 1em 0;
 }
-#tracker #maps .map h2 {
-  cursor: pointer;
-}
-#tracker #maps .map.map-blur {
-  scale: .9;
-  blur: 1;
-  opacity: .6;
-}
-#tracker #maps .mapScores {
-  text-align: center;
-}
-#tracker #maps .mapScores h2 {
-  font-size: 14pt;
-  font-weight: 400;
-  padding: 0 0 .25em;
-  margin: 0 0 .1em;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-#tracker #maps .mapScores li {
-  font-size: 9pt;
-}
-#tracker #maps .map-section {
-  margin: 0 0 20px 0;
-  padding: 0;
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  #tracker #maps .map-section {
-    padding: 0 .25em;
+@media (min-width: 768px) {
+  #tracker #maps {
+    flex-direction: row;
+  }
+  #tracker #maps .map {
+    width: 25%;
   }
 }
-#tracker #maps .map-section ul,
-#tracker #maps .map-section li {
-  margin: 0;
-  padding: 0;
+#tracker #maps .map {
+  display: inline-block;
+  width: 100%;
+  max-width: 320px;
+  padding: 0 4px;
+  margin: 0 auto;
 }
-#tracker #maps .map-section .section-label {
-  font-size: 10pt;
+#tracker #maps h1 {
+  text-align: center;
+}
+#tracker #maps .map-section + .map-section {
+  padding-top: 4px;
+}
+#tracker #maps .track-objective {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin: 1px 0;
+  padding: 0 4px;
+  font-size: 9pt;
+  line-height: 9pt;
+}
+#tracker #maps .track-objective:hover, #tracker #maps .track-objective:focus {
+  font-weight: bold;
+  background-color: #ffc;
+}
+#tracker #maps .track-objective.fresh .track-expire {
+  background-color: #ff9;
+}
+#tracker #maps .track-objective.expiring .track-expire {
+  background-color: #f00;
+  color: #fff;
+}
+#tracker #maps .track-objective.expired .track-expire {
+  width: 0;
+}
+#tracker #maps .track-objective img.emblem {
+  width: 20px;
+  height: 20px;
+}
+#tracker #maps .track-objective img.arrow {
+  width: 10px;
+  height: 10px;
+  opacity: .3;
+}
+#tracker #maps .track-objective > li {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#tracker #maps .track-objective > li.left {
+  width: 75%;
+}
+#tracker #maps .track-objective > li.right {
+  width: 25%;
+  justify-content: flex-end;
+}
+#tracker #maps .track-objective > li > * {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+#tracker #maps .track-objective .track-sprite {
+  width: 24px;
+  text-align: center;
+}
+#tracker #maps .track-objective .track-geo {
+  width: 12px;
+  text-align: center;
+}
+#tracker #maps .track-objective .track-expire {
+  transition: color 2000ms ease-in, background-color 2000ms ease-in, width 200ms ease-in;
+  width: 3em;
+  height: 20px;
   line-height: 20px;
-  font-weight: 700;
-  margin: 0;
-  padding: 0;
+  text-align: center;
+  margin-left: 4px;
+  font-size: 8pt;
 }
 #tracker #log-container {
   margin: .5em 0;

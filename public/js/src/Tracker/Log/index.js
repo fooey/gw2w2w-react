@@ -58,10 +58,14 @@ export default class LogContainer extends React.Component {
 
 
     handleMapFilterClick(mapFilter) {
+        console.log('set mapFilter', mapFilter);
+
         this.setState({mapFilter});
     }
 
     handleTypeFilterClick(toggleType) {
+        console.log('toggle typeFilter', toggleType);
+
         this.setState(state => {
             state.typeFilter[toggleType] = !state.typeFilter[toggleType];
             return state;
