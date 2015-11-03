@@ -81,7 +81,7 @@ function getGuildDetailsFromQueue(cargo, onComplete) {
 
 
 function onGuildData(data, cargo) {
-    console.log('onGuildData', data);
+    // console.log('onGuildData', data);
 
     if (data && !_.isEmpty(data)) {
         cargo.onData({

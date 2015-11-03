@@ -1,33 +1,20 @@
 #guilds {
+    margin: 2em 0;
+    display: flex;
+    flex-flow: wrap row;
+    justify-content: space-around;
+
     .guild {
-        // transition: background-color 2s ease-in;
+        display: inline-block;
+        text-align: center;
+        margin: 1em;
+        width: 160px;
+        font-size: 10pt;
 
-        & + .guild {
-            margin-top: 2em;
+
+        .emblem {
+            width: 100%;
         }
 
-        &:nth-child(even) {
-            background-color: @gray-lightest;
-        }
-
-        h1 {
-            font-size: 32pt;
-            font-size: 24pt;
-            @media(min-width: @screen-md-min) { font-size: 32pt; }
-
-            a {
-                color: @text-color;
-            }
-        }
-
-        img.emblem {
-            width    : 256px;
-            max-width: 100%;
-            height   : auto;
-        }
-
-        ul {
-            margin-left: 1em;
-        }
     }
 }

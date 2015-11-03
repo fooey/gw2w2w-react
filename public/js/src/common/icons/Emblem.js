@@ -7,33 +7,28 @@ const imgPlaceholder = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/20
 
 
 export default ({
-    guildName,
-    size = 256,
+    guildId,
+    size,
+    className = '',
 }) => {
     return (
         <img
-            className = 'emblem'
+            className = {`emblem ${className}`}
 
-            src       = {getEmblemSrc(guildName)}
-            width     = {size}
-            height    = {size}
+            src = {getEmblemSrc(guildId)}
+            width = {size ? size : null}
+            height = {size ? size : null}
 
             onError   = {imgOnError}
         />
     );
 };
 
-function getEmblemSrc(guildName) {
-    return (guildName)
-        ? `https:\/\/guilds.gw2w2w.com\/guilds\/${slugify(guildName)}\/256.svg`
-        : imgPlaceholder;
+function getEmblemSrc(guildId) {
+    return `https://guilds.gw2w2w.com/${guildId}.svg`;
 }
 
 
-
-function slugify(str) {
-    return encodeURIComponent(str.replace(/ /g, '-')).toLowerCase();
-}
 
 
 

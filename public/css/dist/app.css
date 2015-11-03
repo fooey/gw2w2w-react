@@ -132,175 +132,6 @@ body {
   width: 60px;
   height: 60px;
 }
-#tracker .icon-objective-castle,
-#tracker .icon-objective-keep {
-  zoom: .8;
-}
-#tracker .icon-objective-tower {
-  zoom: .9;
-}
-#tracker .sprite {
-  background-image: url('/img/sprite16.~149123b6766~.png');
-  background-repeat: no-repeat;
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-}
-#tracker .sprite,
-#tracker .sprite.neutral,
-#tracker .sprite.camp,
-#tracker .sprite.neutral.camp {
-  background-position: 0px 0px;
-}
-#tracker .sprite.tower,
-#tracker .sprite.neutral.tower {
-  background-position: -17px 0px;
-}
-#tracker .sprite.keep,
-#tracker .sprite.neutral.keep {
-  background-position: -32px 0px;
-}
-#tracker .sprite.castle,
-#tracker .sprite.neutral.castle {
-  background-position: -48px 0px;
-}
-#tracker .sprite.red,
-#tracker .sprite.red.camp {
-  background-position: 0px -16px;
-}
-#tracker .sprite.red.tower {
-  background-position: -17px -16px;
-}
-#tracker .sprite.red.keep {
-  background-position: -32px -16px;
-}
-#tracker .sprite.red.castle {
-  background-position: -48px -16px;
-}
-#tracker .sprite.blue,
-#tracker .sprite.blue.camp {
-  background-position: 0px -32px;
-}
-#tracker .sprite.blue.tower {
-  background-position: -17px -32px;
-}
-#tracker .sprite.blue.keep {
-  background-position: -32px -32px;
-}
-#tracker .sprite.blue.castle {
-  background-position: -48px -32px;
-}
-#tracker .sprite.green,
-#tracker .sprite.green.camp {
-  background-position: 0px -48px;
-}
-#tracker .sprite.green.tower {
-  background-position: -17px -48px;
-}
-#tracker .sprite.green.keep {
-  background-position: -32px -48px;
-}
-#tracker .sprite.green.castle {
-  background-position: -48px -48px;
-}
-#tracker .objective {
-  transition: all 200ms ease-in;
-  display: table;
-  width: 100%;
-  height: 20px;
-  line-height: 20px;
-  font-size: 12pt;
-}
-#tracker .objective.fresh {
-  background-color: #ffc;
-}
-#tracker .objective > div {
-  display: table-cell;
-  vertical-align: middle;
-}
-#tracker .objective,
-#tracker .objective > div {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-#tracker .objective .objective-label {
-  width: 100%;
-}
-#tracker .objective .objective-relative span {
-  display: inline-block;
-  width: 2em;
-  text-align: center;
-  font-size: 10pt;
-}
-#tracker .objective .objective-timestamp {
-  padding-right: .5em;
-  font-size: 10pt;
-}
-#tracker .objective .objective-map span {
-  display: inline-block;
-  width: 2.5em;
-  text-align: center;
-}
-@media (min-width: 768px) {
-  #tracker .objective {
-    font-size: 9pt;
-  }
-}
-@media (min-width: 992px) {
-  #tracker .objective {
-    font-size: 10pt;
-  }
-}
-@media (min-width: 1200px) {
-  #tracker .objective {
-    font-size: 11pt;
-  }
-}
-#tracker .objective .sprite {
-  margin-right: .2em;
-  position: relative;
-  top: 2px;
-}
-#tracker .objective .direction {
-  width: 8px;
-  height: 8px;
-  display: inline-block;
-  margin-right: .2em;
-}
-#tracker .objective .direction img {
-  width: 100%;
-  height: 100%;
-  opacity: .4;
-}
-#tracker .objective .guildname {
-  font-size: 7pt;
-  margin-right: 4px;
-  cursor: pointer;
-}
-#tracker .objective .timer.countdown {
-  transition: all 800ms ease-in;
-  display: inline-block;
-  height: 16px;
-  color: #333;
-  background-color: #ffc;
-  line-height: 16px;
-  font-size: 8pt;
-}
-#tracker .objective .timer.countdown.active {
-  opacity: 1;
-  padding: 0 .5em;
-  max-width: 3em;
-}
-#tracker .objective .timer.countdown.inactive {
-  opacity: 0;
-  padding: 0;
-  max-width: 0;
-}
-#tracker .objective.highlight .timer.countdown {
-  background-color: #f00;
-  color: #fff;
-}
 #tracker #scoreboards .scoreboard {
   margin: 0 1px;
   padding: .5em;
@@ -503,12 +334,16 @@ body {
 #tracker #log-tabs a.check {
   display: flex;
   align-self: flex-end;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   border: 1px solid #eee;
   border-radius: .2em;
   background-color: #f9f9f9;
-  margin: 2px .1em;
-  padding: 4px 8px;
+  margin: 3px 1px;
+  height: 24px;
+  width: 32px;
+  opacity: .5;
 }
 #tracker #log-tabs a.check.first {
   margin-left: 1em;
@@ -518,9 +353,15 @@ body {
   border-color: #ccc;
   font-size: 12pt;
   font-weight: bold;
+  opacity: 1;
 }
 #tracker #log-tabs a.check:hover, #tracker #log-tabs a.check:focus {
   border-color: #ccc;
+  opacity: 1;
+}
+#tracker #log-tabs a.check .icon-objective {
+  width: 18px;
+  height: 18px;
 }
 #tracker #log {
   margin: .25em 0;
@@ -557,20 +398,26 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 9pt;
+  font-size: 8pt;
+  line-height: 8pt;
   text-align: left;
+  padding: .1em 0;
 }
 #tracker #log .log-objective > li.log-sprite {
-  width: 30px;
+  width: 24px;
   text-align: center;
 }
 #tracker #log .log-objective > li.log-time {
-  width: 6em;
+  width: 5em;
   text-align: center;
 }
 #tracker #log .log-objective > li.log-expire {
   width: 3em;
   text-align: center;
+}
+#tracker #log .log-objective > li.log-map {
+  width: 2.5em;
+  text-align: left;
 }
 #tracker #log .log-objective > li.log-name {
   width: 15em;
@@ -578,57 +425,42 @@ body {
 #tracker #log .log-objective > li.log-claimed {
   width: 6em;
 }
-#tracker #log .log-objective > li.log-guild {
-  width: 15em;
+#tracker #log .log-objective > li.log-guild .guild-tag {
+  display: none;
+}
+@media (min-width: 480px) {
+  #tracker #log .log-objective > li.log-guild .guild-tag {
+    display: inline-block;
+  }
+}
+#tracker #log .log-objective > li.log-guild .guild-name {
+  display: none;
+}
+@media (min-width: 768px) {
+  #tracker #log .log-objective > li.log-guild .guild-name {
+    display: inline-block;
+    max-width: 10em;
+  }
 }
 #tracker #log .log-objective > li.log-geo {
   width: 8px;
   text-align: center;
 }
-#tracker #options {
-  transition: all 400ms ease-in;
-  padding-right: 1em;
+#tracker #guilds {
+  margin: 2em 0;
+  display: flex;
+  flex-flow: wrap row;
+  justify-content: space-around;
 }
-#tracker #options .sub-options {
-  padding-left: 1em;
+#tracker #guilds .guild {
+  display: inline-block;
+  text-align: center;
+  margin: 1em;
+  width: 160px;
+  font-size: 10pt;
 }
-#tracker #options .disabled {
-  opacity: 0.8;
-  blur: .5;
-}
-#tracker #options h3 .fa-stack {
-  font-size: 60%;
-}
-#tracker #guilds .guild + .guild {
-  margin-top: 2em;
-}
-#tracker #guilds .guild:nth-child(even) {
-  background-color: #f6f6f6;
-}
-#tracker #guilds .guild h1 {
-  font-size: 32pt;
-  font-size: 24pt;
-}
-@media (min-width: 992px) {
-  #tracker #guilds .guild h1 {
-    font-size: 32pt;
-  }
-}
-#tracker #guilds .guild h1 a {
-  color: #333333;
-}
-#tracker #guilds .guild img.emblem {
-  width: 256px;
-  max-width: 100%;
-  height: auto;
-}
-#tracker #guilds .guild ul {
-  margin-left: 1em;
-}
-#tracker .section-header {
-  margin: 1em 0 .5em;
-  padding: 0 0 .25em;
-  border-bottom: 1px solid #eee;
+#tracker #guilds .guild .emblem {
+  width: 100%;
 }
 #tracker #AppLoading {
   text-align: center;

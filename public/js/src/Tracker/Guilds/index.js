@@ -1,84 +1,30 @@
-'use strict';
+import React from 'react';
+import _ from 'lodash';
+import classnames from 'classnames';
 
-/*
-*
-* Dependencies
-*
-*/
-
-const React     = require('react');
-const Immutable = require('Immutable');
+import Emblem from 'common/icons/Emblem';
 
 
+export default ({
+    guilds,
+}) => (
+    <ul id='guilds' className='list-unstyled'>
+        {_
+            .chain(guilds)
+            .sortBy('name')
+            .map(
+                guild =>
+                <li key={guild.id} className='guild' id={guild.id}>
+                    <a href={`https://guilds.gw2w2w.com/${guild.id}`}>
+                        <Emblem guildId={guild.id} />
+                        <div>
+                            <span className='guild-name'> {guild.name} </span>
+                            <span className='guild-tag'> [{guild.tag}] </span>
+                        </div>
+                    </a>
+                </li>
+            )
+        .value()}
+    </ul>
+);
 
-/*
-* React Components
-*/
-
-const Guild     = require('./Guild');
-
-
-
-
-/*
-*
-* Component Definition
-*
-*/
-
-
-class Guilds extends React.Component {
-    static propTypes = {
-        guilds: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-        lang  : React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    }
-
-
-
-    shouldComponentUpdate(nextProps) {
-        const newLang      = !Immutable.is(this.props.lang, nextProps.lang);
-        const newGuildData = !Immutable.is(this.props.guilds, nextProps.guilds);
-
-        const shouldUpdate = (newLang || newGuildData);
-
-        return shouldUpdate;
-    }
-
-
-
-    render() {
-        const props = this.props;
-
-        // console.log('Guilds::render()');
-        // console.log('props.guilds', props.guilds.toObject());
-
-        const sortedGuilds = props.guilds.toSeq()
-            .sortBy(guild => guild.get('guild_name'))
-            .sortBy(guild => -guild.get('lastClaim'));
-
-        return (
-            <section id='guilds'>
-                <h2 className='section-header'>Guild Claims</h2>
-                {sortedGuilds.map(guild =>
-                    <Guild
-                        key   = {guild.get('guild_id')}
-
-                        guild = {guild}
-                        lang  = {props.lang}
-                    />
-                )}
-            </section>
-        );
-    }
-}
-
-
-
-
-/*
-*
-* Export Module
-*
-*/
-
-module.exports = Guilds;

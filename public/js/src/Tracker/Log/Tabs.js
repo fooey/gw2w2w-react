@@ -1,7 +1,7 @@
 
 import React from'react';
 import classnames from'classnames';
-import Sprite from 'common/icons/Sprite';
+import ObjectiveIcon from 'common/icons/Objective';
 
 import STATIC from 'lib/static';
 
@@ -43,7 +43,7 @@ export default ({
                     className={classnames({check: true, active: typeFilter[t], first: t==='castle'})}
                     onClick={() => handleTypeFilterClick(t)}
                 >
-                    <Sprite type={t} />
+                    <ObjectiveIcon type={t} />
                 </a>
             )}
         </div>

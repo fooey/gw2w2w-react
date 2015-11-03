@@ -37,12 +37,17 @@
     a.check {
         display: flex;
         align-self: flex-end;
+        justify-content: center;
+        align-items: center;
         cursor: pointer;
         border: 1px solid #eee;
         border-radius: .2em;
         background-color: #f9f9f9;
-        margin: 2px .1em;
-        padding: 4px 8px;
+        margin: 3px 1px;
+        height: 24px;
+        width: 32px;
+        opacity: .5;
+
         &.first {
             margin-left: 1em;
         }
@@ -51,9 +56,15 @@
             border-color: #ccc;
             font-size: 12pt;
             font-weight: bold;
+            opacity: 1;
         }
         &:hover {
             border-color: #ccc;
+            opacity: 1;
+        }
+        .icon-objective {
+            width: 18px;
+            height: 18px;
         }
     }
 }
@@ -91,19 +102,25 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            font-size: 9pt;
+            font-size: 8pt;
+            line-height: 8pt;
             text-align: left;
+            padding: .1em 0;
             &.log-sprite {
-                width: 30px;
+                width: 24px;
                 text-align: center;
             }
             &.log-time {
-                width: 6em;
+                width: 5em;
                 text-align: center;
             }
             &.log-expire {
                 width: 3em;
                 text-align: center;
+            }
+            &.log-map {
+                width: 2.5em;
+                text-align: left;
             }
             &.log-name {
                 width: 15em;
@@ -112,7 +129,19 @@
                 width: 6em;
             }
             &.log-guild {
-                width: 15em;
+                .guild-tag {
+                    display: none;
+                    @media(min-width: @screen-xs-min) {
+                        display: inline-block;
+                    }
+                }
+                .guild-name {
+                    display: none;
+                    @media(min-width: @screen-sm-min) {
+                        display: inline-block;
+                        max-width: 10em;
+                    }
+                }
             }
             &.log-geo {
                 width: 8px;

@@ -13,15 +13,6 @@ import moment from'moment';
 
 
 /*
- *   libs
- */
-
-import libDate from 'lib/date';
-import trackerTimers from 'lib/trackerTimers';
-
-
-
-/*
  *   Data
  */
 
@@ -36,7 +27,7 @@ import DAO from 'lib/data/tracker';
 import Scoreboard from './Scoreboard';
 import Maps from './Maps';
 import Log from './Log';
-// import Guilds from './Guilds';
+import Guilds from './Guilds';
 
 
 
@@ -156,12 +147,6 @@ export default class Tracker extends React.Component {
 
 
 
-    // componentWillUpdate() {
-    //  console.log('Tracker::componentWillUpdate()');
-    // }
-
-
-
     render() {
         // console.log('Tracker::render()');
 
@@ -206,19 +191,14 @@ export default class Tracker extends React.Component {
                     </div>
                 </div>
 
-                {/*(this.state.guilds && !this.state.guilds.isEmpty())
+                {(this.state.guilds && !_.isEmpty(this.state.guilds))
                     ? <div className='row'>
                         <div className='col-md-24'>
-                            <Guilds
-                                claimEvents={this.state.claimEvents}
-                                guilds={this.state.guilds}
-                                lang={this.props.lang}
-                                time={this.state.time}
-                            />
+                            <Guilds guilds={this.state.guilds} />
                         </div>
                     </div>
                     : null
-                */}
+                }
 
             </div>
         );
@@ -260,46 +240,9 @@ export default class Tracker extends React.Component {
         });
     }
 
-    // onMatchDetails(timeRemote, match, details) {
-    //     const lastmod      = match.get('lastmod');
-    //     const isModified   = (lastmod !== this.state.match.get('lastmod'));
-
-
-    //     if (isModified) {
-    //         // console.log('onMatchDetails', lastmod);
-
-
-
-    //         const matchWorlds = (this.state.matchWorlds && Immutable.Map.isMap(this.state.matchWorlds))
-    //             ? this.state.matchWorlds
-    //             : this.dao.getMatchWorlds(this.props.lang, match);
-
-
-    //         this.setState({
-    //             hasData: true,
-    //             time: this.getTime(timeRemote),
-    //             lastmod,
-
-    //             claimEvents,
-    //             details,
-    //             match,
-    //             matchWorlds,
-    //         });
-
-
-    //         setImmediate(() => this.dao.guilds.lookup(
-    //             this.state.guilds,
-    //             details,
-    //             this.onGuildDetails.bind(this)
-    //         ));
-    //     }
-    // }
-
 
 
     onGuildDetails(guild) {
-        // console.log('onGuildDetails', guild);
-
         this.setState(state => {
             state.guilds[guild.id] = guild;
 
