@@ -6,6 +6,7 @@ import STATIC from 'lib/static';
 
 import Sprite from 'common/icons/Sprite';
 import ObjectiveIcon from 'common/icons/Objective';
+import ArrowIcon from 'common/icons/Arrow';
 
 
 export default ({
@@ -28,6 +29,7 @@ export default ({
                             ? moment(entry.expires.diff(now, 'milliseconds')).format('m:ss')
                             : null
                         }</li>
+                        <li className='log-geo'><ArrowIcon direction={getObjectiveDirection(entry)} /></li>
                         <li className='log-sprite'><ObjectiveIcon color={entry.owner} type={entry.type} /></li>
                         <li className='log-time'>{
                             (moment().diff(entry.lastFlipped, 'hours') < 4)
@@ -58,6 +60,13 @@ export default ({
     </ol>
 );
 
+
+function getObjectiveDirection(objective) {
+    const baseId = objective.id.split('-')[1].toString();
+    const meta = STATIC.objectivesMeta[baseId];
+
+    return meta.direction;
+}
 
 
 

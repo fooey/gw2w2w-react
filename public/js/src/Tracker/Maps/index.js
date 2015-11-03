@@ -4,6 +4,7 @@ import classnames from 'classnames';
 
 import STATIC from 'lib/static';
 
+import ArrowIcon from 'common/icons/Arrow';
 import SpriteIcon from 'common/icons/Sprite';
 import ObjectiveIcon from 'common/icons/Objective';
 
@@ -34,8 +35,6 @@ export default ({
                 STATIC.mapsMeta,
                 (mm) => {
                     const matchMap = _.find(match.maps, m => m.id == mm.id);
-
-                    // console.log('matchMap', matchMap);
 
                     return (matchMap)
                         ? <MapTracker
@@ -105,31 +104,34 @@ const MapSections = ({
     lang,
     matchMap,
     now,
-}) => (
-    <div className='map-sections'>
-        {_.map(getMapGeo(matchMap.id),
-        (section, ix) =>
-            <div className={classnames({
-                'map-section': true,
-                solo: section.length === 1
-            })} key={ix}>
-                {_.map(
-                    section,
-                    (geo) =>
-                    <Objective
-                        key={geo.id}
-                        id={geo.id}
-                        guilds={guilds}
-                        lang={lang}
-                        direction={geo.direction}
-                        matchMap={matchMap}
-                        now={now}
-                    />
-                )}
-            </div>
-        )}
-    </div>
-);
+}) => {
+    return (
+        <div className='map-sections'>
+            {_.map(
+                getMapObjectivesMeta(matchMap.id),
+                (section, ix) =>
+                <div className={classnames({
+                    'map-section': true,
+                    solo: section.length === 1,
+                })} key={ix}>
+                    {_.map(
+                        section,
+                        (geo) =>
+                        <Objective
+                            key={geo.id}
+                            id={geo.id}
+                            guilds={guilds}
+                            lang={lang}
+                            direction={geo.direction}
+                            matchMap={matchMap}
+                            now={now}
+                        />
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
 
 
 const Objective = ({
@@ -160,7 +162,7 @@ const Objective = ({
             'active': now.isBefore(mo.expires),
         })}>
             <li className='left'>
-                <span className='track-geo'><Arrow direction={direction} /></span>
+                <span className='track-geo'><ArrowIcon direction={direction} /></span>
                 <span className='track-sprite'><ObjectiveIcon color={mo.owner} type={mo.type} /></span>
                 <span className='track-name'>{oMeta.name[lang.slug]}</span>
             </li>
@@ -188,55 +190,21 @@ const Objective = ({
 };
 
 
-const Arrow = ({direction}) => (
-    (direction)
-        ? <img src={getArrowSrc(direction)} className='arrow' />
-        : <span />
-);
 
 
+function getMapObjectivesMeta(mapId) {
+    let mapCode = 'bl2';
 
-
-
-/*
- *
- * Private Methods
- *
- */
-
-function getArrowSrc(direction) {
-    if (!direction) {
-        return null;
-    }
-
-    let src = ['/img/icons/dist/arrow'];
-
-    if (direction.indexOf('N') >= 0) {
-        src.push('north');
-    }
-    else if (direction.indexOf('S') >= 0) {
-        src.push('south');
-    }
-
-    if (direction.indexOf('W') >= 0) {
-        src.push('west');
-    }
-    else if (direction.indexOf('E') >= 0) {
-        src.push('east');
-    }
-
-
-    return src.join('-') + '.svg';
-}
-
-
-function getMapGeo(mapId) {
     if (mapId === 38) {
-        return STATIC.objectivesGeo.eb;
+        mapCode = 'eb';
     }
-    else {
-        return STATIC.objectivesGeo.bl2;
-    }
+
+    return _
+        .chain(STATIC.objectivesMeta)
+        .cloneDeep()
+        .filter(om => om.map === mapCode)
+        .groupBy(om => om.group)
+        .value();
 }
 
 

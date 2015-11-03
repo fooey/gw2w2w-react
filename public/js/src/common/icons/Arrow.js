@@ -5,18 +5,12 @@ import React from'react';
 
 
 
-export default ({oMeta}) => {
-    const imgSrc = getArrowSrc(oMeta);
 
-    return (
-        <span className = 'direction'>
-            {(imgSrc)
-                ? <img src = {imgSrc} />
-                : null
-            }
-        </span>
-    );
-};
+export default ({direction}) => (
+    (direction)
+        ? <img src={getArrowSrc(direction)} className='arrow' />
+        : <span />
+);
 
 
 
@@ -28,24 +22,24 @@ export default ({oMeta}) => {
  *
  */
 
-function getArrowSrc(meta) {
-    if (!meta.get('d')) {
+function getArrowSrc(direction) {
+    if (!direction) {
         return null;
     }
 
     let src = ['/img/icons/dist/arrow'];
 
-    if (meta.get('n')) {
+    if (direction.indexOf('N') >= 0) {
         src.push('north');
     }
-    else if (meta.get('s')) {
+    else if (direction.indexOf('S') >= 0) {
         src.push('south');
     }
 
-    if (meta.get('w')) {
+    if (direction.indexOf('W') >= 0) {
         src.push('west');
     }
-    else if (meta.get('e')) {
+    else if (direction.indexOf('E') >= 0) {
         src.push('east');
     }
 

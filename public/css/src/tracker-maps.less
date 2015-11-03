@@ -4,7 +4,8 @@
     flex-wrap: wrap;
     box-sizing: border-box;
     justify-content: space-between;
-    margin: 2em 0;
+    margin: 0;
+    width: 100%;
 
     h2 {
         margin: 0;
@@ -21,10 +22,9 @@
 
     .map {
         display: inline-block;
-        width: 100%;
-        max-width: 25em;
+        width: 20em;
         padding: 0 4px;
-        margin: 0 auto;
+        margin: 2em auto;
 
         @media(min-width: @screen-sm-min) {
             width: 50%;
@@ -89,8 +89,9 @@
 
 
         img.emblem {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
+            position: relative;
         }
         img.arrow {
             width: 8px;

@@ -25,6 +25,7 @@ export default {
     worlds: worlds,
     objectives: enhanceObjectives(statics.objectives_v2),
     objectivesGeo: getObjectiveGeo(),
+    objectivesMeta: getObjectiveMeta(),
     mapsMeta: getMapsMeta(),
     // objectives      : objectives2,
     // objective_names : statics.objective_names,
@@ -56,7 +57,7 @@ function getMapsMeta() {
         {id: 1099, name: 'Red Borderlands', abbr: 'Red'},
         {id: 1102, name: 'Green Borderlands', abbr: 'Grn'},
         {id: 1143, name: 'Blue Borderlands', abbr: 'Blu'},
-    ]
+    ];
 }
 
 
@@ -107,4 +108,48 @@ function getObjectiveGeo() {
             {id: '116', direction: 'S'},       // well
         ]],
     };
+}
+
+
+function getObjectiveMeta() {
+    return _.chain([
+        {map: 'eb', group: 1, id: '9', direction: ''},          // stonemist
+        {map: 'eb', group: 2, id: '1', direction: 'N'},         // overlook
+        {map: 'eb', group: 2, id: '17', direction: 'NW'},       // mendons
+        {map: 'eb', group: 2, id: '20', direction: 'NE'},       // veloka
+        {map: 'eb', group: 2, id: '18', direction: 'SW'},       // anz
+        {map: 'eb', group: 2, id: '19', direction: 'SE'},       // ogre
+        {map: 'eb', group: 2, id: '6', direction: 'W'},         // speldan
+        {map: 'eb', group: 2, id: '5', direction: 'E'},         // pang
+        {map: 'eb', group: 3, id: '2', direction: 'SE'},        // valley
+        {map: 'eb', group: 3, id: '15', direction: 'S'},        // langor
+        {map: 'eb', group: 3, id: '22', direction: 'E'},        // bravost
+        {map: 'eb', group: 3, id: '16', direction: 'W'},        // quentin
+        {map: 'eb', group: 3, id: '21', direction: 'N'},        // durios
+        {map: 'eb', group: 3, id: '7', direction: 'SW'},        // dane
+        {map: 'eb', group: 3, id: '8', direction: 'NE'},        // umber
+        {map: 'eb', group: 4, id: '3', direction: 'SW'},        // lowlands
+        {map: 'eb', group: 4, id: '11', direction: 'W'},        // aldons
+        {map: 'eb', group: 4, id: '13', direction: 'S'},        // jerrifer
+        {map: 'eb', group: 4, id: '12', direction: 'N'},        // wildcreek
+        {map: 'eb', group: 4, id: '14', direction: 'E'},        // klovan
+        {map: 'eb', group: 4, id: '10', direction: 'NW'},       // rogues
+        {map: 'eb', group: 4, id: '4', direction: 'SE'},        // golanta
+
+        {map: 'bl2', group: 1, id: '113', direction: 'N'},       // rampart
+        {map: 'bl2', group: 1, id: '106', direction: 'W'},       // undercroft
+        {map: 'bl2', group: 1, id: '114', direction: 'E'},       // palace
+        {map: 'bl2', group: 2, id: '102', direction: 'NW'},      // academy
+        {map: 'bl2', group: 2, id: '104', direction: 'NE'},      // necropolis
+        {map: 'bl2', group: 2, id: '99', direction: 'N'},        // lab
+        {map: 'bl2', group: 2, id: '115', direction: 'NW'},      // hideaway
+        {map: 'bl2', group: 2, id: '109', direction: 'NE'},      // refuge
+        {map: 'bl2', group: 3, id: '110', direction: 'SW'},      // outpost
+        {map: 'bl2', group: 3, id: '105', direction: 'SE'},      // depot
+        {map: 'bl2', group: 3, id: '101', direction: 'SW'},      // encamp
+        {map: 'bl2', group: 3, id: '100', direction: 'SE'},      // farm
+        {map: 'bl2', group: 3, id: '116', direction: 'S'},       // well
+    ])
+    .indexBy('id')
+    .value();
 }

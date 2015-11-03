@@ -349,7 +349,8 @@ body {
   flex-wrap: wrap;
   box-sizing: border-box;
   justify-content: space-between;
-  margin: 2em 0;
+  margin: 0;
+  width: 100%;
 }
 #tracker #maps h2 {
   margin: 0;
@@ -365,10 +366,9 @@ body {
 }
 #tracker #maps .map {
   display: inline-block;
-  width: 100%;
-  max-width: 25em;
+  width: 20em;
   padding: 0 4px;
-  margin: 0 auto;
+  margin: 2em auto;
 }
 @media (min-width: 768px) {
   #tracker #maps .map {
@@ -418,8 +418,9 @@ body {
   width: 0;
 }
 #tracker #maps .track-objective img.emblem {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
+  position: relative;
 }
 #tracker #maps .track-objective img.arrow {
   width: 8px;
@@ -546,6 +547,11 @@ body {
   width: 18px;
   height: 18px;
 }
+#tracker #log .log-objective img.arrow {
+  width: 8px;
+  height: 8px;
+  opacity: .2;
+}
 #tracker #log .log-objective > li {
   display: inline-block;
   white-space: nowrap;
@@ -574,6 +580,10 @@ body {
 }
 #tracker #log .log-objective > li.log-guild {
   width: 15em;
+}
+#tracker #log .log-objective > li.log-geo {
+  width: 8px;
+  text-align: center;
 }
 #tracker #options {
   transition: all 400ms ease-in;
