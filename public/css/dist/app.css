@@ -439,7 +439,10 @@ body {
 @media (min-width: 768px) {
   #tracker #log .log-objective > li.log-guild .guild-name {
     display: inline-block;
-    max-width: 10em;
+    max-width: 15em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: .5em;
   }
 }
 #tracker #log .log-objective > li.log-geo {
