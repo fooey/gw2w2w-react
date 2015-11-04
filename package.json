@@ -61,6 +61,7 @@
       "app": "./public/js/src",
       "lib": "./public/js/src/lib",
       "common": "./public/js/src/common",
+      "layout": "./public/js/src/layout",
       "Overview": "./public/js/src/Overview",
       "Tracker": "./public/js/src/Tracker"
     }

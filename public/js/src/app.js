@@ -1,6 +1,6 @@
 'use strict';
 
-// require('babel/polyfill');
+// require('babel/polyfill'); //  using 'browser-polyfill.js'
 console.clear();
 
 /*
@@ -21,8 +21,9 @@ import STATIC from 'lib/static';
 * React Components
 */
 
-import Langs from 'common/Langs';
-import NavbarHeader from 'common/layout/NavbarHeader';
+import Langs from 'layout/Langs';
+import NavbarHeader from 'layout/NavbarHeader';
+import Footer from 'layout/Footer';
 
 import Overview from 'Overview';
 import Tracker from 'Tracker';
@@ -31,36 +32,56 @@ import Tracker from 'Tracker';
 
 
 
+const App = ({langSlug, worldSlug}) => {
+    const lang      = STATIC.langs[langSlug];
+    const world     = getWorldFromSlug(langSlug, worldSlug);
+
+    const hasWorld  = (world && !_.isEmpty(world));
+    const Handler   = (hasWorld) ? Tracker : Overview;
+
+
+    return (
+        <div>
+            <nav className='navbar navbar-default'>
+                <div className='container'>
+                    <NavbarHeader />
+                    <Langs lang={lang} world={world} />
+                </div>
+            </nav>
+
+            <section id='content' className='container'>
+                <Handler lang={lang} world={world} />
+            </section>
+
+            <Footer obsfuEmail={{
+                chunks: ['gw2w2w', 'schtuph', 'com', '@', '.'],
+                pattern: '03142',
+            }} />
+        </div>
+    );
+};
+
+
+
+
+
 /*
 *
-* DOM Ready
+* Launch App
 *
 */
 
-$(function() {
-    attachRoutes();
-    setImmediate(eml);
-});
+(function() {
+    page('/', () => page.redirect(destination));
 
-
-
-/*
-*
-* Routes
-*
-*/
-
-function attachRoutes() {
-
-    // Redirect '/' to '/en'
-    page('/', redirectPage.bind(null, '/en'));
-
-    page('/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)?', function(ctx) {
+    page(
+        '/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)?',
+        (ctx) =>
         ReactDOM.render(
             <App {...ctx.params} />,
             document.getElementById('react-app')
-        );
-    });
+        )
+    );
 
 
     page.start({
@@ -70,59 +91,9 @@ function attachRoutes() {
         hashbang: false,
         decodeURLComponents: true,
     });
-}
+}());
 
 
-
-
-
-/*
-*
-* App Container
-*
-*/
-
-
-
-class App extends React.Component {
-    static propTypes = {
-        langSlug : React.PropTypes.string.isRequired,
-        worldSlug : React.PropTypes.string,
-    }
-
-    componentDidMount() {
-        // console.log('App Started!');
-    }
-
-    render() {
-        const langSlug  = this.props.langSlug;
-        const worldSlug = this.props.worldSlug;
-
-        const lang      = STATIC.langs[langSlug];
-        const world     = getWorldFromSlug(langSlug, worldSlug);
-
-        const hasWorld  = (world && !_.isEmpty(world));
-        const Handler   = (hasWorld) ? Tracker : Overview;
-
-
-        return (
-            <div>
-                <nav className='navbar navbar-default'>
-                    <div className='container'>
-                        <NavbarHeader />
-                        <div id='nav-langs' className='pull-right'>
-                            <Langs lang={lang} world={world} />
-                        </div>
-                    </div>
-                </nav>
-
-                <div id='content' className='container'>
-                    <Handler lang={lang} world={world} />
-                </div>
-            </div>
-        );
-    }
-}
 
 
 
@@ -132,28 +103,10 @@ class App extends React.Component {
 *
 */
 
-function redirectPage(destination) {
-    page.redirect(destination);
-}
-
-
 
 function getWorldFromSlug(langSlug, worldSlug) {
     return _.find(
         STATIC.worlds,
         world => world[langSlug].slug === worldSlug
     );
-}
-
-
-
-function eml() {
-    const chunks = ['gw2w2w', 'schtuph', 'com', '@', '.'];
-    const addr   = [chunks[0], chunks[3], chunks[1], chunks[4], chunks[2]].join('');
-
-    $('.nospam-prz').each((i, el) => {
-        $(el).replaceWith(
-            $('<a>', {href: `mailto:${addr}`, text: addr})
-        );
-    });
 }
