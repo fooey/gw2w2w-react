@@ -72,7 +72,7 @@ const App = ({langSlug, worldSlug}) => {
 */
 
 (function() {
-    page('/', () => page.redirect(destination));
+    page('/', () => page.redirect('/en'));
 
     page(
         '/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)?',
