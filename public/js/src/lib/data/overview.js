@@ -1,12 +1,8 @@
 'use strict';
 
 import _ from 'lodash';
-import $ from 'jQuery';
 
-// import STATIC from 'lib/static';
-
-
-const URL_API_MATCHES = `http://state.gw2w2w.com/matches`;
+import api from 'lib/api';
 
 
 export default class OverviewDataProvider {
@@ -51,12 +47,10 @@ export default class OverviewDataProvider {
     __getData() {
         // console.log('lib::data::overview::__getData()');
 
-        // api.getMatches(this.__onMatchData.bind(this));
-
-        $.ajax({
-            url: URL_API_MATCHES,
-            success: this.__onMatchData.bind(this),
-            complete: this.__setDataTimeout.bind(this),
+        api.getMatches({
+            worldId: this.__worldId,
+            success: (data) => this.__onMatchData(data),
+            complete: () => this.__rescheduleDataUpdate(),
         });
     }
 
@@ -72,10 +66,10 @@ export default class OverviewDataProvider {
 
 
 
-    __setDataTimeout() {
+    __rescheduleDataUpdate() {
         const interval = getInterval();
 
-        // console.log('lib::data::overview::__setDataTimeout()', interval);
+        // console.log('lib::data::overview::__rescheduleDataUpdate()', interval);
 
         this.__timeouts.matchData = setTimeout(
             this.__getData.bind(this),

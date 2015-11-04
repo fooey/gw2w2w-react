@@ -1,11 +1,8 @@
 
-import $ from 'jQuery';
 import _ from 'lodash';
 import async from 'async';
 
 import * as api from 'lib/api';
-
-const URL_API_GUILDS = `https://api.guildwars2.com/v1/guild_details.json`;
 
 
 

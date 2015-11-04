@@ -7,8 +7,6 @@ import api from 'lib/api';
 
 import STATIC from 'lib/static';
 
-const URL_API_MATCHES = `http://state.gw2w2w.com/world`;
-
 
 export default class OverviewDataProvider {
 

@@ -3,14 +3,16 @@
 
 import _ from 'lodash';
 
-import statics from 'gw2w2w-static';
+import STATIC_LANGS from 'gw2w2w-static/data/langs';
+import STATIC_WORLDS from 'gw2w2w-static/data/world_names';
+import STATIC_OBJECTIVES from 'gw2w2w-static/data/objectives_v2_merged';
 
 
 const worlds = _
-    .chain(statics.worlds)
+    .chain(STATIC_WORLDS)
     .map((world) => {
         _.forEach(
-            statics.langs,
+            STATIC_LANGS,
             (lang) =>
             world[lang.slug].link = getWorldLink(lang.slug, world)
         );
@@ -21,18 +23,12 @@ const worlds = _
 
 
 export default {
-    langs: statics.langs,
+    langs: STATIC_LANGS,
     worlds: worlds,
-    objectives: enhanceObjectives(statics.objectives_v2),
+    objectives: enhanceObjectives(STATIC_OBJECTIVES),
     objectivesGeo: getObjectiveGeo(),
     objectivesMeta: getObjectiveMeta(),
     mapsMeta: getMapsMeta(),
-    // objectives      : objectives2,
-    // objective_names : statics.objective_names,
-    // objective_types : statics.objective_types,
-    // objective_meta  : statics.objective_meta,
-    // objective_labels: statics.objective_labels,
-    // objective_map   : statics.objective_map,
 };
 
 

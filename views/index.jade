@@ -24,27 +24,24 @@ body
 
     script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/async/1.5.0/async.min.js")
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/page.js/1.6.4/page.min.js")
 
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/superagent/1.2.0/superagent.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/classnames/2.2.0/index.min.js")
 
-
-    script(src=staticCacheBusted("/nm/moment-twitter/moment-twitter.js", "node_modules/moment-twitter/moment-twitter.js"))
-
     if (process.env.NODE_ENV === 'development')
-        script(src=staticCacheBusted("/nm/babel-core/browser-polyfill.js", "node_modules/babel-core/browser-polyfill.js"))
-        script(src=staticCacheBusted("/nm/react/dist/react.js", "node_modules/react/dist/react.js"))
-        script(src=staticCacheBusted("/nm/react-dom/dist/react-dom.js", "node_modules/react-dom/dist/react-dom.js"))
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.33/browser-polyfill.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react-dom.js")
         script(src=staticCacheBusted("/js/dist/app.js", "public/js/dist/app.js"))
 
 
     else
-        script(src=staticCacheBusted("/nm/babel-core/browser-polyfill.min.js", "node_modules/babel-core/browser-polyfill.min.js"))
-        script(src=staticCacheBusted("/nm/react/dist/react.min.js", "node_modules/react/dist/react.min.js"))
-        script(src=staticCacheBusted("/nm/react-dom/dist/react-dom.min.js", "node_modules/react-dom/dist/react-dom.min.js"))
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.33/browser-polyfill.min.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react.min.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react-dom.min.js")
         script(src=staticCacheBusted("/js/dist/app.min.js", "public/js/dist/app.min.js"))
 
 

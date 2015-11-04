@@ -46,12 +46,13 @@
     "gulp-uglify": "^1.4.2",
     "gulp-util": "^3.0.7",
     "gw2api": "^1.2.1",
-    "gw2w2w-static": "^0.2.4",
+    "gw2w2w-static": "^0.3.1",
     "mkdirp": "^0.5.1",
     "postcss-assets": "^3.0.2",
     "postcss-focus": "^1.0.0",
     "postcss-reporter": "^1.3.0",
     "shortid": "^2.2.4",
+    "superagent": "^1.4.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.4.0"
@@ -69,13 +70,12 @@
   "browserify-shim": {
     "react": "global:React",
     "react-dom": "global:ReactDOM",
-    "lodash": "global:_",
     "async": "global:async",
     "classnames": "global:classNames",
-    "jQuery": "global:jQuery",
+    "lodash": "global:_",
     "moment": "global:moment",
     "page": "global:page",
-    "moment-twitter": "global:moment-twitter",
-    "numeral": "global:numeral"
+    "numeral": "global:numeral",
+    "superagent": "global:superagent"
   }
 }
