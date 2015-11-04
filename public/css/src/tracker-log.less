@@ -129,21 +129,20 @@
                 width: 6em;
             }
             &.log-guild {
+                display: flex;
+                flex-flow: nowrap row;
+                align-items: center;
+
+                .emblem {
+                    display: inline-block;
+                }
                 .guild-tag {
-                    display: none;
-                    @media(min-width: @screen-xs-min) {
-                        display: inline-block;
-                    }
+                    display: inline-block;
                 }
                 .guild-name {
-                    display: none;
-                    @media(min-width: @screen-sm-min) {
-                        display: inline-block;
-                        max-width: 15em;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        padding-right: .5em;
-                    }
+                    display: inline-block;
+                    max-width: 15em;
+                    padding: 0 .5em;
                 }
             }
             &.log-geo {

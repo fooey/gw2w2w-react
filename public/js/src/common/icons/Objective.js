@@ -6,6 +6,7 @@ import React from'react';
 export default ({
     color = 'black',
     type,
+    size,
 }) => {
     let src = '/img/icons/dist/';
     src += type;
@@ -14,5 +15,10 @@ export default ({
     }
     src += '.svg';
 
-    return <img src={src} className={`icon-objective icon-objective-${type}`} />;
+    return <img
+        src={src}
+        className={`icon-objective icon-objective-${type}`}
+        width={size ? size: null}
+        height={size ? size: null}
+    />;
 };

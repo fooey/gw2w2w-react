@@ -43,7 +43,7 @@ export default ({
                     className={classnames({check: true, active: typeFilter[t], first: t==='castle'})}
                     onClick={() => handleTypeFilterClick(t)}
                 >
-                    <ObjectiveIcon type={t} />
+                    <ObjectiveIcon type={t} size={18} />
                 </a>
             )}
         </div>

@@ -132,6 +132,18 @@ body {
   width: 60px;
   height: 60px;
 }
+#tracker .icon-objective-keep {
+  zoom: .85;
+}
+#tracker .icon-objective-tower {
+  zoom: .85;
+}
+#tracker .icon-objective-tower {
+  zoom: .9;
+}
+#tracker .icon-objective-camp {
+  zoom: 1.1;
+}
 #tracker #scoreboards .scoreboard {
   margin: 0 1px;
   padding: .5em;
@@ -425,25 +437,21 @@ body {
 #tracker #log .log-objective > li.log-claimed {
   width: 6em;
 }
-#tracker #log .log-objective > li.log-guild .guild-tag {
-  display: none;
+#tracker #log .log-objective > li.log-guild {
+  display: flex;
+  flex-flow: nowrap row;
+  align-items: center;
 }
-@media (min-width: 480px) {
-  #tracker #log .log-objective > li.log-guild .guild-tag {
-    display: inline-block;
-  }
+#tracker #log .log-objective > li.log-guild .emblem {
+  display: inline-block;
+}
+#tracker #log .log-objective > li.log-guild .guild-tag {
+  display: inline-block;
 }
 #tracker #log .log-objective > li.log-guild .guild-name {
-  display: none;
-}
-@media (min-width: 768px) {
-  #tracker #log .log-objective > li.log-guild .guild-name {
-    display: inline-block;
-    max-width: 15em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: .5em;
-  }
+  display: inline-block;
+  max-width: 15em;
+  padding: 0 .5em;
 }
 #tracker #log .log-objective > li.log-geo {
   width: 8px;

@@ -48,13 +48,8 @@ export default ({
                             entry.guild
                                 ? <a href={'#' + entry.guild}>
                                     <Emblem guildId={entry.guild} />
-                                    {guilds[entry.guild]
-                                        ? <span className='guild-details'>
-                                            <span className='guild-name'> {guilds[entry.guild].name} </span>
-                                            <span className='guild-tag'> [{guilds[entry.guild].tag}] </span>
-                                        </span>
-                                        : <i className='fa fa-spinner fa-spin'></i>
-                                    }
+                                    {guilds[entry.guild] ? <span className='guild-name'> {guilds[entry.guild].name} </span> :  null}
+                                    {guilds[entry.guild] ? <span className='guild-tag'> [{guilds[entry.guild].tag}] </span> :  null}
                                 </a>
                                 : null
                         }</li>
