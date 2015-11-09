@@ -20,7 +20,7 @@ export function getMatches({
     // console.log('api::getMatches()');
 
     request
-        .get(`http://state.gw2w2w.com/matches`)
+        .get(`https://state.gw2w2w.com/matches`)
         .end(onRequest.bind(this, {success, error, complete}));
 }
 
@@ -35,7 +35,7 @@ export function getMatchByWorldSlug({
     // console.log('api::getMatchByWorldSlug()');
 
     request
-        .get(`http://state.gw2w2w.com/world/${worldSlug}`)
+        .get(`https://state.gw2w2w.com/world/${worldSlug}`)
         .end(onRequest.bind(this, {success, error, complete}));
 }
 
@@ -50,7 +50,7 @@ export function getMatchByWorldId({
     // console.log('api::getMatchByWorldId()');
 
     request
-        .get(`http://state.gw2w2w.com/world/${worldId}`)
+        .get(`https://state.gw2w2w.com/world/${worldId}`)
         .end(onRequest.bind(this, {success, error, complete}));
 }
 
