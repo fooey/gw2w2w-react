@@ -8,13 +8,19 @@
     "build": "gulp compile"
   },
   "dependencies": {
-    "babel": "^5.8.29",
-    "babel-core": "^5.8.32",
+    "async": "^1.5.2",
+    "babel-cli": "^6.4.5",
+    "babel-core": "^6.4.5",
+    "babel-polyfill": "^6.3.14",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
+    "babel-register": "^6.4.3",
     "compression": "^1.6.0",
     "errorhandler": "^1.4.1",
     "express": "^4.13.3",
     "jade": "^1.11.0",
-    "lodash": "^3.10.1",
+    "lodash": "^4.0.1",
     "moment-twitter": "^0.2.0",
     "morgan": "^1.6.1",
     "newrelic": "^1.23.0",
@@ -26,12 +32,12 @@
   },
   "devDependencies": {
     "aliasify": "^1.8.0",
-    "async": "^1.4.2",
     "autoprefixer-core": "^6.0.1",
-    "babelify": "^6.0.0",
+    "babel-polyfill": "^6.3.14",
+    "babelify": "^7.2.0",
     "bootstrap": "^3.3.5",
     "bootswatch": "^3.3.5",
-    "browserify": "^12.0.0",
+    "browserify": "^12.0.2",
     "browserify-shim": "^3.8.10",
     "classnames": "^2.2.0",
     "cssnano": "^3.3.1",
@@ -55,7 +61,7 @@
     "superagent": "^1.4.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.4.0"
+    "watchify": "^3.7.0"
   },
   "aliasify": {
     "aliases": {

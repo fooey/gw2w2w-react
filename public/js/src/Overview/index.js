@@ -50,7 +50,7 @@ const REGIONS = {
 class Overview extends React.Component {
     static propTypes = {
         lang: React.PropTypes.object.isRequired,
-    }
+    };
 
 
 

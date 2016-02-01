@@ -22,26 +22,26 @@ body
 
 
 
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js")
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/async/1.5.0/async.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.1/lodash.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/async/1.5.2/async.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/page.js/1.6.4/page.min.js")
 
     script(src="https://cdnjs.cloudflare.com/ajax/libs/superagent/1.2.0/superagent.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js")
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/classnames/2.2.0/index.min.js")
 
     if (process.env.NODE_ENV === 'development')
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.33/browser-polyfill.js")
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react.js")
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react-dom.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.3.14/polyfill.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.6/react.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.6/react-dom.js")
         script(src=staticCacheBusted("/js/dist/app.js", "public/js/dist/app.js"))
 
 
     else
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.33/browser-polyfill.min.js")
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react.min.js")
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react-dom.min.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.3.14/polyfill.min.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.6/react.min.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.6/react-dom.min.js")
         script(src=staticCacheBusted("/js/dist/app.min.js", "public/js/dist/app.min.js"))
 
 

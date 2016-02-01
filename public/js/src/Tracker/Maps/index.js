@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import MatchMap from './MatchMap';
 
-import STATIC from 'lib/static';
+import * as STATIC from 'lib/static';
 
 
 
@@ -26,7 +26,7 @@ export default ({
         return null;
     }
 
-    const maps = _.indexBy(match.maps, 'id');
+    const maps = _.keyBy(match.maps, 'id');
     const currentMapIds = _.keys(maps);
     const mapsMetaActive = _.filter(
         STATIC.mapsMeta,

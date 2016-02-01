@@ -2,7 +2,7 @@
 import React from 'react';
 import moment from'moment';
 
-import STATIC from 'lib/static';
+import * as STATIC from 'lib/static';
 
 import Emblem from 'common/icons/Emblem';
 // import Sprite from 'common/icons/Sprite';
@@ -64,6 +64,11 @@ export default ({
 function getObjectiveDirection(objective) {
     const baseId = objective.id.split('-')[1].toString();
     const meta = STATIC.objectivesMeta[baseId];
+
+    if (!meta) {
+        console.log('objectivesMeta', STATIC.objectivesMeta);
+        console.log('baseObjectivesMeta', _.keyBy(STATIC.baseObjectivesMeta, 'id'));
+    }
 
     return meta.direction;
 }

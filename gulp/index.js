@@ -1,4 +1,3 @@
-'use strict';
 
 
 import gulp from  'gulp';
@@ -38,11 +37,11 @@ paths.js.dist  = paths.js.base + '/dist';
 *
 */
 
-require('./gulp/css')(gulp, paths);
-require('./gulp/javascript')(gulp, paths);
-require('./gulp/nodemon')(gulp, server, livereload);
+require('./css')(gulp, paths);
+require('./javascript')(gulp, paths);
+require('./nodemon')(gulp, server, livereload);
 
-require('./gulp/watch')(gulp, livereload, server, paths);
+require('./watch')(gulp, livereload, server, paths);
 
 
 

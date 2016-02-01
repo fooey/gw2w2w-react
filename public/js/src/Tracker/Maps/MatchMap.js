@@ -4,7 +4,7 @@ import classnames from 'classnames';
 
 import Objective from './Objective';
 
-import STATIC from 'lib/static';
+import * as STATIC from 'lib/static';
 
 
 export default ({

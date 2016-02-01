@@ -8,7 +8,7 @@ import Emblem from 'common/icons/Emblem';
 import Arrow from 'common/icons/Arrow';
 import ObjectiveIcon from 'common/icons/Objective';
 
-import STATIC from 'lib/static';
+import * as STATIC from 'lib/static';
 
 
 export default ({

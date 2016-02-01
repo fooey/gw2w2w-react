@@ -5,7 +5,7 @@ import _ from 'lodash';
 import GuildsDAO from './guilds';
 import api from 'lib/api';
 
-import STATIC from 'lib/static';
+import * as STATIC from 'lib/static';
 
 
 export default class OverviewDataProvider {

@@ -11,7 +11,7 @@ export default class Match extends React.Component {
     static propTypes = {
         lang: React.PropTypes.object.isRequired,
         match: React.PropTypes.object.isRequired,
-    }
+    };
 
 
 

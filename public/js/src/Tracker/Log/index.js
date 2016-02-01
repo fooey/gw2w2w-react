@@ -12,7 +12,7 @@ export default class LogContainer extends React.Component {
         log: React.PropTypes.array.isRequired,
         guilds: React.PropTypes.object.isRequired,
         match: React.PropTypes.object.isRequired,
-    }
+    };
 
 
 

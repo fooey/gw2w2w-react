@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import STATIC from 'lib/static';
+import {langs} from 'lib/static';
 
 import LangLink from './LangLink';
 
@@ -17,7 +17,7 @@ export default ({
 }) => (
     <div id='nav-langs' className='pull-right'>
         <ul className = 'nav navbar-nav'>
-            {_.map(STATIC.langs, (linkLang, key) =>
+            {_.map(langs, (linkLang, key) =>
                 <LangLink
                     key = {key}
 

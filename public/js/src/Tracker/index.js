@@ -57,7 +57,7 @@ export default class Tracker extends React.Component {
     static propTypes={
         lang : React.PropTypes.object.isRequired,
         world: React.PropTypes.object.isRequired,
-    }
+    };
 
     /*
     *
@@ -287,7 +287,7 @@ function setPageTitle(lang, world) {
 function getLog(match) {
     return _
         .chain(match.maps)
-        .pluck('objectives')
+        .map('objectives')
         .flatten()
         .clone()
         .sortBy('lastFlipped')
@@ -308,8 +308,8 @@ function getNewClaims(log, knownGuilds) {
     return  _
         .chain(log)
         .reject(o => _.isEmpty(o.guild))
-        .pluck('guild')
-        .unique()
+        .map('guild')
+        .uniq()
         .difference(knownGuilds)
         .value();
 }

@@ -20,15 +20,7 @@ var vinylSource = require('vinyl-source-stream');
 
 var aliasify    = require('aliasify');
 var shimify     = require('browserify-shim');
-var babelify    = require('babelify').configure({
-    // stage: 0,
-    // experimental: true,
-    // loose: 'all',
-    // optional: [
-    //     'optimisation.react.constantElements',
-    //     'minification.inlineExpressions',
-    // ],
-});
+var babelify    = require('babelify');
 
 
 
@@ -53,6 +45,9 @@ function gulpTasks(gulp, paths) {
     var browserifyBundler = browserify(browserifyConfig)
         // .on('bundle', logEvent.bind(null, 'bundle'))
         // .on('reset',  logEvent.bind(null, 'reset '))
+        // .transform('babelify')
+        // .transform('aliasify')
+        // .transform('browserify-shim')
         .on('error', gutil.log.bind(gutil, 'Browserify Error'));
 
     var watchifyBundler = watchify(browserifyBundler)

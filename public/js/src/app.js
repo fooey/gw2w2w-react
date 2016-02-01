@@ -1,6 +1,5 @@
 'use strict';
 
-// require('babel/polyfill'); //  using 'browser-polyfill.js'
 console.clear();
 
 /*
@@ -13,7 +12,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import page from 'page';
 
-import STATIC from 'lib/static';
+import * as STATIC from 'lib/static';
 
 
 

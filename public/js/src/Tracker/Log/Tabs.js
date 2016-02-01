@@ -3,7 +3,7 @@ import React from'react';
 import classnames from'classnames';
 import ObjectiveIcon from 'common/icons/Objective';
 
-import STATIC from 'lib/static';
+import * as STATIC from 'lib/static';
 
 
 export default ({
@@ -38,12 +38,16 @@ export default ({
             {_.map(
                 ['castle', 'keep', 'tower', 'camp'],
                 t =>
-                <a
-                    key={t}
-                    className={classnames({check: true, active: typeFilter[t], first: t==='castle'})}
-                    onClick={() => handleTypeFilterClick(t)}
-                >
+                <a  key={t}
+                    className={classnames({
+                        check: true,
+                        active: typeFilter[t],
+                        first: t === 'castle',
+                    })}
+                    onClick={() => handleTypeFilterClick(t)} >
+
                     <ObjectiveIcon type={t} size={18} />
+
                 </a>
             )}
         </div>
