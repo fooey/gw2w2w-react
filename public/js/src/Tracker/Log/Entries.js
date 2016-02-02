@@ -65,11 +65,6 @@ function getObjectiveDirection(objective) {
     const baseId = objective.id.split('-')[1].toString();
     const meta = STATIC.objectivesMeta[baseId];
 
-    if (!meta) {
-        console.log('objectivesMeta', STATIC.objectivesMeta);
-        console.log('baseObjectivesMeta', _.keyBy(STATIC.baseObjectivesMeta, 'id'));
-    }
-
     return meta.direction;
 }
 

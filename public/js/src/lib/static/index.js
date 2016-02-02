@@ -122,8 +122,6 @@ export const baseObjectivesMeta = [
 ];
 
 function getObjectiveMeta() {
-    console.log('objectiveMeta', baseObjectivesMeta);
-    console.log('objectiveMeta', _.keyBy(baseObjectivesMeta, 'id'));
     return _.keyBy(baseObjectivesMeta, 'id');
 }
 
