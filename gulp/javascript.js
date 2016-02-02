@@ -1,26 +1,26 @@
 'use strict';
 
-// jscs:disable esnext
-// jscs:disable disallowKeywords
+import gutil from 'gulp-util';
 
-var gutil       = require('gulp-util');
+import _ from 'lodash';
 
-var _           = require('lodash');
+import browserify from 'browserify';
+import watchify from 'watchify';
+import uglify from 'gulp-uglify';
 
-var browserify  = require('browserify');
-var watchify    = require('watchify');
-var uglify      = require('gulp-uglify');
+import rename from 'gulp-rename';
+import sourcemaps from 'gulp-sourcemaps';
 
-var rename      = require('gulp-rename');
-var sourcemaps  = require('gulp-sourcemaps');
-
-var vinylBuffer = require('vinyl-buffer');
-var vinylSource = require('vinyl-source-stream');
+import vinylBuffer from 'vinyl-buffer';
+import vinylSource from 'vinyl-source-stream';
 
 
-var aliasify    = require('aliasify');
-var shimify     = require('browserify-shim');
-var babelify    = require('babelify');
+import aliasify from 'aliasify';
+import shimify from 'browserify-shim';
+import babelify from 'babelify';
+
+
+import config from './config';
 
 
 
@@ -31,10 +31,10 @@ function logEvent(event, data) {
 
 
 
-function gulpTasks(gulp, paths) {
+export default function gulpTasks(gulp) {
 
     var browserifyConfig = _.defaults(watchify.args, {
-        entries       : [paths.js.src + '/app.js'],
+        entries       : [config.paths.js.src + '/app.js'],
         debug         : true,
         bundleExternal: true,
         verbose       : true,
@@ -58,13 +58,13 @@ function gulpTasks(gulp, paths) {
         .on('error', gutil.log.bind(gutil, 'Watchify Error'));
 
 
-    var uglifier = function() {
+    var uglifier = () => {
         return uglify({
             // report: 'min',
             stripBanners: true,
-            mangle      : true,
+            mangle: true,
             compress: {
-                unsafe      : true,
+                unsafe: true,
                 drop_console: true,
             },
         }).on('error', gutil.log.bind(gutil, 'Uglify Error'));
@@ -73,7 +73,7 @@ function gulpTasks(gulp, paths) {
 
 
 
-    var compileJS = function() {
+    var compileJS = () => {
         return watchifyBundler
             .bundle()
             .on('error', gutil.log.bind(gutil, 'Browserify Error'))
@@ -82,7 +82,7 @@ function gulpTasks(gulp, paths) {
             .pipe(vinylBuffer())
 
             .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest(paths.js.dist)) // non-minified app.js
+            .pipe(gulp.dest(config.paths.js.dist)) // non-minified app.js
 
             .pipe(sourcemaps.init({loadMaps: true}))
 
@@ -91,7 +91,7 @@ function gulpTasks(gulp, paths) {
             .pipe(rename({suffix: '.min'}))
             .pipe(sourcemaps.write('./'))
 
-            .pipe(gulp.dest(paths.js.dist)); // minified app.min.js
+            .pipe(gulp.dest(config.paths.js.dist)); // minified app.min.js
 
         // .pipe(livereload());
     };
@@ -104,7 +104,3 @@ function gulpTasks(gulp, paths) {
 
     return gulp;
 }
-
-
-
-module.exports = gulpTasks;

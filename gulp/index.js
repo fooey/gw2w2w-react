@@ -1,31 +1,15 @@
-
-
 import gulp from  'gulp';
 import livereload from  'gulp-livereload';
 import server from 'gulp-develop-server';
 
 
+import config from './config';
+
+import jsTasks from './javascript';
 
 
 
-/*
-*
-*   Asset Paths
-*
-*/
 
-let paths      = {};
-paths.public   = './public';
-
-paths.css      = {};
-paths.css.base = paths.public + '/css';
-paths.css.src  = paths.css.base + '/src';
-paths.css.dist = paths.css.base + '/dist';
-
-paths.js       = {};
-paths.js.base  = paths.public + '/js';
-paths.js.src   = paths.js.base + '/src';
-paths.js.dist  = paths.js.base + '/dist';
 
 
 
@@ -37,11 +21,11 @@ paths.js.dist  = paths.js.base + '/dist';
 *
 */
 
-require('./css')(gulp, paths);
-require('./javascript')(gulp, paths);
+require('./css')(gulp, config.paths);
+jsTasks(gulp);
 require('./nodemon')(gulp, server, livereload);
 
-require('./watch')(gulp, livereload, server, paths);
+require('./watch')(gulp, livereload, server, config.paths);
 
 
 
