@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "gulp default",
+    "lint": "eslint --parser babel-eslint ./config/** ./public/js/** ./routes/**",
     "build": "gulp compile"
   },
   "dependencies": {
@@ -19,7 +20,6 @@
     "compression": "^1.6.0",
     "errorhandler": "^1.4.1",
     "express": "^4.13.3",
-    "jade": "^1.11.0",
     "lodash": "^4.0.1",
     "moment-twitter": "^0.2.0",
     "morgan": "^1.6.1",

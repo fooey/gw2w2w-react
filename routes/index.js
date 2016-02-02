@@ -1,9 +1,24 @@
-'use strict';
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-module.exports = function(app, express) {
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+
+import attachStaticRoutes from './statics';
+
+import Layout from 'views/Layout';
+
+
+
+export function initRoutes(app, express) {
+    const html = `<!DOCTYPE html>` + ReactDOMServer.renderToStaticMarkup(
+        <Layout
+            env={process.env}
+            staticCacheBusted={staticCacheBusted}
+        />
+    );
+
 
     /*
     *
@@ -11,20 +26,7 @@ module.exports = function(app, express) {
     *
     */
 
-    require('./statics.js')(app, express);
-
-
-
-    function staticCacheBusted(urlPath, filePath) {
-        const fullPath = path.join(process.cwd(), filePath);
-        const hash     = '~' + fs.statSync(fullPath).mtime.getTime().toString(16) + '~';
-
-        const pathname = path.dirname(urlPath)
-            + '/' + path.basename(urlPath, path.extname(urlPath))
-            + '.' + hash + path.extname(urlPath);
-
-        return pathname;
-    }
+    attachStaticRoutes(app, express);
 
 
     /*
@@ -33,18 +35,35 @@ module.exports = function(app, express) {
     *
     */
 
-    let router = express.Router();
+    const router = express.Router();
 
-    router.get('/:langSlug(en|de|es|fr)?', function(req, res) {
-        res.render('index', {staticCacheBusted});
+    router.get('/:langSlug(en|de|es|fr)?', (req, res) => {
+        res.send(html);
         // res.sendFile(process.cwd() + '/public/index.html');
     });
 
-    router.get('/:langSlug(en|de|es|fr)/:langSlug([a-z-]+)', function(req, res) {
-        res.render('index', {staticCacheBusted});
+    router.get('/:langSlug(en|de|es|fr)/:langSlug([a-z-]+)', (req, res) => {
+        res.send(html);
+        // res.render('index', {staticCacheBusted});
         // res.sendFile(process.cwd() + '/public/index.html');
     });
 
 
     app.use(router);
 };
+
+
+
+export function staticCacheBusted(urlPath, filePath) {
+    const fullPath = path.join(process.cwd(), filePath);
+    const { dir, name, ext } = path.parse(urlPath);
+
+    const timestamp = fs.statSync(fullPath).mtime.getTime();
+    const timeHex = timestamp.toString(36);
+
+    const hashToken = `~${timeHex}~`;
+    const hashName = `${name}.${hashToken}${ext}`;
+    const hashPath =  `${dir}/${hashName}`;
+
+    return hashPath;
+}

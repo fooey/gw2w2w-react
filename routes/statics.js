@@ -5,7 +5,7 @@ import favicon from 'serve-favicon';
 import serveStatic from 'serve-static';
 
 
-module.exports = function(app, express) {
+export default (app, express) => {
 
     /*
     *
@@ -13,7 +13,7 @@ module.exports = function(app, express) {
     *
     */
 
-    app.use(function(req, res, next) {
+    app.use((req, res, next) => {
         const cacheBustInFilename = /\.~[A-Za-z0-9_-]{7,14}~\./;  // filename.~asdf~.ext
         const cacheBustDirectory  = /\/~[A-Za-z0-9_-]{7,14}~\//;  // /~asdf~/*
 
@@ -64,10 +64,10 @@ module.exports = function(app, express) {
     };
 
     app.use(serveStatic('public', staticOptions));
-    app.use('/nm', serveStatic(process.cwd() + '/node_modules', staticOptions));
-    app.use('/node_modules', serveStatic(process.cwd() + '/node_modules', staticOptions));
-    app.use('/routes', serveStatic(process.cwd() + '/routes', staticOptions));
-    app.use('/views', serveStatic(process.cwd() + '/views', staticOptions));
+    app.use('/nm', serveStatic(`${process.cwd()}/node_modules`, staticOptions));
+    app.use('/node_modules', serveStatic(`${process.cwd()}/node_modules`, staticOptions));
+    app.use('/routes', serveStatic(`${process.cwd()}/routes`, staticOptions));
+    app.use('/views', serveStatic(`${process.cwd()}/views`, staticOptions));
 
     express.static.mime.define({
         'text/plain': ['jade', 'map'],

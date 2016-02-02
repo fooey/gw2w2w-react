@@ -1,5 +1,13 @@
+import express from 'express';
+
+import { createExpressApp } from './config/express';
+import { initRoutes } from './routes';
+
+
 const nodeEnv      = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
 const serverPort   = process.env.PORT ? process.env.PORT : 3000;
+
+const app = createExpressApp(express, nodeEnv);
 
 
 GLOBAL.timestamp   = Date.now();
@@ -13,16 +21,13 @@ if (nodeEnv !== 'development' && process.env.NEW_RELIC_LICENSE_KEY) {
 
 
 
-let express = require('express');
-let app = require('./config/express')(express, nodeEnv);
 
-require('./routes')(app, express);
-// app.use(routes);
+initRoutes(app, express);
 
 
 
 
-app.listen(serverPort, function() {
+app.listen(serverPort, () => {
     console.log('');
     console.log('**************************************************');
     console.log('Express server started');

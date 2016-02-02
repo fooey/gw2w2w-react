@@ -1,9 +1,9 @@
-'use strict';
 
-const path = require('path');
+import path from 'path';
 
-module.exports = function(express, nodeEnv) {
-    let app = express();
+
+export function createExpressApp(express, nodeEnv) {
+    const app = express();
 
     const isDev  = (nodeEnv === 'development');
     // const isProd = !isDev;
@@ -20,10 +20,10 @@ module.exports = function(express, nodeEnv) {
     */
 
     app.set('views', path.normalize(path.join(process.cwd(), 'views')));
-    app.set('view engine', 'jade');
+    // app.set('view engine', 'jade');
     app.set('case sensitive', true);
     app.set('strict routing', true);
-    app.engine('jade', require('jade').__express);
+    // app.engine('jade', require('jade').__express);
 
 
 
