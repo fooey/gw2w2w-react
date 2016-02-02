@@ -1,7 +1,7 @@
 
 const paths    = {};
 
-paths.public   = './public';
+paths.public   = './app/public';
 
 paths.css      = {};
 paths.css.base = paths.public + '/css';

@@ -1,5 +1,6 @@
 'use strict';
 
+import gulp from 'gulp';
 import gutil from 'gulp-util';
 
 import _ from 'lodash';
@@ -31,7 +32,7 @@ function logEvent(event, data) {
 
 
 
-export default function gulpTasks(gulp) {
+export default function gulpTasks() {
 
     var browserifyConfig = _.defaults(watchify.args, {
         entries       : [config.paths.js.src + '/app.js'],

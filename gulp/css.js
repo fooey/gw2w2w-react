@@ -1,7 +1,8 @@
-'use strict';
 
-// jscs:disable esnext
-// jscs:disable disallowKeywords
+import gulp from  'gulp';
+
+import config from './config';
+
 
 var gutil        = require('gulp-util');
 
@@ -10,6 +11,9 @@ var sourcemaps   = require('gulp-sourcemaps');
 
 
 var less         = require('gulp-less');
+var NpmImportPlugin = require('less-plugin-npm-import');
+let npmImport = new NpmImportPlugin({prefix: 'npm://'});
+let lessPlugins = [npmImport];
 
 var postcss      = require('gulp-postcss');
 var postcssLog   = require('postcss-reporter');
@@ -24,7 +28,7 @@ var cssnano      = require('cssnano');
 
 
 
-function gulpTasks(gulp, paths) {
+function gulpTasks() {
 
     gulp.task('css-compile', ['css-compile-bootstrap', 'css-compile-custom'], function(cb) {
         cb();
@@ -33,8 +37,8 @@ function gulpTasks(gulp, paths) {
 
 
     gulp.task('css-compile-custom', [], function() {
-        var src  = paths.css.src + '/app.less';
-        var dest = paths.css.dist;
+        var src  = config.paths.css.src + '/app.less';
+        var dest = config.paths.css.dist;
 
         var postcssCore = [
             cssAssets({
@@ -64,7 +68,7 @@ function gulpTasks(gulp, paths) {
             .src(src)
             .pipe(sourcemaps.init({debug: true}))
 
-            .pipe(less())
+            .pipe(less({plugins: lessPlugins}))
             .pipe(postcss(postcssCore))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(dest));
@@ -75,8 +79,8 @@ function gulpTasks(gulp, paths) {
 
 
     gulp.task('css-compress', [], function() {
-        var src  = paths.css.dist + '/app.css';
-        var dest = paths.css.dist;
+        var src  = config.paths.css.dist + '/app.css';
+        var dest = config.paths.css.dist;
 
         var postcssProd = [
             cssnano({urls: false}),
@@ -99,15 +103,15 @@ function gulpTasks(gulp, paths) {
 
 
     gulp.task('css-compile-bootstrap', [], function() {
-        var src  = paths.css.src + '/bootstrap.less';
-        var dest = paths.css.dist;
+        var src  = config.paths.css.src + '/bootstrap.less';
+        var dest = config.paths.css.dist;
 
 
         var stream = gulp
             .on('error', gutil.log.bind(gutil, 'Less Error'))
             .src(src)
             .pipe(sourcemaps.init({debug: true, loadMaps: true}))
-            .pipe(less())
+            .pipe(less({plugins: lessPlugins}))
             // .pipe(postcss([
             //     csswring({removeAllComments: true}),
             //     postcssLog(),

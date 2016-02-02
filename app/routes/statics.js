@@ -70,7 +70,7 @@ export default (app, express) => {
     app.use('/views', serveStatic(`${process.cwd()}/views`, staticOptions));
 
     express.static.mime.define({
-        'text/plain': ['jade', 'map'],
+        'text/plain': ['map'],
         'text/css'  : ['less'],
         'text/jsx'  : ['jsx'],
     });

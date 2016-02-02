@@ -18,8 +18,10 @@
     "babel-preset-stage-0": "^6.3.13",
     "babel-register": "^6.4.3",
     "compression": "^1.6.0",
+    "domready": "^1.0.8",
     "errorhandler": "^1.4.1",
     "express": "^4.13.3",
+    "less-plugin-npm-import": "^2.1.0",
     "lodash": "^4.0.1",
     "moment-twitter": "^0.2.0",
     "morgan": "^1.6.1",
@@ -27,6 +29,9 @@
     "page": "^1.6.4",
     "react": "^0.14.1",
     "react-dom": "^0.14.1",
+    "react-redux": "^4.2.1",
+    "redux": "^3.2.1",
+    "redux-devtools": "^3.1.0",
     "serve-favicon": "^2.3.0",
     "serve-static": "^1.10.0"
   },
@@ -65,12 +70,12 @@
   },
   "aliasify": {
     "aliases": {
-      "app": "./public/js/src",
-      "lib": "./public/js/src/lib",
-      "common": "./public/js/src/common",
-      "layout": "./public/js/src/layout",
-      "Overview": "./public/js/src/Overview",
-      "Tracker": "./public/js/src/Tracker"
+      "app": "./app/public/js/src",
+      "lib": "./app/public/js/src/lib",
+      "common": "./app/public/js/src/common",
+      "layout": "./app/public/js/src/layout",
+      "Overview": "./app/public/js/src/Overview",
+      "Tracker": "./app/public/js/src/Tracker"
     }
   },
   "browserify-shim": {

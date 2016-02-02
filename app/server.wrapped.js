@@ -1,18 +1,14 @@
 import express from 'express';
 
-import { createExpressApp } from './config/express';
-import { initRoutes } from './routes';
-
-
-const nodeEnv      = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
-const serverPort   = process.env.PORT ? process.env.PORT : 3000;
-
-const app = createExpressApp(express, nodeEnv);
+import { createExpressApp } from 'config/express';
+import { initRoutes } from 'routes';
 
 
 GLOBAL.timestamp   = Date.now();
 
 
+const nodeEnv      = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
+const serverPort   = process.env.PORT ? process.env.PORT : 3000;
 
 
 if (nodeEnv !== 'development' && process.env.NEW_RELIC_LICENSE_KEY) {
@@ -20,10 +16,9 @@ if (nodeEnv !== 'development' && process.env.NEW_RELIC_LICENSE_KEY) {
 }
 
 
-
+const app = createExpressApp(express, nodeEnv);
 
 initRoutes(app, express);
-
 
 
 

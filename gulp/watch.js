@@ -1,26 +1,26 @@
-'use strict';
 
-// jscs:disable esnext
-// jscs:disable disallowKeywords
+import gulp from  'gulp';
 
-
+import config from './config';
 
 
-function gulpTasks(gulp, livereload, server, paths) {
 
-    gulp.task('watch', ['compile', 'server'], function(cb) {
+
+function gulpTasks(livereload) {
+
+    gulp.task('watch', ['compile', 'servers'], function(cb) {
 
 
         /*
         *   Server
         */
 
-        gulp.watch([
-            './server.js',
-            './config/**',
-            './routes/**',
-            './views/**',
-        ], ['server-restart']);
+        // gulp.watch([
+        //     './server.js',
+        //     './config/**',
+        //     './routes/**',
+        //     './views/**',
+        // ], ['server-restart']);
 
 
         /*
@@ -28,17 +28,17 @@ function gulpTasks(gulp, livereload, server, paths) {
         */
 
         gulp.watch([
-            paths.css.src + '/**/*.less',
-            '!' + paths.css.src + '/**/bootstrap.less',
+            config.paths.css.src + '/**/*.less',
+            '!' + config.paths.css.src + '/**/bootstrap.less',
         ], ['css-compile-custom']);
 
         gulp.watch([
-            paths.css.src + '/bootstrap.less',
+            config.paths.css.src + '/bootstrap.less',
         ], ['css-compile-bootstrap']);
 
 
         gulp.watch([
-            paths.css.dist + '/app.css',
+            config.paths.css.dist + '/app.css',
         ], ['css-compress']);
 
 
@@ -48,8 +48,8 @@ function gulpTasks(gulp, livereload, server, paths) {
         */
 
         gulp.watch([
-            paths.css.dist + '/app.min.css',
-            paths.css.dist + '/bootstrap.min.css',
+            config.paths.css.dist + '/app.min.css',
+            config.paths.css.dist + '/bootstrap.min.css',
         ], livereload.changed);
 
 
@@ -60,8 +60,8 @@ function gulpTasks(gulp, livereload, server, paths) {
         */
 
         gulp.watch([
-            paths.js.dist + '/app.js',
-            paths.js.dist + '/app.min.js',
+            config.paths.js.dist + '/app.js',
+            config.paths.js.dist + '/app.min.js',
         ], livereload.changed);
 
 

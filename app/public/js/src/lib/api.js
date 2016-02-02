@@ -5,10 +5,10 @@ const noop = () => null;
 
 
 export default {
-    getMatches: getMatches,
-    getMatchByWorldSlug: getMatchByWorldSlug,
-    getMatchByWorldId: getMatchByWorldId,
-    getGuildById : getGuildById,
+    getMatches,
+    getMatchByWorldSlug,
+    getMatchByWorldId,
+    getGuildById,
 };
 
 
