@@ -15,10 +15,7 @@ import * as STATIC from 'lib/static';
 * React Components
 */
 
-import Langs from 'components/Layout/Langs';
-import NavbarHeader from 'components/Layout/NavbarHeader';
-import Footer from 'components/Layout/Footer';
-
+import Container from 'components/Layout/Container';
 import Overview from 'components/Overview';
 import Tracker from 'components/Tracker';
 
@@ -27,7 +24,9 @@ import appReducers from 'reducers';
 import {setRoute} from 'actions/route';
 import {setLang} from 'actions/lang';
 import {setWorld} from 'actions/world';
+
 import {getWorldFromSlug} from 'lib/worlds';
+
 
 /*
 *
@@ -45,34 +44,6 @@ domready(() => start());
 *
 */
 
-const Container = ({
-    children,
-}) => {
-    return (
-        <div>
-            <nav className='navbar navbar-default'>
-                <div className='container'>
-                    <NavbarHeader />
-                    <Langs />
-                </div>
-            </nav>
-
-            <section id='content' className='container'>
-                {children}
-            </section>
-
-            <Footer obsfuEmail={{
-                chunks: ['gw2w2w', 'schtuph', 'com', '@', '.'],
-                pattern: '03142',
-            }} />
-        </div>
-    );
-};
-
-Container.propTypes = {
-    children: React.PropTypes.node.isRequired,
-    world: React.PropTypes.object,
-};
 
 // }
 
