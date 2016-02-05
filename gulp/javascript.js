@@ -1,107 +1,140 @@
-'use strict';
-
-import gulp from 'gulp';
-import gutil from 'gulp-util';
+import path from 'path';
 
 import _ from 'lodash';
 
-import browserify from 'browserify';
-import watchify from 'watchify';
-import uglify from 'gulp-uglify';
+import gulp from 'gulp';
+import livereload from 'gulp-livereload';
 
-import rename from 'gulp-rename';
+import source from 'vinyl-source-stream';
+import buffer from 'vinyl-buffer';
 import sourcemaps from 'gulp-sourcemaps';
+import gutil from 'gulp-util';
+import rename from 'gulp-rename';
 
-import vinylBuffer from 'vinyl-buffer';
-import vinylSource from 'vinyl-source-stream';
-
-
-import aliasify from 'aliasify';
-import shimify from 'browserify-shim';
-import babelify from 'babelify';
-
-
-import config from './config';
+import browserify from 'browserify';
+import uglify from 'gulp-uglify';
+import watchify from 'watchify';
+// import babelify from 'babelify';
+// import shimify from 'browserify-shim';
 
 
+const VENDOR_LIBS = [
+    'async',
+    'babel-polyfill',
+    'classnames',
+    'domready',
+    'lodash',
+    'moment',
+    'numeral',
+    'page',
+    // 'process',
+    'react',
+    'react-dom',
+    'react-redux',
+    'redux',
+    'superagent',
+    // 'util',
+];
 
 
-function logEvent(event, data) {
-    console.log('%d Watchify Event :: %s :: %s', Date.now(), event, JSON.stringify(data));
+const BROWSERIFY_DEFAULT_OPTIONS = {
+    debug: true,
+    cache: {},
+    packageCache: {},
+    plugin: [],
+    transform: ['babelify'/*, 'browserify-shim'*/],
+    external: VENDOR_LIBS,
+    paths: ['./node_modules', './app'],
+};
+
+
+
+gulp.task('build::js::vendor', (cb) => {
+    const b = browserify({require: VENDOR_LIBS});
+
+    // _.forEach(VENDOR_LIBS, (r) => b.require(r));
+
+    return b.bundle()
+        .pipe(source('vendor.js'))
+        .pipe(buffer())
+        .pipe(gulp.dest('./app/build/js/'))
+        .pipe(uglify())
+        .pipe(rename({extname: '.min.js'}))
+        .pipe(gulp.dest('./app/build/js/'));
+
+    // cb();
+});
+
+
+
+
+export default function createJsTask(script) {
+    // gutil.log('BROWSERIFY_DEFAULT_OPTIONS', BROWSERIFY_DEFAULT_OPTIONS);
+
+    if (Array.isArray(script)) {
+        return script.map(s => createJsTask(s));
+    }
+
+    const taskName = `build::js::${script.name}`;
+    const pretasks = (script.pretasks) ? script.pretasks : [];
+    const opts = _.defaults(script.opts, BROWSERIFY_DEFAULT_OPTIONS);
+
+    let onUpdate = _.noop;
+
+    if (script.watch) {
+        gutil.log(taskName, 'watching enabled');
+        opts.plugin.push(watchify);
+        onUpdate = bundle;
+    }
+
+    // gutil.log(
+    //     Date.now(),
+    //     'Bundling JS',
+    //     script.name,
+    //     pretasks
+    // );
+
+
+    gulp.task(taskName, pretasks, () => {
+        // gutil.log('script', script.name/*, opts*/);
+
+        const b = browserify(opts);
+        b.external(VENDOR_LIBS);
+
+        b.on('update', () => {
+            gutil.log('browserify update: ', script.name);
+            onUpdate(b, script);
+        });
+
+        return bundle(b, script);
+    });
+
+
+    return taskName;
 }
 
 
 
-export default function gulpTasks() {
-
-    var browserifyConfig = _.defaults(watchify.args, {
-        entries       : [config.paths.js.src + '/app.js'],
-        debug         : true,
-        bundleExternal: true,
-        verbose       : true,
-        ignore        : ['request', 'zlib', 'assert', 'buffer', 'util', '_process'],
-        transform     : [babelify, aliasify, shimify],
-    });
-
-    var browserifyBundler = browserify(browserifyConfig)
-        // .on('bundle', logEvent.bind(null, 'bundle'))
-        // .on('reset',  logEvent.bind(null, 'reset '))
-        // .transform('babelify')
-        // .transform('aliasify')
-        // .transform('browserify-shim')
-        .on('error', gutil.log.bind(gutil, 'Browserify Error'));
-
-    var watchifyBundler = watchify(browserifyBundler)
-        .on('update', logEvent.bind(null, 'update'))
-        // .on('bytes', logEvent.bind(null, 'bytes '))
-        // .on('time', logEvent.bind(null, 'time  '))
-        .on('log', logEvent.bind(null, 'log   '))
-        .on('error', gutil.log.bind(gutil, 'Watchify Error'));
-
-
-    var uglifier = () => {
-        return uglify({
-            // report: 'min',
-            stripBanners: true,
-            mangle: true,
-            compress: {
-                unsafe: true,
-                drop_console: true,
-            },
-        }).on('error', gutil.log.bind(gutil, 'Uglify Error'));
-    };
 
 
 
 
-    var compileJS = () => {
-        return watchifyBundler
-            .bundle()
-            .on('error', gutil.log.bind(gutil, 'Browserify Error'))
 
-            .pipe(vinylSource('app.js'))
-            .pipe(vinylBuffer())
+function bundle(b, script) {
+    // gutil.log('bundle', script);
 
-            .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest(config.paths.js.dist)) // non-minified app.js
+    return b.bundle()
+        .on('error', gutil.log)
 
-            .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(source(script.name))
+        .pipe(buffer())
+        .pipe(gulp.dest(script.dest))
 
-            .pipe(uglifier())
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(rename({extname: '.min.js'}))
+        .pipe(uglify())
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest(script.dest))
 
-            .pipe(rename({suffix: '.min'}))
-            .pipe(sourcemaps.write('./'))
-
-            .pipe(gulp.dest(config.paths.js.dist)); // minified app.min.js
-
-        // .pipe(livereload());
-    };
-
-
-    watchifyBundler.on('update', compileJS);
-    gulp.task('js-compile', [], compileJS);
-
-
-
-    return gulp;
+        .pipe(livereload());
 }

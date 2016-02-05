@@ -30,13 +30,13 @@ var cssnano      = require('cssnano');
 
 function gulpTasks() {
 
-    gulp.task('css-compile', ['css-compile-bootstrap', 'css-compile-custom'], function(cb) {
+    gulp.task('build::css', ['build::css::bootstrap', 'build::css::custom'], function(cb) {
         cb();
     });
 
 
 
-    gulp.task('css-compile-custom', [], function() {
+    gulp.task('build::css::custom', [], function() {
         var src  = config.paths.css.src + '/app.less';
         var dest = config.paths.css.dist;
 
@@ -102,7 +102,7 @@ function gulpTasks() {
 
 
 
-    gulp.task('css-compile-bootstrap', [], function() {
+    gulp.task('build::css::bootstrap', [], function() {
         var src  = config.paths.css.src + '/bootstrap.less';
         var dest = config.paths.css.dist;
 

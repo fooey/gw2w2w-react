@@ -1,18 +1,25 @@
+import fs from 'fs-extra';
+import path from 'path';;
+
+const buildPath = './app/build';
+
 
 const paths    = {};
 
 paths.public   = './app/public';
 
 paths.css      = {};
-paths.css.base = paths.public + '/css';
-paths.css.src  = paths.css.base + '/src';
-paths.css.dist = paths.css.base + '/dist';
+paths.css.src  = './app/css';
+paths.css.dist = `${buildPath}/css`;
 
 paths.js       = {};
-paths.js.base  = paths.public + '/js';
-paths.js.src   = paths.js.base + '/src';
-paths.js.dist  = paths.js.base + '/dist';
+paths.js.src   = './app';
+paths.js.dist = `${buildPath}/js`;
 
+
+fs.ensureDirSync(path.resolve(buildPath));
+fs.ensureDirSync(path.resolve(paths.css.dist));
+fs.ensureDirSync(path.resolve(paths.js.dist));
 
 
 

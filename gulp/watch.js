@@ -8,7 +8,7 @@ import config from './config';
 
 function gulpTasks(livereload) {
 
-    gulp.task('watch', ['compile', 'servers'], function(cb) {
+    gulp.task('watch', ['build'], function(cb) {
 
 
         /*
@@ -30,11 +30,11 @@ function gulpTasks(livereload) {
         gulp.watch([
             config.paths.css.src + '/**/*.less',
             '!' + config.paths.css.src + '/**/bootstrap.less',
-        ], ['css-compile-custom']);
+        ], ['build::css::custom']);
 
         gulp.watch([
             config.paths.css.src + '/bootstrap.less',
-        ], ['css-compile-bootstrap']);
+        ], ['build::css::bootstrap']);
 
 
         gulp.watch([
@@ -62,16 +62,6 @@ function gulpTasks(livereload) {
         gulp.watch([
             config.paths.js.dist + '/app.js',
             config.paths.js.dist + '/app.min.js',
-        ], livereload.changed);
-
-
-
-        /*
-        *   Serverside Templates
-        */
-
-        gulp.watch([
-            './views/**/*.jade',
         ], livereload.changed);
 
 

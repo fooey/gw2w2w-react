@@ -1,6 +1,12 @@
 
 import path from 'path';
 
+import morgan from 'morgan';
+import compression from 'compression';
+import errorhandler from 'errorhandler';
+
+import { unHashifyMiddleware } from 'lib/cacheBust';
+
 
 export function createExpressApp(express, nodeEnv) {
     const app = express();
@@ -35,11 +41,6 @@ export function createExpressApp(express, nodeEnv) {
     *
     */
 
-    const morgan       = require('morgan');
-    const compression  = require('compression');
-    const errorhandler = require('errorhandler');
-
-
     if (isDev) {
         app.use(errorhandler());
         app.use(morgan('dev'));
@@ -51,6 +52,7 @@ export function createExpressApp(express, nodeEnv) {
     }
 
     app.use(compression());
+    app.use(unHashifyMiddleware());
 
 
 

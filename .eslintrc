@@ -69,7 +69,7 @@
       "space-return-throw-case": 1,
       "key-spacing": 0,
 
-      "arrow-parens": [1, "as-needed"],
+      //"arrow-parens": [1, "as-needed"],
       "arrow-spacing": 2,
       "constructor-super": 2,
       "no-const-assign": 2,

@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { createExpressApp } from 'config/express';
-import { initRoutes } from 'routes';
+import { initRoutes } from 'routes/server';
 
 
 GLOBAL.timestamp   = Date.now();
