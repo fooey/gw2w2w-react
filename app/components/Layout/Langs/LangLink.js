@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 
 import classnames from 'classnames';
 
+import { worlds } from 'lib/static';
+
 
 const mapStateToProps = (state) => {
     // console.log('lang', state.lang);
@@ -18,18 +20,22 @@ let Lang = ({
     activeLang,
     activeWorld,
     lang,
-}) =>  (
-    <li
-        className={classnames({
-            active: activeLang.label === lang.label,
-        })}
-        title={lang.name}
-    >
-        <a href={getLink(lang, activeWorld)}>
-            {lang.label}
-        </a>
-    </li>
-);
+}) => {
+    const world = worlds[activeWorld.id];
+
+    return (
+        <li
+            className={classnames({
+                active: activeLang.label === lang.label,
+            })}
+            title={lang.name}
+        >
+            <a href={getLink(lang, world[lang.slug])}>
+                {lang.label}
+            </a>
+        </li>
+    )
+};
 Lang.propTypes = {
     activeLang: React.PropTypes.object.isRequired,
     activeWorld: React.PropTypes.object,
