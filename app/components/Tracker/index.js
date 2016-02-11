@@ -111,6 +111,13 @@ export default class Tracker extends React.Component {
 
 
 
+    componentWillMount() {
+        // console.log(`Tracker::componentWillMount()`);
+        // setPageTitle(this.props.lang);
+    }
+
+
+
     componentWillReceiveProps(nextProps) {
         setPageTitle(nextProps.lang, nextProps.world);
         this.dao.setWorld(nextProps.world);

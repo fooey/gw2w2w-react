@@ -1,19 +1,16 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
-import { connect, Provider  } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import thunkMiddleware from 'redux-thunk';
 
-import page from 'page';
+
 import domready from 'domready';
-
-import * as STATIC from 'lib/static';
-
+import page from 'page';
 
 
-/*
-* React Components
-*/
+
 
 import Container from 'components/Layout/Container';
 import Overview from 'components/Overview';
@@ -21,108 +18,122 @@ import Tracker from 'components/Tracker';
 
 import appReducers from 'reducers';
 
-import {setRoute} from 'actions/route';
-import {setLang} from 'actions/lang';
-import {setWorld} from 'actions/world';
-
-import {getWorldFromSlug} from 'lib/worlds';
-
-
-/*
-*
-* Launch App
-*
-*/
-
-domready(() => start());
+import { setRoute } from 'actions/route';
+import { setLang } from 'actions/lang';
+import { setWorld, clearWorld } from 'actions/world';
 
 
 
 /*
 *
-* container
+*   Create Redux Store
 *
 */
 
-
-// }
-
-
-
-function start() {
-    const store = createStore(appReducers);
+const store = createStore(
+    appReducers,
+    applyMiddleware(thunkMiddleware)
+);
 
 
+
+/*
+*
+*   Start App
+*
+*/
+
+domready(() => {
     console.clear();
     console.log('Starting Application');
 
 
-    page('/', () => page.redirect('/en'));
-
-    page(
-        '/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)',
-        ctx => {
-            console.log(`route => ${ctx.path}`);
-
-            const lang = STATIC.langs[ctx.params.langSlug];
-            const world = getWorldFromSlug(ctx.params.langSlug, ctx.params.worldSlug);
-
-            store.dispatch(setRoute(ctx));
-            store.dispatch(setLang(ctx.params.langSlug));
-            store.dispatch(setWorld(ctx.params.langSlug, ctx.params.worldSlug));
-
-            ReactDOM.render(
-                <Provider store={store}>
-                    <Container>
-                        <Tracker lang={lang} world={world} />
-                    </Container>
-                </Provider>,
-                document.getElementById('react-app')
-            );
-        }
-    );
-
-    page(
-        '/:langSlug(en|de|es|fr)',
-        ctx => {
-            console.log(`route => ${ctx.path}`);
-
-            store.dispatch(setRoute(ctx));
-            store.dispatch(setLang(ctx.params.langSlug));
-
-            ReactDOM.render(
-                <Provider store={store}>
-                    <Container>
-                        <Overview />
-                    </Container>
-                </Provider>,
-                document.getElementById('react-app')
-            );
-        }
-    );
-
+    attachMiddleware();
+    attachRoutes();
 
     page.start({
         click: true,
-        popstate: true,
+        popstate: false,
         dispatch: true,
         hashbang: false,
         decodeURLComponents: true,
     });
+});
+
+
+
+function render(App) {
+    // console.log('render()');
+
+    ReactDOM.render(
+        <Provider store={store}>
+            <Container>
+                {App}
+            </Container>
+        </Provider>,
+        document.getElementById('react-app')
+    );
 }
 
 
 
 
+function attachMiddleware() {
+    page((ctx, next) => {
+        console.info(`route => ${ctx.path}`);
+
+        // attach store to the router context
+        ctx.store = store;
+        ctx.store.dispatch(setRoute(ctx));
+
+        next();
+    });
+
+
+    page('/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)?', (ctx, next) => {
+        const { langSlug, worldSlug } = ctx.params;
+
+        ctx.store.dispatch(setLang(langSlug));
+
+        if (worldSlug) {
+            ctx.store.dispatch(setWorld(langSlug, worldSlug));
+        }
+        else {
+            ctx.store.dispatch(clearWorld());
+        }
+
+        next();
+    });
+}
 
 
 
+function attachRoutes() {
+    page('/', '/en');
 
+    page(
+        '/:langSlug(en|de|es|fr)/:worldSlug([a-z-]+)',
+        (ctx) => {
+            // const { langSlug, worldSlug } = ctx.params;
 
+            // ctx.store.dispatch(setLang(langSlug));
+            // ctx.store.dispatch(setWorld(langSlug, worldSlug));
 
+            const { lang, world } = ctx.store.getState();
 
-/*
-*
-* Util
-*
-*/
+            render(<Tracker lang={lang} world={world} />);
+        }
+    );
+
+    page(
+        '/:langSlug(en|de|es|fr)',
+        (ctx) => {
+            // const { langSlug } = ctx.params;
+
+            // ctx.store.dispatch(setLang(langSlug));
+            // ctx.store.dispatch(clearWorld());
+
+            render(<Overview />);
+        }
+    );
+}

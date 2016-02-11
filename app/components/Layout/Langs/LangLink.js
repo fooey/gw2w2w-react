@@ -7,35 +7,33 @@ import classnames from 'classnames';
 import { worlds } from 'lib/static';
 
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
     // console.log('lang', state.lang);
     return {
         activeLang: state.lang,
-        activeWorld: state.world,
+        // activeWorld: state.world,
+        world: state.world ? worlds[state.world.id][props.lang.slug] : null,
     };
 };
 
 
 let Lang = ({
     activeLang,
-    activeWorld,
+    // activeWorld,
     lang,
-}) => {
-    const world = worlds[activeWorld.id];
-
-    return (
-        <li
-            className={classnames({
-                active: activeLang.label === lang.label,
-            })}
-            title={lang.name}
-        >
-            <a href={getLink(lang, world[lang.slug])}>
-                {lang.label}
-            </a>
-        </li>
-    )
-};
+    world,
+}) => (
+    <li
+        className={classnames({
+            active: activeLang.label === lang.label,
+        })}
+        title={lang.name}
+    >
+        <a href={getLink(lang, world)}>
+            {lang.label}
+        </a>
+    </li>
+);
 Lang.propTypes = {
     activeLang: React.PropTypes.object.isRequired,
     activeWorld: React.PropTypes.object,

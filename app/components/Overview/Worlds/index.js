@@ -1,18 +1,22 @@
 
 import React from 'react';
+import { connect } from 'react-redux';
 
-import {worlds} from 'lib/static';
+import { worlds } from 'lib/static';
 
 
 
 
-/*
-*
-* Component Definition
-*
-*/
 
-export default ({
+
+const mapStateToProps = (state) => {
+    return {
+        lang: state.lang,
+    };
+};
+
+
+let Worlds = ({
     lang,
     region,
 }) => (
@@ -29,3 +33,12 @@ export default ({
         </ul>
     </div>
 );
+Worlds.propTypes = {
+    lang: React.PropTypes.object.isRequired,
+    region: React.PropTypes.object.isRequired,
+};
+
+Worlds = connect(mapStateToProps)(Worlds);
+
+
+export default Worlds;

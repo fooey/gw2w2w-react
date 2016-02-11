@@ -57,10 +57,12 @@ export default class OverviewDataProvider {
 
 
     __onMatchData(data) {
-        // console.log('lib::data::overview::__onMatchData()', textStatus, jqXHR, data);
+        // console.log('lib::data::overview::__onMatchData()', data);
 
         if (data && !_.isEmpty(data)) {
             (this.__listeners.onMatchData || _.noop)(data);
+            this.__listeners.dispatchMatchData(data);
+
         }
     }
 

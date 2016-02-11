@@ -5,15 +5,16 @@
 *
 */
 
-import React from'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 
 /*
-*   Data
+*   Redux Actions
 */
 
-import DAO from 'lib/data/overview';
+import * as matchesActions from 'actions/matches';
+import * as timeoutActions from 'actions/timeouts';
 
 
 /*
@@ -33,10 +34,9 @@ import Worlds from './Worlds';
 *
 */
 
-
 const REGIONS = {
-    1: {label: 'NA', id: '1'},
-    2: {label: 'EU', id: '2'},
+    1: { label: 'NA', id: '1' },
+    2: { label: 'EU', id: '2' },
 };
 
 
@@ -46,10 +46,26 @@ const REGIONS = {
 *   Redux Helpers
 *
 */
+
 const mapStateToProps = (state) => {
+
+    // console.log('state', state.timeouts);
+
     return {
         lang: state.lang,
-        world: state.world,
+        matchesData: state.matches.data,
+        matchesLastUpdated: state.matches.lastUpdated,
+        matchesIsFetching: state.matches.isFetching,
+        // timeouts: state.timeouts,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        fetchMatches: () => dispatch(matchesActions.fetchMatches()),
+        setAppTimeout: ({ name, cb, timeout }) => dispatch(timeoutActions.setAppTimeout({ name, cb, timeout })),
+        clearAppTimeout: ({ name }) => dispatch(timeoutActions.clearAppTimeout({ name })),
+        // clearAllTimeouts: () => dispatch(timeoutActions.clearAllTimeouts()),
     };
 };
 
@@ -65,64 +81,88 @@ const mapStateToProps = (state) => {
 class Overview extends React.Component {
     static propTypes = {
         lang: React.PropTypes.object.isRequired,
+        matchesData: React.PropTypes.object.isRequired,
+        matchesLastUpdated: React.PropTypes.number.isRequired,
+        matchesIsFetching: React.PropTypes.bool.isRequired,
+        // timeouts: React.PropTypes.object.isRequired,
+
+        fetchMatches: React.PropTypes.func.isRequired,
+
+        setAppTimeout: React.PropTypes.func.isRequired,
+        clearAppTimeout: React.PropTypes.func.isRequired,
     };
 
 
 
     constructor(props) {
         super(props);
-
-        this.dao = new DAO({
-            onMatchData: this.onMatchData.bind(this),
-        });
-
-
-        this.state = {
-            matchData: {},
-        };
     }
 
 
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return (
-            this.isNewMatchData(nextState)
-            || this.isNewLang(nextProps)
+    shouldComponentUpdate(nextProps/*, nextState*/) {
+        const shouldUpdate = (
+            this.props.matchesLastUpdated !== nextProps.matchesLastUpdated
+            || this.props.matchesIsFetching !== nextProps.matchesIsFetching
+            || this.props.lang.slug !== nextProps.lang.slug
         );
-    }
 
-    isNewMatchData(nextState) {
-        return getLastmod(this.state.matchData) !== getLastmod(nextState.matchData);
-    }
+        // console.log(`Overview::shouldUpdate`, this.props, nextProps);
 
-    isNewLang(nextProps) {
-        return (this.props.lang.name !== nextProps.lang.name);
+        // console.log(`Overview::shouldUpdate`, shouldUpdate);
+        // console.log(`Overview::isNewMatchesData`, this.isNewMatchesData(nextProps));
+        // console.log(`Overview::isNewLang`, this.isNewLang(nextProps));
+
+        return shouldUpdate;
     }
 
 
 
     componentWillMount() {
+        // console.log(`Overview::componentWillMount()`);
+
         setPageTitle(this.props.lang);
     }
 
 
 
     componentDidMount() {
-        this.dao.init(this.props.lang);
+        // console.log(`Overview::componentDidMount()`);
+
+        this.props.fetchMatches();
     }
 
 
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.lang.name !== nextProps.lang.name) {
+        // console.log(`Overview::componentWillReceiveProps()`);
+
+        const {
+            lang,
+            matchesIsFetching,
+            fetchMatches,
+            setAppTimeout,
+        } = this.props;
+
+        if (lang.name !== nextProps.lang.name) {
             setPageTitle(nextProps.lang);
+        }
+
+        if (matchesIsFetching && !nextProps.matchesIsFetching) {
+            setAppTimeout({
+                name: 'fetchMatches',
+                cb: () => fetchMatches(),
+                timeout: () => _.random(4 * 1000, 8 * 1000),
+            });
         }
     }
 
 
 
     componentWillUnmount() {
-        this.dao.close();
+        // console.log(`Overview::componentWillUnmount()`);
+
+        this.props.clearAppTimeout({ name: 'fetchMatches' });
     }
 
 
@@ -131,27 +171,22 @@ class Overview extends React.Component {
         return (
             <div id='overview'>
 
+                {/* matches */}
                 <div className='row'>
-                    {_.map(REGIONS, (region, regionId) =>
-                        <div className='col-sm-12' key={regionId}>
-                            <Matches
-                                lang={this.props.lang}
-                                matches={_.filter(this.state.matchData, match => match.region === regionId)}
-                                region={region}
-                            />
+                    {_.map(REGIONS, (region) =>
+                        <div className='col-sm-12' key={region.id}>
+                            <Matches region={region} />
                         </div>
                     )}
                 </div>
 
                 <hr />
 
+                {/* worlds */}
                 <div className='row'>
-                    {_.map(REGIONS, (region, regionId) =>
-                        <div className='col-sm-12' key={regionId}>
-                            <Worlds
-                                lang={this.props.lang}
-                                region={region}
-                            />
+                    {_.map(REGIONS, (region) =>
+                        <div className='col-sm-12' key={region.id}>
+                            <Worlds region={region} />
                         </div>
                     )}
                 </div>
@@ -159,33 +194,12 @@ class Overview extends React.Component {
             </div>
         );
     }
-
-
-
-    /*
-    *
-    *   Data Listeners
-    *
-    */
-
-    onMatchData(matchData) {
-        this.setState({matchData});
-    }
 }
 
 Overview = connect(
   mapStateToProps,
-  // mapDispatchToProps
+  mapDispatchToProps
 )(Overview);
-
-
-function getLastmod(matchData) {
-    return _.reduce(
-        matchData,
-        (acc, match) => Math.max(match.lastmod),
-        0
-    );
-}
 
 
 
@@ -198,7 +212,7 @@ function getLastmod(matchData) {
 */
 
 function setPageTitle(lang) {
-    let title = ['gw2w2w.com'];
+    const title = ['gw2w2w.com'];
 
     if (lang.slug !== 'en') {
         title.push(lang.name);

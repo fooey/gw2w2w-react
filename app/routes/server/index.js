@@ -5,13 +5,13 @@ import ReactDOMServer from 'react-dom/server';
 import attachStaticRoutes from './statics';
 import { getUrlHashified } from 'lib/cacheBust';
 
-import Root from 'components/Layout/Root';
+import Html from 'components/Layout/Html';
 
 
 
 export function initRoutes(app, express) {
     const html = `<!DOCTYPE html>` + ReactDOMServer.renderToStaticMarkup(
-        <Root
+        <Html
             env={process.env}
             getUrlHashified={getUrlHashified}
         />
@@ -33,19 +33,19 @@ export function initRoutes(app, express) {
     *
     */
 
-    const router = express.Router();
+    // const router = express.Router();
 
     // router.get('/:langSlug(en|de|es|fr)?', (req, res) => {
     //     res.send(html);
     //     // res.sendFile(process.cwd() + '/public/index.html');
     // });
 
-    router.get('/:langSlug(en|de|es|fr)/:langSlug([a-z-]+)?', (req, res) => {
+    app.use('/$', (req, res) => res.redirect('/en'));
+
+    app.use('/:langSlug(en|de|es|fr)/:langSlug([a-z-]+)?', (req, res) => {
         res.send(html);
-        // res.render('index', {staticCacheBusted});
-        // res.sendFile(process.cwd() + '/public/index.html');
     });
 
 
-    app.use(router);
+    // app.use(router);
 };

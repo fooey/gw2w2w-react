@@ -1,3 +1,9 @@
+
+import {
+    SET_ROUTE,
+} from 'constants/actionTypes';
+
+
 const defaultState = {
     path: '/',
     params: {},
@@ -5,7 +11,7 @@ const defaultState = {
 
 const route = (state = defaultState, action) => {
     switch (action.type) {
-        case 'SET_ROUTE':
+        case SET_ROUTE:
             return {
                 path: action.path,
                 params: action.params,
