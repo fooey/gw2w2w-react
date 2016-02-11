@@ -28,6 +28,20 @@ body {
             @media(max-width: @screen-xs-max) { margin-left: 2vw; }
         }
     }
+
+    .navbar-spinner {
+        transition: opacity 250ms ease-out 400ms;
+
+        line-height: 50px;
+        font-size: 25px;
+        padding: 0 .5em;
+        opacity: 0;
+
+        &.active {
+            transition: opacity 150ms ease-out;
+            opacity: .75;
+        }
+    }
 }
 
 

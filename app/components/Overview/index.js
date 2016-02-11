@@ -55,7 +55,7 @@ const mapStateToProps = (state) => {
         lang: state.lang,
         matchesData: state.matches.data,
         matchesLastUpdated: state.matches.lastUpdated,
-        matchesIsFetching: state.matches.isFetching,
+        matchesIsFetching: _.includes(state.api.pending, 'matches'),
         // timeouts: state.timeouts,
     };
 };
