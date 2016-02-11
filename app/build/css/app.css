@@ -21,6 +21,27 @@
 body {
   padding-bottom: 60px;
 }
+.team.red,
+.team.red a {
+  color: #a94442;
+}
+.team.blue,
+.team.blue a {
+  color: #31708f;
+}
+.team.green,
+.team.green a {
+  color: #3c763d;
+}
+.team-bg.red {
+  background-color: #F2DEDE;
+}
+.team-bg.blue {
+  background-color: #D9EDF7;
+}
+.team-bg.green {
+  background-color: #DFF0D8;
+}
 .navbar.navbar-default {
   border-radius: 0;
   border-top: none;
@@ -74,27 +95,6 @@ body {
   .navbar-nav li > a {
     padding: 0 1.5em;
   }
-}
-.team.red,
-.team.red a {
-  color: #a94442;
-}
-.team.blue,
-.team.blue a {
-  color: #31708f;
-}
-.team.green,
-.team.green a {
-  color: #3c763d;
-}
-.team-bg.red {
-  background-color: #F2DEDE;
-}
-.team-bg.blue {
-  background-color: #D9EDF7;
-}
-.team-bg.green {
-  background-color: #DFF0D8;
 }
 #overview .RegionMatches,
 #overview .RegionWorlds {
