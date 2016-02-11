@@ -2,6 +2,13 @@ import _ from 'lodash';
 
 import api from 'lib/api';
 
+
+import {
+    requestOpen,
+    requestSuccess,
+    requestFailed,
+} from './api';
+
 import {
     REQUEST_MATCHES,
     RECEIVE_MATCHES,
@@ -13,10 +20,7 @@ import {
 export const requestMatches = () => {
     // console.log('action::requestMatches');
 
-    return {
-        type: REQUEST_MATCHES,
-    };
-
+    return ;
 };
 
 
@@ -25,11 +29,14 @@ export const fetchMatches = () => {
     // console.log('action::fetchMatches');
 
     return (dispatch) => {
-        dispatch(requestMatches());
+        const requestKey = 'matches';
+
+        dispatch(requestOpen({ requestKey }));
 
         api.getMatches({
             success: (data) => {
                 // console.log('action::fetchMatches::success', data);
+                dispatch(requestSuccess({ requestKey }));
                 dispatch(receiveMatches({
                     data,
                     lastUpdated: getMatchesLastmod(data),
@@ -37,6 +44,7 @@ export const fetchMatches = () => {
             },
             error: (err) => {
                 // console.log('action::fetchMatches::error', err);
+                dispatch(requestFailed({ requestKey }));
                 dispatch(receiveMatchesFailed(err));
             },
             // complete: () => {
