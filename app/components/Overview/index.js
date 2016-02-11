@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 *   Redux Actions
 */
 
-import * as matchesActions from 'actions/matches';
+import * as apiActions from 'actions/api';
 import * as timeoutActions from 'actions/timeouts';
 
 
@@ -62,7 +62,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchMatches: () => dispatch(matchesActions.fetchMatches()),
+        fetchMatches: () => dispatch(apiActions.fetchMatches()),
         setAppTimeout: ({ name, cb, timeout }) => dispatch(timeoutActions.setAppTimeout({ name, cb, timeout })),
         clearAppTimeout: ({ name }) => dispatch(timeoutActions.clearAppTimeout({ name })),
         // clearAllTimeouts: () => dispatch(timeoutActions.clearAllTimeouts()),

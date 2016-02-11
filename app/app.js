@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
+import { enableBatching } from 'redux-batched-actions';
 
 
 import domready from 'domready';
@@ -31,7 +32,7 @@ import { setWorld, clearWorld } from 'actions/world';
 */
 
 const store = createStore(
-    appReducers,
+    enableBatching(appReducers),
     applyMiddleware(thunkMiddleware)
 );
 
