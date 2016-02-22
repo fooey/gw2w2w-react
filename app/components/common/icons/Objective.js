@@ -3,7 +3,7 @@ import React from'react';
 
 
 
-export default ({
+const Objective = ({
     color = 'black',
     type,
     size,
@@ -22,3 +22,5 @@ export default ({
         height={size ? size: null}
     />;
 };
+
+export default Objective;

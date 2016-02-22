@@ -4,9 +4,11 @@ import React from'react';
 
 
 
-export default ({
+const Sprite = ({
     color,
     type,
 }) => (
     <span className = {`sprite ${type} ${color}`} />
 );
+
+export default Sprite;

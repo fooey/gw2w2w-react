@@ -1,5 +1,5 @@
 
-import _ from 'lodash';
+import Immutable from 'immutable';
 
 
 
@@ -12,30 +12,29 @@ import {
 
 
 
-const defaultState = {
-    pending: [],
-};
+const defaultState = Immutable.Map({
+    pending: Immutable.List([]),
+});
 
 
 const api = (state = defaultState, action) => {
     // console.log('reducer::api', state, action);
 
     switch (action.type) {
-
         case API_REQUEST_OPEN:
-            // console.log('reducer::api', action.type, state, action);
-            return {
-                ...state,
-                pending: [action.requestKey, ...state.pending],
-            };
+            // console.log('reducer::api', action.type, action.requestKey);
+            return state.update(
+                'pending',
+                u => u.push(action.requestKey)
+            );
 
         case API_REQUEST_SUCCESS:
         case API_REQUEST_FAILED:
-            // console.log('reducer::api', action.type, state, action);
-            return {
-                ...state,
-                pending: _.without(state.pending, action.requestKey),
-            };
+            // console.log('reducer::api', action.type, action.requestKey);
+            return state.update(
+                'pending',
+                u => u.filterNot(f => f === action.requestKey)
+            );
 
         default:
             return state;

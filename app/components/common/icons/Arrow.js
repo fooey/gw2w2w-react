@@ -6,7 +6,7 @@ import React from'react';
 
 
 
-export default ({direction}) => (
+const Arrow = ({ direction }) => (
     (direction)
         ? <img src={getArrowSrc(direction)} className='arrow' />
         : <span />
@@ -23,11 +23,12 @@ export default ({direction}) => (
  */
 
 function getArrowSrc(direction) {
+    const src = ['/img/icons/dist/arrow'];
+
     if (!direction) {
         return null;
     }
 
-    let src = ['/img/icons/dist/arrow'];
 
     if (direction.indexOf('N') >= 0) {
         src.push('north');
@@ -46,3 +47,6 @@ function getArrowSrc(direction) {
 
     return src.join('-') + '.svg';
 }
+
+
+export default Arrow;

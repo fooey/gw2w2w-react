@@ -20,6 +20,10 @@ const app = createExpressApp(express, nodeEnv);
 
 initRoutes(app, express);
 
+// app.use('*', (req, res) => {
+//     console.log(req.ip); res.status(403).send('buzz off');
+// });
+
 
 
 app.listen(serverPort, () => {

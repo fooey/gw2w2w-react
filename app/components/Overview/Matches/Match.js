@@ -1,8 +1,11 @@
 
 import React from 'react';
+import Immutable from 'immutable';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import ImmutablePropTypes  from 'react-immutable-proptypes';
 
-// import moment from 'moment';
+import _ from 'lodash';
 
 import MatchWorld from './MatchWorld';
 
@@ -11,19 +14,43 @@ const WORLD_COLORS = ['red', 'blue', 'green'];
 
 
 
-const mapStateToProps = (state, props) => {
-    return {
-        lang: state.lang,
-        match: state.matches.data[props.matchId],
-    };
-};
+/*
+*
+*   Redux Helpers
+*
+*/
+
+// const mapToProps = (state, props) => {
+//     return {
+//         lang: state.lang,
+//         // match: state.matches.getIn(['data', props.matchId]),
+//         match: (Immutable.Map.isMap(state.matches))
+//             ? state.matches.getIn(['data', props.matchId])
+//             : Immutable.Map({  }),
+//     };
+// };
+
+const langSelector = (state) => state.lang;
+const matchSelector = (state, props) => props.match;
+
+// const matchSelector = createSelector(
+//     matchIdSelector,
+//     matchesSelector,
+//     (matchId, matches) => matches.get(matchId)
+// );
+
+const mapToProps = createSelector(
+    langSelector,
+    matchSelector,
+    (lang, match) => ({ lang, match })
+);
 
 
 
 class Match extends React.Component {
     static propTypes = {
-        lang: React.PropTypes.object.isRequired,
-        match: React.PropTypes.object.isRequired,
+        lang: ImmutablePropTypes.map.isRequired,
+        match: ImmutablePropTypes.map.isRequired,
     };
 
 
@@ -36,25 +63,28 @@ class Match extends React.Component {
     }
 
     isNewMatchData(nextProps) {
-        return (this.props.match.lastmod !== nextProps.match.lastmod);
+        return !this.props.match.equals(nextProps.match);
     }
 
     isNewLang(nextProps) {
-        return (this.props.lang.slug !== nextProps.lang.slug);
+        return !this.props.lang.equals(nextProps.lang);
     }
 
 
 
     render() {
-        const { lang, match } = this.props;
+        const {
+            lang,
+            match,
+        } = this.props;
+        // console.log('match', match.get('id'), match.toJS());
 
         return (
             <div className='matchContainer'>
                 <table className='match'>
                     <tbody>
                         {_.map(WORLD_COLORS, (color) => {
-                            const worldId  = match.worlds[color];
-                            const world = worlds[worldId][lang.slug];
+                            const worldId  = match.getIn(['worlds', color]);
 
                             return (
                                 <MatchWorld
@@ -64,7 +94,7 @@ class Match extends React.Component {
                                     color = {color}
                                     match = {match}
                                     showPie = {color === 'red'}
-                                    world = {world}
+                                    worldId = {worldId}
                                 />
                             );
                         })}
@@ -82,7 +112,7 @@ class Match extends React.Component {
 }
 
 Match = connect(
-    mapStateToProps,
+    mapToProps,
 )(Match);
 
 

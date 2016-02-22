@@ -1,4 +1,4 @@
-import path from 'path';
+// import path from 'path';
 
 import _ from 'lodash';
 
@@ -14,6 +14,7 @@ import rename from 'gulp-rename';
 import browserify from 'browserify';
 import uglify from 'gulp-uglify';
 import watchify from 'watchify';
+import envify from 'envify/custom';
 // import babelify from 'babelify';
 // import shimify from 'browserify-shim';
 
@@ -23,6 +24,7 @@ const VENDOR_LIBS = [
     'babel-polyfill',
     'classnames',
     'domready',
+    'immutable',
     'lodash',
     'moment',
     'numeral',
@@ -30,8 +32,11 @@ const VENDOR_LIBS = [
     // 'process',
     'react',
     'react-dom',
+    'react-immutable-proptypes',
     'react-redux',
+    'react-addons-perf',
     'redux',
+    'reselect',
     'superagent',
     // 'util',
 ];
@@ -42,24 +47,28 @@ const BROWSERIFY_DEFAULT_OPTIONS = {
     cache: {},
     packageCache: {},
     plugin: [],
-    transform: ['babelify'/*, 'browserify-shim'*/],
+    transform: [
+        'babelify',
+        envify({
+            NODE_ENV: 'development',
+        }),
+        /*, 'browserify-shim'*/
+    ],
     external: VENDOR_LIBS,
     paths: ['./node_modules', './app'],
 };
 
 
 
-gulp.task('build::js::vendor', (cb) => {
-    const b = browserify({require: VENDOR_LIBS});
-
-    // _.forEach(VENDOR_LIBS, (r) => b.require(r));
+gulp.task('build::js::vendor', () => {
+    const b = browserify({ require: VENDOR_LIBS });
 
     return b.bundle()
         .pipe(source('vendor.js'))
         .pipe(buffer())
         .pipe(gulp.dest('./app/build/js/'))
         .pipe(uglify())
-        .pipe(rename({extname: '.min.js'}))
+        .pipe(rename({ extname: '.min.js' }))
         .pipe(gulp.dest('./app/build/js/'));
 
     // cb();
@@ -99,6 +108,7 @@ export default function createJsTask(script) {
         // gutil.log('script', script.name/*, opts*/);
 
         const b = browserify(opts);
+
         b.external(VENDOR_LIBS);
 
         b.on('update', () => {

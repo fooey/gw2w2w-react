@@ -3,6 +3,7 @@ import _ from 'lodash';
 import {
     // REQUEST_MATCHES,
     RECEIVE_MATCHES,
+    RECEIVE_MATCHES_SUCCESS,
     RECEIVE_MATCHES_FAILED,
 } from 'constants/actionTypes';
 
@@ -16,6 +17,17 @@ export const receiveMatches = ({ data, lastUpdated }) => {
         lastUpdated,
     };
 };
+
+
+
+export const receiveMatchesSuccess = () => {
+    // console.log('action::receiveMatchesFailed', err);
+
+    return {
+        type: RECEIVE_MATCHES_SUCCESS,
+    };
+};
+
 
 
 

@@ -12,7 +12,7 @@ const INSTANCE = {
 };
 
 
-export default ({scores}) => (
+const Pie = ({ scores }) => (
     <img
         src = {getImageSource(scores)}
 
@@ -25,3 +25,6 @@ export default ({scores}) => (
 function getImageSource(scores) {
     return `https:\/\/www.piely.net\/${INSTANCE.size}\/${scores.red},${scores.blue},${scores.green}?strokeWidth=${INSTANCE.stroke}`;
 }
+
+
+export default Pie;

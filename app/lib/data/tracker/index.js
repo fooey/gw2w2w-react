@@ -120,10 +120,8 @@ export default class OverviewDataProvider {
 function getMatchWorld(match, color) {
     const worldId = match.worlds[color].toString();
 
-    const world = _.merge(
-        {color: color},
-        STATIC.worlds[worldId]
-    );
-
-    return world;
+    return {
+        color,
+        ...STATIC.worlds[worldId],
+    };
 }

@@ -1,17 +1,18 @@
+import Immutable from 'immutable';
 
-const SET_LANG = 'SET_LANG';
+import { SET_LANG } from 'constants/actionTypes';
 
 
 import { langs } from 'lib/static';
 
 const defaultSlug = 'en';
-const defaultLang = langs[defaultSlug];
+const defaultLang = Immutable.fromJS(langs[defaultSlug]);
 
 
 const lang = (state = defaultLang, action) => {
     switch (action.type) {
         case SET_LANG:
-            return langs[action.slug];
+            return Immutable.fromJS(langs[action.slug]);
 
         default:
             return state;

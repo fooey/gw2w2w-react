@@ -6,7 +6,7 @@ const imgPlaceholder = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/20
 
 
 
-export default ({
+const Emblem = ({
     guildId,
     size,
     className = '',
@@ -23,3 +23,5 @@ export default ({
         />
     );
 };
+
+export default Emblem;

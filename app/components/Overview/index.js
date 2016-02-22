@@ -7,6 +7,10 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+
+import Immutable from 'immutable';
+import ImmutablePropTypes  from 'react-immutable-proptypes';
 
 
 /*
@@ -39,6 +43,8 @@ const REGIONS = {
     2: { label: 'EU', id: '2' },
 };
 
+const REFRESH_TIMEOUT = _.random(4 * 1000, 8 * 1000);
+
 
 
 /*
@@ -47,18 +53,43 @@ const REGIONS = {
 *
 */
 
-const mapStateToProps = (state) => {
+const apiSelector = (state) => state.api;
+const langSelector = (state) => state.lang;
+const matchesSelector = (state) => state.matches;
 
-    // console.log('state', state.timeouts);
+const dataErrorSelector = createSelector(matchesSelector, (matches) => matches.get('error'));
+const matchesDataSelector = createSelector(matchesSelector, (matches) => matches.get('data'));
+const matchesLastUpdatedSelector = createSelector(matchesSelector, (matches) => matches.get('lastUpdated'));
+const matchesIsFetchingSelector = createSelector(apiSelector, (api) => api.get('pending').includes('matches'));
 
-    return {
-        lang: state.lang,
-        matchesData: state.matches.data,
-        matchesLastUpdated: state.matches.lastUpdated,
-        matchesIsFetching: _.includes(state.api.pending, 'matches'),
-        // timeouts: state.timeouts,
-    };
-};
+const mapStateToProps = createSelector(
+    langSelector,
+    dataErrorSelector,
+    matchesDataSelector,
+    matchesLastUpdatedSelector,
+    matchesIsFetchingSelector,
+    (lang, dataError, matchesData, matchesLastUpdated, matchesIsFetching) => ({
+        lang,
+        matchesData,
+        dataError,
+        matchesLastUpdated,
+        matchesIsFetching,
+    })
+);
+
+
+// const mapStateToProps = (state) => {
+
+//     // console.log('state', state.timeouts);
+
+//     return {
+//         lang: state.lang,
+//         matchesData: state.matches.data,
+//         matchesLastUpdated: state.matches.lastUpdated,
+//         matchesIsFetching: _.includes(state.api.pending, 'matches'),
+//         // timeouts: state.timeouts,
+//     };
+// };
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -80,8 +111,9 @@ const mapDispatchToProps = (dispatch) => {
 
 class Overview extends React.Component {
     static propTypes = {
-        lang: React.PropTypes.object.isRequired,
-        matchesData: React.PropTypes.object.isRequired,
+        lang: ImmutablePropTypes.map.isRequired,
+        dataError: React.PropTypes.string,
+        matchesData: ImmutablePropTypes.map.isRequired,
         matchesLastUpdated: React.PropTypes.number.isRequired,
         matchesIsFetching: React.PropTypes.bool.isRequired,
         // timeouts: React.PropTypes.object.isRequired,
@@ -104,10 +136,12 @@ class Overview extends React.Component {
         const shouldUpdate = (
             this.props.matchesLastUpdated !== nextProps.matchesLastUpdated
             || this.props.matchesIsFetching !== nextProps.matchesIsFetching
-            || this.props.lang.slug !== nextProps.lang.slug
+            || this.props.dataError !== nextProps.dataError
+            || !this.props.matchesData.equals(nextProps.matchesData)
+            || !this.props.lang.equals(nextProps.lang)
         );
 
-        // console.log(`Overview::shouldUpdate`, this.props, nextProps);
+        // console.log(`Overview::shouldUpdate`, shouldUpdate, this.props, nextProps);
 
         // console.log(`Overview::shouldUpdate`, shouldUpdate);
         // console.log(`Overview::isNewMatchesData`, this.isNewMatchesData(nextProps));
@@ -152,7 +186,7 @@ class Overview extends React.Component {
             setAppTimeout({
                 name: 'fetchMatches',
                 cb: () => fetchMatches(),
-                timeout: () => _.random(4 * 1000, 8 * 1000),
+                timeout: () => REFRESH_TIMEOUT,
             });
         }
     }
@@ -168,8 +202,14 @@ class Overview extends React.Component {
 
 
     render() {
+        const {
+            dataError,
+        } = this.props;
+
         return (
             <div id='overview'>
+
+                {(dataError) ? <pre className='alert alert-danger'>{dataError.toString()}</pre> : null}
 
                 {/* matches */}
                 <div className='row'>
@@ -197,6 +237,7 @@ class Overview extends React.Component {
 }
 
 Overview = connect(
+  // mapStateToProps,
   mapStateToProps,
   mapDispatchToProps
 )(Overview);

@@ -1,4 +1,3 @@
-'use strict';
 
 /*
 *
@@ -7,8 +6,24 @@
 */
 
 import React from'react';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import { createImmutableSelector } from 'lib/redux';
+
+import Immutable from 'immutable';
+import ImmutablePropTypes  from 'react-immutable-proptypes';
+
 import _ from'lodash';
 import moment from'moment';
+
+
+/*
+*   Redux Actions
+*/
+
+import * as apiActions from 'actions/api';
+import * as timeoutActions from 'actions/timeouts';
+import * as nowActions from 'actions/now';
 
 
 
@@ -16,7 +31,7 @@ import moment from'moment';
  *   Data
  */
 
-import DAO from 'lib/data/tracker';
+// import DAO from 'lib/data/tracker';
 
 
 
@@ -36,13 +51,79 @@ import Guilds from './Guilds';
 * Globals
 */
 
-const updateTimeInterval = 1000;
+const MATCH_REFRESH = _.random(4 * 1000, 8 * 1000);
+const TIME_REFRESH = 1000 / 1;
 
-const LoadingSpinner = () => (
-    <h1 id='AppLoading'>
-        <i className='fa fa-spinner fa-spin'></i>
-    </h1>
+// const LoadingSpinner = () => (
+//     <h1 id='AppLoading'>
+//         <i className='fa fa-spinner fa-spin'></i>
+//     </h1>
+// );
+
+
+
+
+
+/*
+*
+*   Redux Helpers
+*
+*/
+// const mapStateToProps = (state) => {
+//     return {
+//         lang: state.lang,
+//         world: state.world,
+//         guilds: state.guilds,
+//         // timeouts: state.timeouts,
+//     };
+// };
+const apiSelector = (state) => state.api;
+const langSelector = (state) => state.lang;
+// const nowSelector = (state) => state.now;
+// const matchDetailsSelector = (state) => state.matchDetails;
+// const guildsSelector = (state) => state.guilds;
+const worldSelector = (state) => state.world;
+
+const detailsIsFetchingSelector = createImmutableSelector(
+    apiSelector, (api) => api.get('pending').includes('matchDetails')
 );
+
+const mapStateToProps = createImmutableSelector(
+    langSelector,
+    // nowSelector,
+    // guildsSelector,
+    // matchDetailsSelector,
+    worldSelector,
+    detailsIsFetchingSelector,
+    (
+        lang,
+        // now,
+        // guilds,
+        // matchDetails,
+        world,
+        detailsIsFetching
+    ) => ({
+        lang,
+        // now,
+        // guilds,
+        // matchDetails,
+        world,
+        detailsIsFetching,
+    })
+);
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setNow: () => dispatch(nowActions.setNow()),
+
+        fetchGuildById: (id) => dispatch(apiActions.fetchGuildById(id)),
+        fetchMatchDetails: (worldId) => dispatch(apiActions.fetchMatchDetails(worldId)),
+
+        setAppTimeout: ({ name, cb, timeout }) => dispatch(timeoutActions.setAppTimeout({ name, cb, timeout })),
+        clearAppTimeout: ({ name }) => dispatch(timeoutActions.clearAppTimeout({ name })),
+    };
+};
+
 
 
 
@@ -53,10 +134,22 @@ const LoadingSpinner = () => (
 */
 
 
-export default class Tracker extends React.Component {
+class Tracker extends React.Component {
     static propTypes={
-        lang : React.PropTypes.object.isRequired,
+        lang : ImmutablePropTypes.map.isRequired,
         world: React.PropTypes.object.isRequired,
+        detailsIsFetching: React.PropTypes.bool.isRequired,
+        // guilds : ImmutablePropTypes.map.isRequired,
+        // matchDetails : ImmutablePropTypes.map.isRequired,
+
+        setNow: React.PropTypes.func.isRequired,
+        // now: React.PropTypes.object.isRequired,
+
+        fetchGuildById: React.PropTypes.func.isRequired,
+        fetchMatchDetails: React.PropTypes.func.isRequired,
+
+        setAppTimeout: React.PropTypes.func.isRequired,
+        clearAppTimeout: React.PropTypes.func.isRequired,
     };
 
     /*
@@ -67,46 +160,34 @@ export default class Tracker extends React.Component {
 
     constructor(props) {
         super(props);
-
-
-        this.__mounted = false;
-        this.__timeouts = {};
-        this.__intervals = {};
-
-
-        const dataListeners = {
-            onMatchDetails: this.onMatchDetails.bind(this),
-            onGuildDetails: this.onGuildDetails.bind(this),
-        };
-
-        this.dao = new DAO(dataListeners);
-
-
-
-        this.state = {
-            hasData: false,
-            match: {},
-            log: [],
-            guilds: {},
-            now: now(),
-        };
-
-
-        this.__intervals.setDate = setInterval(
-            () => this.setState({now: now()}),
-            updateTimeInterval
-        );
     }
 
 
 
     componentDidMount() {
         // console.log('Tracker::componentDidMount()');
-        this.__mounted   = true;
 
-        setPageTitle(this.props.lang, this.props.world);
+        const {
+            lang,
+            world,
+            fetchMatchDetails,
+        } = this.props;
 
-        this.dao.init(this.props.world);
+        setPageTitle(lang, world);
+        fetchMatchDetails({ world });
+
+        this.updateNow();
+    }
+
+    updateNow() {
+        this.props.setAppTimeout({
+            name: 'setNow',
+            cb: () => {
+                this.props.setNow();
+                this.updateNow();
+            },
+            timeout: TIME_REFRESH,
+        });
     }
 
 
@@ -119,37 +200,50 @@ export default class Tracker extends React.Component {
 
 
     componentWillReceiveProps(nextProps) {
-        setPageTitle(nextProps.lang, nextProps.world);
-        this.dao.setWorld(nextProps.world);
+        const {
+            lang,
+            world,
+
+            detailsIsFetching,
+
+            fetchMatchDetails,
+            setAppTimeout,
+        } = this.props;
+
+        if (!lang.equals(nextProps.lang) || world.slug !== nextProps.world.slug) {
+            setPageTitle(nextProps.lang, nextProps.world);
+        }
+
+        if (detailsIsFetching && !nextProps.detailsIsFetching) {
+            setAppTimeout({
+                name: 'fetchMatchDetails',
+                cb: () => fetchMatchDetails({ world }),
+                timeout: () => MATCH_REFRESH,
+            });
+        }
     }
 
 
 
-    shouldComponentUpdate(nextProps, nextState) {
+    shouldComponentUpdate(nextProps) {
         return (
-            this.isNewSecond(nextState)
-            || this.isNewLang(nextProps)
+            this.isNewLang(nextProps)
+            // || this.isNewSecond(nextProps)
         );
     }
 
-    isNewSecond(nextState) {
-        return !this.state.now.isSame(nextState.now);
+    isNewSecond(nextProps) {
+        return !this.props.now.isSame(nextProps.now);
     }
 
     isNewLang(nextProps) {
-        return (this.props.lang.name !== nextProps.lang.name);
+        return (!this.props.lang.equals(nextProps.lang));
     }
 
 
 
     componentWillUnmount() {
-        // console.log('Tracker::componentWillUnmount()');
-
-        this.__mounted   = false;
-        this.__timeouts  = _.map(this.__timeouts,  t => clearTimeout(t));
-        this.__intervals = _.map(this.__intervals, i => clearInterval(i));
-
-        this.dao.close();
+        this.props.clearAppTimeout({ name: 'fetchMatchDetails' });
     }
 
 
@@ -158,106 +252,36 @@ export default class Tracker extends React.Component {
         // console.log('Tracker::render()');
 
 
-
         return (
             <div id='tracker'>
-
-                {(!this.state.hasData)
-                    ? <LoadingSpinner />
-                    : null
-                }
+                <Scoreboard />
+                <Log />
+                <Guilds />
 
 
-                {(this.state.match && !_.isEmpty(this.state.match))
-                    ? <Scoreboard
-                        lang={this.props.lang}
-                        match={this.state.match}
-                    />
-                    : null
-                }
-
-                {(this.state.match && !_.isEmpty(this.state.match))
+                {/*
+                {(match && !_.isEmpty(match))
                     ? <Maps
-                        guilds={this.state.guilds}
-                        lang={this.props.lang}
-                        match={this.state.match}
-                        now={this.state.now}
+                        lang={lang}
+                        match={match}
+                        now={now}
                     />
                     : null
                 }
+                */}
 
-                <div className='row'>
-                    <div className='col-md-24'>
-                        <Log
-                            guilds={this.state.guilds}
-                            lang={this.props.lang}
-                            log={this.state.log}
-                            match={this.state.match}
-                            now={this.state.now}
-                        />
-                    </div>
-                </div>
 
-                {(this.state.guilds && !_.isEmpty(this.state.guilds))
-                    ? <div className='row'>
-                        <div className='col-md-24'>
-                            <Guilds guilds={this.state.guilds} />
-                        </div>
-                    </div>
-                    : null
-                }
 
             </div>
         );
     }
 
-
-
-
-    /*
-    *
-    *   Data Listeners
-    *
-    */
-
-    // updateTimers(cb = _.noop) {
-    //     if (this.__mounted) {
-    //         trackerTimers.update(this.state.time.offset, cb);
-    //         this.__timeouts.updateTimers = setTimeout(this.updateTimers.bind(this), updateTimeInterval);
-    //     }
-    // }
-
-
-
-    onMatchDetails(match) {
-        const log = getLog(match);
-
-        this.setState({
-            hasData: true,
-            match,
-            log,
-        });
-
-
-        setImmediate(() => {
-            const knownGuilds = _.keys(this.state.guilds);
-            const unknownGuilds = getNewClaims(log, knownGuilds);
-
-            this.dao.guilds.lookup(unknownGuilds, this.onGuildDetails.bind(this));
-        });
-    }
-
-
-
-    onGuildDetails(guild) {
-        this.setState(state => {
-            state.guilds[guild.id] = guild;
-
-            return {guilds: state.guilds};
-        });
-    }
-
 }
+
+Tracker = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Tracker);
 
 
 
@@ -270,20 +294,20 @@ export default class Tracker extends React.Component {
 
 
 
-function now() {
+function momentNow() {
     return moment(Math.floor(Date.now() / 1000) * 1000);
 }
 
 
 
 function setPageTitle(lang, world) {
-    const langSlug  = lang.slug;
+    const langSlug  = lang.get('slug');
     const worldName = world.name;
 
     const title     = [worldName, 'gw2w2w'];
 
     if (langSlug !== 'en') {
-        title.push(lang.name);
+        title.push(lang.get('name'));
     }
 
     document.title = title.join(' - ');
@@ -291,32 +315,11 @@ function setPageTitle(lang, world) {
 
 
 
-function getLog(match) {
-    return _
-        .chain(match.maps)
-        .map('objectives')
-        .flatten()
-        .clone()
-        .sortBy('lastFlipped')
-        .reverse()
-        .map(o => {
-            o.mapId = _.parseInt(o.id.split('-')[0]);
-            o.lastmod = moment(o.lastmod, 'X');
-            o.lastFlipped = moment(o.lastFlipped, 'X');
-            o.lastClaimed = moment(o.lastClaimed, 'X');
-            o.expires = moment(o.lastFlipped).add(5, 'minutes');
-            return o;
-        })
-        .value();
-};
 
 
-function getNewClaims(log, knownGuilds) {
-    return  _
-        .chain(log)
-        .reject(o => _.isEmpty(o.guild))
-        .map('guild')
-        .uniq()
-        .difference(knownGuilds)
-        .value();
-}
+
+
+
+
+
+export default Tracker;

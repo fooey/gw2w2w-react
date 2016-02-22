@@ -1,17 +1,31 @@
 
 import React from'react';
+import { connect } from 'react-redux';
+// import { createSelector } from 'reselect';
+import { createImmutableSelector } from 'lib/redux';
+
+import Immutable from 'immutable';
+import ImmutablePropTypes  from 'react-immutable-proptypes';
 
 
 import Entries from './Entries';
 import Tabs from './Tabs';
 
 
-export default class LogContainer extends React.Component {
+const objectivesSelector = (state) => state.objectives;
+const mapsSelector = (state) => state.matchDetails.get('maps');
+
+const mapStateToProps = createImmutableSelector(
+    mapsSelector,
+    objectivesSelector,
+    (maps, objectives) => ({ maps, objectives })
+);
+
+
+class LogContainer extends React.Component {
     static propTypes = {
-        lang: React.PropTypes.object.isRequired,
-        log: React.PropTypes.array.isRequired,
-        guilds: React.PropTypes.object.isRequired,
-        match: React.PropTypes.object.isRequired,
+        maps: ImmutablePropTypes.list.isRequired,
+        objectives: ImmutablePropTypes.map.isRequired,
     };
 
 
@@ -33,24 +47,29 @@ export default class LogContainer extends React.Component {
 
 
     render() {
-        return (
-            <div id='log-container'>
-                <Tabs
-                    maps={this.props.match.maps}
-                    mapFilter={this.state.mapFilter}
-                    typeFilter={this.state.typeFilter}
+        const {
+            maps,
+            objectives,
+        } = this.props;
 
-                    handleMapFilterClick={this.handleMapFilterClick.bind(this)}
-                    handleTypeFilterClick={this.handleTypeFilterClick.bind(this)}
-                />
-                <Entries
-                    guilds={this.props.guilds}
-                    lang={this.props.lang}
-                    log={this.props.log}
-                    now={this.props.now}
-                    mapFilter={this.state.mapFilter}
-                    typeFilter={this.state.typeFilter}
-                />
+        return (
+            <div className='row'>
+                <div className='col-md-24'>
+                    <div id='log-container'>
+                        <Tabs
+                            maps={maps}
+                            mapFilter={this.state.mapFilter}
+                            typeFilter={this.state.typeFilter}
+
+                            handleMapFilterClick={this.handleMapFilterClick.bind(this)}
+                            handleTypeFilterClick={this.handleTypeFilterClick.bind(this)}
+                        />
+                        <Entries
+                            mapFilter={this.state.mapFilter}
+                            typeFilter={this.state.typeFilter}
+                        />
+                    </div>
+                </div>
             </div>
         );
     }
@@ -60,7 +79,7 @@ export default class LogContainer extends React.Component {
     handleMapFilterClick(mapFilter) {
         console.log('set mapFilter', mapFilter);
 
-        this.setState({mapFilter});
+        this.setState({ mapFilter });
     }
 
     handleTypeFilterClick(toggleType) {
@@ -72,3 +91,10 @@ export default class LogContainer extends React.Component {
         });
     }
 }
+
+LogContainer = connect(
+  mapStateToProps,
+)(LogContainer);
+
+
+export default LogContainer;

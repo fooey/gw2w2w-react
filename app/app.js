@@ -6,6 +6,9 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import { enableBatching } from 'redux-batched-actions';
 
+import Perf from 'react-addons-perf';
+import PerfControls from 'components/util/Perf';
+
 
 import domready from 'domready';
 import page from 'page';
@@ -22,6 +25,7 @@ import appReducers from 'reducers';
 import { setRoute } from 'actions/route';
 import { setLang } from 'actions/lang';
 import { setWorld, clearWorld } from 'actions/world';
+import { resetObjectives } from 'actions/objectives';
 
 
 
@@ -48,9 +52,14 @@ domready(() => {
     console.clear();
     console.log('Starting Application');
 
+    // Perf.start();
+    // console.log('Perf started');
 
-    attachMiddleware();
-    attachRoutes();
+    console.log('process.env.NODE_ENV', process.env.NODE_ENV);
+
+
+    attachPageMiddleware();
+    attachPageRoutes();
 
     page.start({
         click: true,
@@ -69,6 +78,8 @@ function render(App) {
     ReactDOM.render(
         <Provider store={store}>
             <Container>
+                {/*<PerfControls />*/}
+
                 {App}
             </Container>
         </Provider>,
@@ -79,7 +90,7 @@ function render(App) {
 
 
 
-function attachMiddleware() {
+function attachPageMiddleware() {
     page((ctx, next) => {
         console.info(`route => ${ctx.path}`);
 
@@ -97,6 +108,7 @@ function attachMiddleware() {
         ctx.store.dispatch(setLang(langSlug));
 
         if (worldSlug) {
+            ctx.store.dispatch(resetObjectives());
             ctx.store.dispatch(setWorld(langSlug, worldSlug));
         }
         else {
@@ -109,7 +121,7 @@ function attachMiddleware() {
 
 
 
-function attachRoutes() {
+function attachPageRoutes() {
     page('/', '/en');
 
     page(
@@ -122,7 +134,7 @@ function attachRoutes() {
 
             const { lang, world } = ctx.store.getState();
 
-            render(<Tracker lang={lang} world={world} />);
+            render(<Tracker />);
         }
     );
 

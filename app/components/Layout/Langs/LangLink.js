@@ -1,20 +1,47 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import ImmutablePropTypes  from 'react-immutable-proptypes';
 
 import classnames from 'classnames';
 
 import { worlds } from 'lib/static';
 
 
-const mapStateToProps = (state, props) => {
-    // console.log('lang', state.lang);
-    return {
-        activeLang: state.lang,
-        // activeWorld: state.world,
-        world: state.world ? worlds[state.world.id][props.lang.slug] : null,
-    };
-};
+
+
+
+/*
+*
+*   Redux Helpers
+*
+*/
+
+const activeLangSelector = (state) => state.lang;
+const langSelector = (state, props) => props.lang;
+const worldSelector = (state) => state.world;
+const worldDataSelector = createSelector(
+    activeLangSelector,
+    langSelector,
+    worldSelector,
+    (activeLang, lang, world) => ({
+        activeLang,
+        world: world ? worlds[world.id][lang.slug] : null,
+    })
+);
+
+// const mapStateToProps = (state, props) => {
+//     // console.log('lang', state.lang);
+//     return {
+//         activeLang: state.lang,
+//         // activeWorld: state.world,
+//         world: state.world ? worlds[state.world.id][props.lang.slug] : null,
+//     };
+// };
+
+
+
 
 
 let Lang = ({
@@ -25,7 +52,7 @@ let Lang = ({
 }) => (
     <li
         className={classnames({
-            active: activeLang.label === lang.label,
+            active: activeLang.get('label') === lang.label,
         })}
         title={lang.name}
     >
@@ -35,12 +62,12 @@ let Lang = ({
     </li>
 );
 Lang.propTypes = {
-    activeLang: React.PropTypes.object.isRequired,
+    activeLang: ImmutablePropTypes.map.isRequired,
     activeWorld: React.PropTypes.object,
     lang: React.PropTypes.object.isRequired,
 };
 Lang = connect(
-  mapStateToProps,
+  worldDataSelector,
   // mapDispatchToProps
 )(Lang);
 

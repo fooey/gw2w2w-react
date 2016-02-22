@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import ImmutablePropTypes  from 'react-immutable-proptypes';
+
 import _ from 'lodash';
 
 
@@ -33,12 +35,15 @@ function isEqualByPick(currentProps, nextProps, keys) {
 class Container extends React.Component {
     static propTypes = {
         children: React.PropTypes.node.isRequired,
-        lang: React.PropTypes.object.isRequired,
+        lang: ImmutablePropTypes.map.isRequired,
         world: React.PropTypes.object,
     };
 
     shouldComponentUpdate(nextProps) {
-        const shouldUpdate = !isEqualByPick(this.props, nextProps, ['lang', 'world', 'children']);
+        const shouldUpdate = (
+            !isEqualByPick(this.props, nextProps, ['world', 'children'])
+            || !this.props.lang.equals(nextProps.lang)
+        );
         // console.log(`Container::componentShouldUpdate()`, shouldUpdate);
 
         // console.log('lang', _.isEqual(this.props.lang, nextProps.lang), nextProps.lang);

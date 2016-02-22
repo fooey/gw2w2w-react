@@ -7,15 +7,16 @@ import Sprite from 'components/common/Icons/Sprite';
 
 
 
-export default ({
+const Holdings = ({
     color,
     holdings,
 }) => (
     <ul className='list-inline'>
-        {_.map(holdings, (typeQuantity, typeIndex) =>
+        {holdings.map(
+            (typeQuantity, typeIndex) =>
             <li key={typeIndex}>
                 <Sprite
-                    type  = {typeIndex}
+                    type = {typeIndex}
                     color = {color}
                 />
 
@@ -24,3 +25,6 @@ export default ({
         )}
     </ul>
 );
+
+
+export default Holdings;

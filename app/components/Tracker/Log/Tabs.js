@@ -24,7 +24,7 @@ export default ({
             {_.map(
                 STATIC.mapsMeta,
                 (mm) => (
-                    (_.some(maps, matchMap => matchMap.id == mm.id))
+                    (maps.find(matchMap => matchMap.get('id') == mm.id))
                         ? <a
                             key={mm.id}
                             className={classnames({tab: true, active: mapFilter == mm.id})}
