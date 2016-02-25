@@ -1,8 +1,8 @@
 import Immutable from 'immutable';
-import { batchActions } from 'redux-batched-actions';
+// import { batchActions } from 'redux-batched-actions';
 
 
-import { worlds as STATIC_WORLDS } from 'lib/static';
+// import { worlds as STATIC_WORLDS } from 'lib/static';
 
 
 import {
@@ -15,7 +15,7 @@ import {
 // import * as actions from 'actions/matchDetails';
 import { fetchGuildById } from 'actions/api';
 import {
-    updateObjective,
+    // updateObjective,
     updateObjectives,
 } from 'actions/objectives';
 

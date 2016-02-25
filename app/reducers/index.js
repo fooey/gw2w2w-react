@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import api from './api';
 import guilds from './guilds';
 import lang from './lang';
+import logFilters from './logFilters';
 import matches from './matches';
 import matchDetails from './matchDetails';
 import now from './now';
@@ -17,6 +18,7 @@ export default combineReducers({
     api,
     guilds,
     lang,
+    logFilters,
     matches,
     matchDetails,
     now,

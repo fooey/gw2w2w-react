@@ -42,6 +42,7 @@ export const timesDefault = Immutable.Map({
     startTime: null,
 });
 
+
 export const defaultState = Immutable.Map({
     id: null,
     guilds: Immutable.OrderedSet(),
@@ -51,6 +52,7 @@ export const defaultState = Immutable.Map({
     times: timesDefault,
     stats: statsDefault,
     worlds: rgbNum,
+    lastUpdate: Date.now(),
 });
 
 
@@ -61,15 +63,19 @@ const matchDetails = (state = defaultState, action) => {
 
         case RECEIVE_MATCHDETAILS:
             // console.log('reducer::matchDetails', action);
-            return state
-                .set('id', action.id)
-                .set('guildIds', action.guildIds)
-                .set('maps', action.maps)
-                .set('objectiveIds', action.objectiveIds)
-                .set('region', action.region)
-                .set('stats', action.stats)
-                .set('times', action.times)
-                .set('worlds', action.worlds);
+            return state.withMutations(
+                tmpState =>
+                tmpState
+                    .set('lastUpdate', Date.now())
+                    .set('id', action.id)
+                    .set('guildIds', action.guildIds)
+                    .set('maps', action.maps)
+                    .set('objectiveIds', action.objectiveIds)
+                    .set('region', action.region)
+                    .set('stats', action.stats)
+                    .set('times', action.times)
+                    .set('worlds', action.worlds)
+            );
 
         case CLEAR_MATCHDETAILS:
             return defaultState;
@@ -77,14 +83,16 @@ const matchDetails = (state = defaultState, action) => {
         case RECEIVE_MATCHDETAILS_SUCCESS:
             // console.log('reducer::matchDetails', action);
 
-            return state.has('error')
-                ? state.delete('error')
-                : state;
+            return state
+                .set('lastUpdate', Date.now())
+                .delete('error');
 
         case RECEIVE_MATCHDETAILS_FAILED:
             console.log('reducer::matchDetails', action);
 
-            return state.set('error', action.err.message);
+            return state
+                .set('lastUpdate', Date.now())
+                .set('error', action.err.message);
 
         default:
             return state;

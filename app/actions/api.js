@@ -127,7 +127,7 @@ export const fetchMatchDetails = ({ world }) => {
                     processMatchDetails({
                         data: Immutable.fromJS(data),
                     })
-                )
+                );
             },
             error: (err) => {
                 console.log('action::fetchMatches::error', err);

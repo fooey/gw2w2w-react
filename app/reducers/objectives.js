@@ -17,7 +17,7 @@ const objectives = (state = defaultState, action) => {
     switch (action.type) {
 
         case OBJECTIVES_RESET:
-            console.log('reducer::objectives', action);
+            // console.log('reducer::objectives', action);
 
             return defaultState;
 

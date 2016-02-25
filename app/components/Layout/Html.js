@@ -8,7 +8,7 @@ export default ({env, getUrlHashified}) => (
 
         <title>gw2w2w</title>
 
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css' />
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.css' />
         <link rel='stylesheet' href={getUrlHashified('/css/bootstrap.min.css', 'build/css/bootstrap.min.css')} />
         {(env.NODE_ENV === 'development')
             ? <link rel='stylesheet' href={getUrlHashified('/css/app.css', 'build/css/app.css')} />
@@ -56,14 +56,14 @@ export default ({env, getUrlHashified}) => (
             </div>
         }
 
-        <script dangerouslySetInnerHTML={{__html: `
+        <script dangerouslySetInnerHTML={{ __html: `
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
             ga('create', 'UA-51384-37', 'auto');
             ga('send', 'pageview');
-        `}}/>
+        ` }}/>
     </body>
 </html>
 );

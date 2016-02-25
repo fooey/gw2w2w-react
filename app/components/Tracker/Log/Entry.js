@@ -1,7 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 // import { createSelector } from 'reselect';
-import { createImmutableSelector } from 'lib/redux';
+import {
+    createImmutableSelector,
+    mapImmutableSelectorsToProps,
+} from 'lib/reduxHelpers';
 
 import Immutable from 'immutable';
 import ImmutablePropTypes  from 'react-immutable-proptypes';
@@ -10,15 +13,19 @@ import moment from 'moment';
 
 import * as STATIC from 'lib/static';
 
+import ObjectiveName from 'components/common/objectives/Name';
+import ObjectiveArrow from 'components/common/objectives/Arrow';
+
 import Emblem from 'components/common/icons/Emblem';
 // import Sprite from 'components/common/icons/Sprite';
 import ObjectiveIcon from 'components/common/icons/Objective';
-import ArrowIcon from 'components/common/icons/Arrow';
 
 
 
 
-
+/*
+*   Redux / Reselect
+*/
 
 const objectiveIdSelector = (state, props) => props.id;
 
@@ -32,73 +39,69 @@ const objectiveSelector = createImmutableSelector(
     objectivesSelector,
     (id, objectives) => objectives.get(id)
 );
+
+const hasBuffSelector = createImmutableSelector(
+    nowSelector,
+    objectiveSelector,
+    (now, objective) => (objective.get('expires').diff() > -2000)
+);
+
+const guildIdSelector = createImmutableSelector(
+    objectiveSelector,
+    (objective) => objective.get('guild')
+);
+
 const guildSelector = createImmutableSelector(
     guildsSelector,
-    objectiveSelector,
-    (guilds, objective) => guilds.get(
-        objective.get('guild'),
-        Immutable.Map()
-    )
+    guildIdSelector,
+    (guilds, guildId) => guilds.get(guildId, Immutable.Map())
 );
 
-const mapStateToProps = createImmutableSelector(
-    langSelector,
-    nowSelector,
-    guildSelector,
-    objectiveSelector,
-    objectiveIdSelector,
-    (lang, now, guild, objective, id) => ({
-        lang,
-        now,
-        guild,
-        objective,
-        id,
-    })
-);
+const mapStateToProps = mapImmutableSelectorsToProps({
+    guild: guildSelector,
+    hasBuff: hasBuffSelector,
+    id: objectiveIdSelector,
+    lang: langSelector,
+    now: nowSelector,
+    objective: objectiveSelector,
+});
 
 
 
-// const mapStateToProps = (state, props) => {
-//     return {
-//         lang: state.lang,
-//         guild: state.guilds.get(
-//             props.objective.get('guild'),
-//             Immutable.Map()
-//         ),
-//         // entries,
-//         id: props.id,
-//         objective: props.objective,
-//     };
-// };
 
+
+/*
+*   Component
+*/
 
 class Entry extends React.Component {
     static propTypes = {
+        hasBuff : React.PropTypes.bool.isRequired,
         id : React.PropTypes.string.isRequired,
-        guild : React.PropTypes.object.isRequired,
         lang : ImmutablePropTypes.map.isRequired,
         now : React.PropTypes.object.isRequired,
         objective : ImmutablePropTypes.map.isRequired,
+
+        guild : React.PropTypes.object,
+        guildId : React.PropTypes.string,
     };
 
 
 
     shouldComponentUpdate(nextProps) {
         const {
+            hasBuff,
             guild,
             lang,
-            now,
             objective,
+            now,
         } = this.props;
 
         const shouldUpdate = (
-            (
-                !now.isSame(nextProps.now)
-                && (objective.get('expires').diff() > -5000)
-            )
+            (hasBuff && !now.isSame(nextProps.now))
+            || !guild.equals(nextProps.guild)
             || !lang.equals(nextProps.lang)
             || !objective.equals(nextProps.objective)
-            || !guild.equals(nextProps.guild)
         );
 
         return shouldUpdate;
@@ -108,6 +111,7 @@ class Entry extends React.Component {
 
     render() {
         const {
+            // hasBuff,
             id,
             lang,
             now,
@@ -115,99 +119,60 @@ class Entry extends React.Component {
             guild,
         } = this.props;
 
-        // const lastFlipped = moment.unix(objective.get('lastFlipped'));
-        // const lastClaimed = moment.unix(objective.get('lastClaimed'));
-        // const lastmod = moment.unix(objective.get('lastmod'));
-        // const expires = moment.unix(objective.get('expires'));
-
         const lastFlipped = objective.get('lastFlipped');
-        const lastClaimed = objective.get('lastClaimed');
-        const lastmod = objective.get('lastmod');
         const expires = objective.get('expires');
-
-        // const expires = lastFlipped.add(5, 'm');
-
-        // console.log(id);
+        // const lastClaimed = objective.get('lastClaimed');
+        // const lastmod = objective.get('lastmod');
 
         return (
-            <li key={id} className={`team ${ objective.get('owner') }`}>
-                {/*JSON.stringify(objective.toJS())*/}
-
+            <li className={`team ${ objective.get('owner') }`}>
                 <ul className='list-unstyled log-objective'>
-                    <li className='log-expire'>{
-                        expires.isAfter()
-                            ? moment(expires.diff(now, 'milliseconds')).format('m:ss')
-                            : null
-                    }</li>
-                    <li className='log-time'>{
-                        (moment().diff(lastFlipped, 'hours') < 1)
-                            ? lastFlipped.format('hh:mm:ss')
-                            : lastFlipped.fromNow(true)
-                    }</li>
-                    <li className='log-geo'><ArrowIcon direction={getObjectiveDirection(objective.get('id'))} /></li>
+                    <li className='log-expire'><TimeRemaining expires={expires} /></li>
+                    <li className='log-time'><TimeStamp time={lastFlipped} /></li>
+                    <li className='log-geo'><ObjectiveArrow id={id} /></li>
                     <li className='log-sprite'><ObjectiveIcon color={objective.get('owner')} type={objective.get('type')} /></li>
-                    <li className='log-name'>{STATIC.objectives[id].name[lang.get('slug')]}</li>
-                    <li className='log-guild'>{
-                        (objective.get('guild'))
-                            ? <a href={'#' + objective.get('guild')}>
-                                <Emblem guildId={objective.get('guild')} />
-                                {guild ? <span className='guild-name'> {guild.get('name')} </span> :  null}
-                                {guild ? <span className='guild-tag'> [{guild.get('tag')}] </span> :  null}
-                            </a>
-                            : null
-                    }</li>
+                    <li className='log-name'><ObjectiveName id={id} lang={lang} /></li>
+                    <li className='log-guild'><ObjectiveGuild objective={objective} guild={guild} /></li>
                 </ul>
             </li>
         );
     }
 };
 
-        // {_.map(entries, entry =>
-        //     <li key={entry.id} className={`team ${entry.owner}`}>
-        //         <ul className='list-unstyled log-objective'>
-        //             <li className='log-expire'>{
-        //                 entry.expires.isAfter(now)
-        //                     ? moment(entry.expires.diff(now, 'milliseconds')).format('m:ss')
-        //                     : null
-        //             }</li>
-        //             <li className='log-time'>{
-        //                 (moment().diff(entry.lastFlipped, 'hours') < 4)
-        //                     ? entry.lastFlipped.format('hh:mm:ss')
-        //                     : entry.lastFlipped.fromNow(true)
-        //             }</li>
-        //             <li className='log-geo'><ArrowIcon direction={getObjectiveDirection(entry)} /></li>
-        //             <li className='log-sprite'><ObjectiveIcon color={entry.owner} type={entry.type} /></li>
-        //             {(mapFilter === '') ? <li className='log-map'>{getMap(entry).abbr}</li> : null}
-        //             <li className='log-name'>{STATIC.objectives[entry.id].name[lang.get('slug')]}</li>
-        //             {/*<li className='log-claimed'>{
-        //                 (entry.lastClaimed.isValid())
-        //                     ? entry.lastClaimed.format('hh:mm:ss')
-        //                     : null
-        //             }</li>*/}
-        //             <li className='log-guild'>{
-        //                 (entry.guild)
-        //                     ? <a href={'#' + entry.guild}>
-        //                         <Emblem guildId={entry.guild} />
-        //                         {guild[entry.guild] ? <span className='guild-name'> {guild[entry.guild].name} </span> :  null}
-        //                         {guild[entry.guild] ? <span className='guild-tag'> [{guild[entry.guild].tag}] </span> :  null}
-        //                     </a>
-        //                     : null
-        //             }</li>
-        //         </ul>
-        //     </li>
-        // )}
-
 Entry = connect(
   mapStateToProps
 )(Entry);
 
 
-function getObjectiveDirection(id) {
-    const baseId = id.split('-')[1].toString();
-    const meta = STATIC.objectivesMeta[baseId];
 
-    return meta.direction;
-}
+const TimeRemaining = ({ expires }) => (
+    <span>{
+        expires.isAfter()
+            ? moment(expires.diff(Date.now(), 'milliseconds')).format('m:ss')
+            : null
+    }</span>
+);
+
+const TimeStamp = ({ time, maxAge = 1 }) => (
+    <span>{
+        (moment().diff(time, 'hours') < maxAge)
+            ? time.format('hh:mm:ss')
+            : time.fromNow(true)
+    }</span>
+);
+
+const ObjectiveGuild = ({ objective, guild }) => (
+    <span>{
+        (objective.get('guild'))
+            ? <a href={'#' + objective.get('guild')}>
+                <Emblem guildId={objective.get('guild')} />
+                {guild ? <span className='guild-name'> {guild.get('name')} </span> :  null}
+                {guild ? <span className='guild-tag'> [{guild.get('tag')}] </span> :  null}
+            </a>
+            : null
+    }</span>
+);
+
 
 
 function getMap(objective) {

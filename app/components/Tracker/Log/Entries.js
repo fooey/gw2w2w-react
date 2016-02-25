@@ -1,7 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 // import { createSelector } from 'reselect';
-import { createImmutableSelector } from 'lib/redux';
+import {
+    createImmutableSelector,
+    mapImmutableSelectorsToProps,
+} from 'lib/reduxHelpers';
 
 // import Immutable from 'immutable';
 import ImmutablePropTypes  from 'react-immutable-proptypes';
@@ -15,13 +18,19 @@ const objectivesSelector = (state) => state.objectives;
 
 const sortedObjectivesSelector = createImmutableSelector(
     objectivesSelector,
-    (objectives) => objectives.sortBy(o => -o.get('lastFlipped'))
+    (objectives) => objectives
+        .sortBy(o => -o.get('lastFlipped'))
+        .keySeq()
 );
 
-const mapStateToProps = createImmutableSelector(
-    sortedObjectivesSelector,
-    (sortedObjectives) => ({ objectives: sortedObjectives })
-);
+// const objectiveIdsSelector = createImmutableSelector(
+//     sortedObjectivesSelector,
+//     (objectives) => objectives.keySeq()
+// );
+
+const mapStateToProps = mapImmutableSelectorsToProps({
+    objectives: sortedObjectivesSelector,
+});
 
 // const mapStateToProps = (state, props) => {
 //     // const entries = _.chain(props.log)
@@ -39,7 +48,7 @@ const mapStateToProps = createImmutableSelector(
 
 class Entries extends React.Component {
     static propTypes = {
-        objectives : ImmutablePropTypes.map.isRequired,
+        objectives : ImmutablePropTypes.seq.isRequired,
 
         // now : React.PropTypes.instanceOf(moment).isRequired,
         mapFilter : React.PropTypes.string.isRequired,
@@ -70,9 +79,10 @@ class Entries extends React.Component {
 
         return (
             <ol id='log' className='list-unstyled'>
-                {objectives.keySeq().map(id => (
+                {objectives.map(
+                    id =>
                     <Entry key={id} id={id} />
-                ))}
+                )}
             </ol>
         );
     }

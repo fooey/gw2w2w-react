@@ -7,10 +7,13 @@
 
 import React from'react';
 import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
-import { createImmutableSelector } from 'lib/redux';
+// import { createSelector } from 'reselect';
+import {
+    createImmutableSelector,
+    mapImmutableSelectorsToProps,
+} from 'lib/reduxHelpers';
 
-import Immutable from 'immutable';
+// import Immutable from 'immutable';
 import ImmutablePropTypes  from 'react-immutable-proptypes';
 
 import _ from'lodash';
@@ -77,40 +80,29 @@ const TIME_REFRESH = 1000 / 1;
 //         // timeouts: state.timeouts,
 //     };
 // };
-const apiSelector = (state) => state.api;
 const langSelector = (state) => state.lang;
-// const nowSelector = (state) => state.now;
-// const matchDetailsSelector = (state) => state.matchDetails;
-// const guildsSelector = (state) => state.guilds;
+const matchDetailsSelector = (state) => state.matchDetails;
 const worldSelector = (state) => state.world;
+// const apiSelector = (state) => state.api;
+// const nowSelector = (state) => state.now;
+// const guildsSelector = (state) => state.guilds;
 
-const detailsIsFetchingSelector = createImmutableSelector(
-    apiSelector, (api) => api.get('pending').includes('matchDetails')
+// const detailsIsFetchingSelector = createImmutableSelector(
+//     apiSelector,
+//     (api) => api.get('pending').includes('matchDetails')
+// );
+
+const matchDetailsLastUpdateSelector = createImmutableSelector(
+    matchDetailsSelector,
+    (matchDetails) => matchDetails.get('lastUpdate')
 );
 
-const mapStateToProps = createImmutableSelector(
-    langSelector,
-    // nowSelector,
-    // guildsSelector,
-    // matchDetailsSelector,
-    worldSelector,
-    detailsIsFetchingSelector,
-    (
-        lang,
-        // now,
-        // guilds,
-        // matchDetails,
-        world,
-        detailsIsFetching
-    ) => ({
-        lang,
-        // now,
-        // guilds,
-        // matchDetails,
-        world,
-        detailsIsFetching,
-    })
-);
+const mapStateToProps = mapImmutableSelectorsToProps({
+    lang: langSelector,
+    matchDetailsLastUpdate: matchDetailsLastUpdateSelector,
+    world: worldSelector,
+});
+
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -138,7 +130,8 @@ class Tracker extends React.Component {
     static propTypes={
         lang : ImmutablePropTypes.map.isRequired,
         world: React.PropTypes.object.isRequired,
-        detailsIsFetching: React.PropTypes.bool.isRequired,
+        // detailsIsFetching: React.PropTypes.bool.isRequired,
+        matchDetailsLastUpdate: React.PropTypes.number.isRequired,
         // guilds : ImmutablePropTypes.map.isRequired,
         // matchDetails : ImmutablePropTypes.map.isRequired,
 
@@ -204,7 +197,7 @@ class Tracker extends React.Component {
             lang,
             world,
 
-            detailsIsFetching,
+            matchDetailsLastUpdate,
 
             fetchMatchDetails,
             setAppTimeout,
@@ -214,7 +207,7 @@ class Tracker extends React.Component {
             setPageTitle(nextProps.lang, nextProps.world);
         }
 
-        if (detailsIsFetching && !nextProps.detailsIsFetching) {
+        if (matchDetailsLastUpdate !== nextProps.matchDetailsLastUpdate) {
             setAppTimeout({
                 name: 'fetchMatchDetails',
                 cb: () => fetchMatchDetails({ world }),
