@@ -10,7 +10,7 @@ const nodeInstances = {};
 const DEFAULT_ENV = {
     NODE_ENV: 'development',
     NODE_PATH: path.resolve('./'),
-    PORT: '8080',
+    PORT: '3000',
 };
 
 

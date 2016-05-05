@@ -2,7 +2,7 @@
 import React from'react';
 import { connect } from 'react-redux';
 // import { createSelector } from 'reselect';
-import { createImmutableSelector } from 'lib/redux';
+import { createImmutableSelector } from 'lib/reduxHelpers';
 
 import Immutable from 'immutable';
 import ImmutablePropTypes  from 'react-immutable-proptypes';
